@@ -10,37 +10,37 @@
 
 
 
+<ion-content class="ion-padding">
+  <form class="form" [formGroup]="userForm" (ngSubmit)="signUp(userForm.value)">
+    <ion-item>
+      <ion-label position="floating">Email</ion-label>
+      <ion-input type="text" formControlName="email"></ion-input>
+    </ion-item>
 
-<ion-content color="">
-  <ion-card type = "button">
-  <ion-item color="">
-    <ion-label position="floating">Name</ion-label>
-    <ion-input [(ngModel)]="name" type="text" required></ion-input>
-  </ion-item>
+    <ng-container *ngFor="let error of error_msg.email">
+      <div
+        *ngIf="userForm.get('email').hasError(error.type) && (userForm.get('email').dirty || userForm.get('email').touched)">
+        {{ error.message }}
+      </div>
+    </ng-container>
 
-  <ion-item color="">
-    <ion-label position="floating">Email</ion-label>
-    <ion-input [(ngModel)]="email" type="text" required></ion-input>
-  </ion-item>
+    <ion-item>
+      <ion-label position="floating" color="primary">Password</ion-label>
+      <ion-input type="password" formControlName="password" class="form-controll" required></ion-input>
+    </ion-item>
 
-  <ion-item color="">
-    <ion-label position="floating">Password</ion-label>
-    <ion-input [(ngModel)]="password" type="password" required></ion-input>
-  </ion-item>
+    <ng-container *ngFor="let error of error_msg.password">
+      <div
+        *ngIf="userForm.get('password').hasError(error.type) && (userForm.get('password').dirty || userForm.get('password').touched)">
+        {{ error.message }}
+      </div>
+    </ng-container>
 
-  <ion-item color="">
-    <ion-label position="floating">Confirm Password</ion-label>
-    <ion-input [(ngModel)]="confirm_password" type="password" required></ion-input>
-  </ion-item>
+    <ion-button type="submit" expand="block" (click)="signUp()"
+                [disabled]="!userForm.valid">Register</ion-button>
 
-  <ion-button class="ion-margin-top" type="submit" expand="block"  (click)="onSubmit()">
-    Create Account
-  </ion-button>
-
-  <ion-item color="" class="ion-text-center">
-    <ion-label>Or</ion-label>
-  </ion-item>
-
-  <ion-button  expand="block" fill="outline" [routerLink]="['/login']">Login</ion-button>
-  </ion-card>
+    <label class="ion-text-center" color="danger">{{errorMsg}}</label>
+    <label class="ion-text-center" color="success">{{successMsg}}</label>
+  </form>
+  <p class="ion-text-center">Already registered? <a (click)="goToLogin()">Login</a></p>
 </ion-content>
