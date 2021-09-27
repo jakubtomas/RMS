@@ -6,7 +6,7 @@ const routes: Routes = [
   {
     path: '',
     /* redirectTo: '/tabs/tab1', */
-     redirectTo: '/signup',
+     redirectTo: 'signup',
     pathMatch: 'full'
   },
 

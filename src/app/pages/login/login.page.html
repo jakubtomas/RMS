@@ -1,12 +1,76 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
-    <ion-title>Login</ion-title>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>Login</ion-title>
+    </ion-toolbar>
 </ion-header>
 
-<ion-content>
-<h1>this is login page </h1>
+<ion-content class="ion-padding">
+    <form class="form" [formGroup]="userForm" (ngSubmit)="loginUser(userForm.value)">
+        <ion-item>
+            <ion-label position="floating">Email</ion-label>
+            <ion-input type="text" formControlName="email"></ion-input>
+        </ion-item>
+
+        <ng-container *ngFor="let error of error_msg.email">
+            <div
+                    *ngIf="userForm.get('email').hasError(error.type) && (userForm.get('email').dirty || userForm.get('email').touched)">
+                {{ error.message }}
+            </div>
+        </ng-container>
+
+        <ion-item>
+            <ion-label position="floating">Password</ion-label>
+            <ion-input type="password" formControlName="password" class="form-controll" required></ion-input>
+        </ion-item>
+
+        <ng-container *ngFor="let error of error_msg.password">
+            <div
+                    *ngIf="userForm.get('password').hasError(error.type) && (userForm.get('password').dirty || userForm.get('password').touched)">
+                {{ error.message }}
+            </div>
+        </ng-container>
+
+
+        <ion-card *ngIf="firebaseErrorMessage">
+            <ion-item color="warning">
+                <label class="ion-text-center" >{{firebaseErrorMessage}}</label>
+            </ion-item >
+        </ion-card>
+
+        <ion-button type="submit" expand="block"
+                    [disabled]="!userForm.valid">Login
+        </ion-button>
+
+    </form>
+
+    <p class="ion-text-center">or <a routerLink="/signup" >Create account</a></p>
 </ion-content>
+
+
+<!--<ion-content color="">
+    <ion-card>
+
+        <ion-item color="">
+            <ion-label position="floating">Email</ion-label>
+            <ion-input [(ngModel)]="email" type="text" required></ion-input>
+        </ion-item>
+
+        <ion-item color="">
+            <ion-label position="floating">Password</ion-label>
+            <ion-input [(ngModel)]="password" type="password" required></ion-input>
+        </ion-item>
+
+        <ion-button class="ion-margin-top" type="submit" expand="block" color="primary" (click)="onSubmit()">
+            Login
+        </ion-button>
+
+        <ion-item color="" class="ion-text-center">
+            <ion-label>Or</ion-label>
+        </ion-item>
+    </ion-card>
+
+    <ion-button type="submit" color="light" expand="block" [routerLink]="['/signup']">Create Account</ion-button>
+</ion-content>-->

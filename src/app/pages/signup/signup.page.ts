@@ -12,8 +12,16 @@ import {AuthService} from "../../services/auth.service";
 export class SignupPage implements OnInit {
 
     userForm: FormGroup;
+    /*userForm = new FormGroup({
+        email: new FormControl("jasnko@gmail.com"),
+        password: new FormControl("45612398798")
+    });*/
+
+
+
     successMsg: string = '';
     errorMsg: string = '';
+    firebaseErrorMessage: string;
 
     error_msg = {
         'email': [
@@ -38,10 +46,9 @@ export class SignupPage implements OnInit {
         ]
     };
 
+
     constructor(
         private router: Router,
-        //private ionicAuthService: IonicAuthService,
-        // private accountService: AccountService,
         private authService: AuthService,
         private fb: FormBuilder
     ) {
@@ -58,44 +65,55 @@ export class SignupPage implements OnInit {
                 Validators.required
             ])),
         });
+
+        //todo only for developing /testing app
+        this.userForm.setValue({email: this.generateEmail(), password: '465489'})
     }
 
-    signUp() {
+     private generateEmail() {
+        let result           = '';
+        const characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const charactersLength = characters.length;
+        for ( let i = 0; i < 5; i++ ) {
+            result += characters.charAt(Math.floor(Math.random() *
+                charactersLength));
+        }
+        return result+"@gmail.com";
+    }
 
-        console.log(this.userForm);
-        console.log(this.userForm.controls.email);
-        console.log(this.userForm);
-        console.log(this.userForm.value.email); ///oki
-        console.log(this.userForm.value.password);
+    signUps(value) {
+        console.log(value);
 
-        //todo change this according the presentation from g
-        // todo create newFORMGROUP new FormControl
-        const email = this.userForm.value.email;
-        const psswd = this.userForm.value.password;
+    }
 
-        this.authService.createUser(email, psswd).then((result) => {
+
+    createUser(userFormValues: {email,password}) {
+        //const email:string = this.userForm.get('email').value;
+        //const password:string =this.userForm.get('password').value;
+
+        console.log("email and password are " + userFormValues.email + " password  " + userFormValues.email);
+
+
+        this.authService.createUser(userFormValues.email, userFormValues.password).then((result) => {
             if (result == null) {// null is success, false means there was an error
-                console.log('result is null');
-                console.log("som prihalsenz ");
-
-
+                console.log("successful registration createUser.ts");
             } else {
-                console.log("chyba niesom prishalsenz ");
+                console.log("unsuccessful registration account createUser.ts  ");
+                this.firebaseErrorMessage = result.message;
 
-                console.log('result is not null');
-                //console.log(result.isValid);
+                console.log(result);
+                console.log(result.message);
+
+                console.log(result.isValid);
                 console.log('resut message ');
-                // console.log(result.message);
-
-
-           //     this.firebaseErrorMessage = result.message;
             }
         }).catch((error) => {
             console.log("odchytavam error");
             console.log(error);
-
-
         });
+
+
+
 
         /*this.accountService.createUser(value)
           .then((response) =>
