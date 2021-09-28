@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {AngularFireAuth} from '@angular/fire/compat/auth';
 
 @Component({
   selector: 'app-root',
@@ -14,15 +15,11 @@ export class AppComponent
       icon: 'calendar'
     },
     {
-      title: 'Speakers',
-      url: '/app/tabs/speakers',
+      title: 'Dashboard',
+      url: '/dashboard',
       icon: 'people'
     },
-    {
-      title: 'Map',
-      url: '/app/tabs/map',
-      icon: 'map'
-    },
+
     {
       title: 'About',
       url: '/app/tabs/about',
@@ -34,5 +31,5 @@ export class AppComponent
   dark = false;
 
 
-  constructor() {}
+  constructor(public afAuth: AngularFireAuth) {}
 }

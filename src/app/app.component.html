@@ -18,7 +18,7 @@
           </ion-menu-toggle>
         </ion-list>
 
-        <ion-list *ngIf="loggedIn" lines="none">
+        <ion-list *ngIf="(afAuth.user | async); else loggedOut" lines="none">
           <ion-list-header>
             Account
           </ion-list-header>
@@ -52,46 +52,49 @@
 
         </ion-list>
 
-        <ion-list *ngIf="!loggedIn" lines="none">
-          <ion-list-header>
-            Account
-          </ion-list-header>
+        <ng-template #loggedOut>
 
-          <ion-menu-toggle autoHide="false">
-            <ion-item routerLink="/login" routerLinkActive="active" routerDirection="root" detail="false">
-              <ion-icon slot="start" name="log-in"></ion-icon>
+          <ion-list  lines="none">
+            <ion-list-header>
+              Account
+            </ion-list-header>
+
+            <ion-menu-toggle autoHide="false">
+              <ion-item routerLink="/login" routerLinkActive="active" routerDirection="root" detail="false">
+                <ion-icon slot="start" name="log-in"></ion-icon>
+                <ion-label>
+                  Login
+                </ion-label>
+              </ion-item>
+            </ion-menu-toggle>
+
+            <ion-menu-toggle autoHide="false">
+              <ion-item routerLink="/support" routerLinkActive="active" routerDirection="root" detail="false">
+                <ion-icon slot="start" name="help"></ion-icon>
+                <ion-label>
+                  Support
+                </ion-label>
+              </ion-item>
+            </ion-menu-toggle>
+
+            <ion-menu-toggle autoHide="false">
+              <ion-item routerLink="/signup" routerLinkActive="active" routerDirection="root" detail="false">
+                <ion-icon slot="start" name="person-add"></ion-icon>
+                <ion-label>
+                  Signup
+                </ion-label>
+              </ion-item>
+            </ion-menu-toggle>
+
+            <ion-item>
+              <ion-icon slot="start" name="moon-outline"></ion-icon>
               <ion-label>
-                Login
+                Dark Mode
               </ion-label>
+              <ion-toggle [(ngModel)]="dark"></ion-toggle>
             </ion-item>
-          </ion-menu-toggle>
-
-          <ion-menu-toggle autoHide="false">
-            <ion-item routerLink="/support" routerLinkActive="active" routerDirection="root" detail="false">
-              <ion-icon slot="start" name="help"></ion-icon>
-              <ion-label>
-                Support
-              </ion-label>
-            </ion-item>
-          </ion-menu-toggle>
-
-          <ion-menu-toggle autoHide="false">
-            <ion-item routerLink="/signup" routerLinkActive="active" routerDirection="root" detail="false">
-              <ion-icon slot="start" name="person-add"></ion-icon>
-              <ion-label>
-                Signup
-              </ion-label>
-            </ion-item>
-          </ion-menu-toggle>
-
-          <ion-item>
-            <ion-icon slot="start" name="moon-outline"></ion-icon>
-            <ion-label>
-              Dark Mode
-            </ion-label>
-            <ion-toggle [(ngModel)]="dark"></ion-toggle>
-          </ion-item>
-        </ion-list>
+          </ion-list>
+        </ng-template>
 
         <ion-list lines="none">
           <ion-list-header>

@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import {AuthGuard} from "./guards/auth.guard";
+//import {canActivate} from "@angular/fire/compat/auth-guard";
 
 const routes: Routes = [
 
@@ -22,6 +24,12 @@ const routes: Routes = [
     path: 'signup',
     loadChildren: () => import('./pages/signup/signup.module').then( m => m.SignupPageModule)
   },
+  {
+    path: 'dashboard',
+    loadChildren: () => import('./pages/dashboard/dashboard.module').then( m => m.DashboardPageModule),
+    canActivate:[AuthGuard]
+  },
+
 
 ];
 @NgModule({
