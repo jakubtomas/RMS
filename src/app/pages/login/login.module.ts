@@ -13,7 +13,7 @@ import { LoginPage } from './login.page';
     CommonModule,
     FormsModule,
     IonicModule,
-      ReactiveFormsModule,
+    ReactiveFormsModule,
     LoginPageRoutingModule
   ],
   declarations: [LoginPage],

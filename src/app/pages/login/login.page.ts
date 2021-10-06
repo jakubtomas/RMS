@@ -61,6 +61,7 @@ export class LoginPage implements OnInit {
     }
 
     loginUser(userFormObject: { email, password }) {
+        //todo use Observable ,
         this.authService.login(userFormObject.email, userFormObject.password).then((result) => {
             if (result == null) {// null is success, false means there was an error
                 console.log("login successfully login.page");

@@ -11,12 +11,13 @@ import {AuthService} from "../../services/auth.service";
 })
 export class SignupPage implements OnInit {
 
-    userForm: FormGroup;
-    /*userForm = new FormGroup({
+    registerForm: FormGroup;
+    /*registerForm = new FormGroup({
         email: new FormControl("jasnko@gmail.com"),
         password: new FormControl("45612398798")
     });*/
 
+   ///
 
 
     successMsg: string = '';
@@ -43,6 +44,13 @@ export class SignupPage implements OnInit {
                 type: 'minlength',
                 message: 'Password length should be 6 characters long.'
             }
+        ],
+        'password2': [
+            {
+                type: 'required',
+                message: 'Password is required.'
+            },
+
         ]
     };
 
@@ -55,7 +63,7 @@ export class SignupPage implements OnInit {
     }
 
     ngOnInit() {
-        this.userForm = this.fb.group({
+        this.registerForm = this.fb.group({
             email: new FormControl('', Validators.compose([
                 Validators.required,
                 Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
@@ -64,21 +72,26 @@ export class SignupPage implements OnInit {
                 Validators.minLength(6),
                 Validators.required
             ])),
+           // password2: new FormControl("", Validators.required)
+/*
+            password2: new FormControl('', Validators.compose([
+                Validators.minLength(6)
+            ])),*/
         });
 
         //todo only for developing /testing app
-        this.userForm.setValue({email: this.generateEmail(), password: '465489'})
+      //  this.registerForm.setValue({email: this.generateEmail(), password: '465489'})
     }
 
-     private generateEmail() {
-        let result           = '';
-        const characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    private generateEmail() {
+        let result = '';
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         const charactersLength = characters.length;
-        for ( let i = 0; i < 5; i++ ) {
+        for (let i = 0; i < 5; i++) {
             result += characters.charAt(Math.floor(Math.random() *
                 charactersLength));
         }
-        return result+"@gmail.com";
+        return result + "@gmail.com";
     }
 
     signUps(value) {
@@ -86,10 +99,14 @@ export class SignupPage implements OnInit {
 
     }
 
+    onSubmit() {
+        console.log("click on submit ");
+        
+    }
 
-    createUser(userFormValues: {email,password}) {
-        //const email:string = this.userForm.get('email').value;
-        //const password:string =this.userForm.get('password').value;
+    /*createUser(userFormValues: { email, password}) {
+        //const email:string = this.registerForm.get('email').value;
+        //const password:string =this.registerForm.get('password').value;
 
         console.log("email and password are " + userFormValues.email + " password  " + userFormValues.email);
 
@@ -113,19 +130,17 @@ export class SignupPage implements OnInit {
         });
 
 
-
-
-        /*this.accountService.createUser(value)
-          .then((response) =>
-          {
-            this.errorMsg = "";
-            this.successMsg = "New user created.";
-          }, error =>
-          {
-            this.errorMsg = error.message;
-            this.successMsg = "";
-          })*/
-    }
+    }*/
+    /*this.accountService.createUser(value)
+      .then((response) =>
+      {
+        this.errorMsg = "";
+        this.successMsg = "New user created.";
+      }, error =>
+      {
+        this.errorMsg = error.message;
+        this.successMsg = "";
+      })*/
 
     goToLogin() {
         this.router.navigateByUrl('login');

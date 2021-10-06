@@ -7,8 +7,8 @@ const routes: Routes = [
 
   {
     path: '',
-    /* redirectTo: '/tabs/tab1', */
-     redirectTo: 'signup',
+     redirectTo: '/tabs/tab1',
+    // redirectTo: 'signup',
     pathMatch: 'full'
   },
 
@@ -20,15 +20,20 @@ const routes: Routes = [
     path: 'login',
     loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
   },
-  {
+  /*{
     path: 'signup',
     loadChildren: () => import('./pages/signup/signup.module').then( m => m.SignupPageModule)
-  },
+  },*/
   {
     path: 'dashboard',
     loadChildren: () => import('./pages/dashboard/dashboard.module').then( m => m.DashboardPageModule),
     canActivate:[AuthGuard]
   },
+  {
+    path: 'registration',
+    loadChildren: () => import('./pages/registration/registration.module').then( m => m.RegistrationPageModule)
+  },
+
 
 
 ];
