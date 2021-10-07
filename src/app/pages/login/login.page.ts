@@ -65,19 +65,18 @@ export class LoginPage implements OnInit {
         this.authService.login(userFormObject.email, userFormObject.password).then((result) => {
             if (result == null) {// null is success, false means there was an error
                 console.log("login successfully login.page");
+                this.router.navigate(['/dashboard']);
+
             } else {
                 console.log("login unsuccessfully login.page");
-
                 console.log(result);
-                
-                //todo redirect and send message
                 this.firebaseErrorMessage = result.message;
             }
-        }).catch((error) => {
+        })/*.catch((error) => {
             console.log("odchytavam error");
             console.log(error);
 
 
-        });
+        });*/
     }
 }
