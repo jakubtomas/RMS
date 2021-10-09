@@ -46,7 +46,7 @@ export class RegistrationPage implements OnInit {
         'password2': [
             {
                 type: 'required',
-                message: 'Password is required.'
+                message: 'Repeat password is required.'
             },
             {
                 type: 'mismatch',
@@ -65,7 +65,7 @@ export class RegistrationPage implements OnInit {
     // get password(): FormControl { return this.registerForm.get('password') as FormControl; }
 
     ngOnInit() {
-
+        this.firebaseErrorMessage = null;
         this.registerForm = new FormGroup(
             {
                 email: new FormControl('', [
@@ -84,7 +84,8 @@ export class RegistrationPage implements OnInit {
             this.passwordMatchValidator
         );
 
-          this.registerForm.setValue({email: this.generateEmail(), password: '123123',password2: '123123'})
+         this.registerForm.setValue({email: "jakubshoop@gmail.com", password: '123123',password2: '123123'})
+       //  this.registerForm.setValue({email: this.generateEmail(), password: '123123',password2: '123123'})
 
     }
 
@@ -133,24 +134,24 @@ export class RegistrationPage implements OnInit {
         //const email:string = this.registerForm.get('email').value;
         //const password:string =this.registerForm.get('password').value;
 
-        console.log("email and password are " + email + " password  " + email);
+        //console.log("email and password are " + email + " password  " + email);
 
 
         this.authService.createUser(email, password).then((result) => {
             if (result == null) {// null is success, false means there was an error
                 console.log("successful registration createUser.ts");
-
+                //todo send also message successfully
                  this.router.navigate(['/dashboard']);
 
             } else {
-                console.log("unsuccessful registration account createUser.ts  ");
                 this.firebaseErrorMessage = result.message;
+               /* console.log("unsuccessful registration account createUser.ts  ");
 
                 console.log(result);
                 console.log(result.message);
 
-                console.log(result.isValid);
-                console.log('resut message ');
+                console.log(result.code);
+                console.log('result message ');*/
             }
         })
 

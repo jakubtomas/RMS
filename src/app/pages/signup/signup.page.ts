@@ -6,7 +6,7 @@ import {AuthService} from "../../services/auth.service";
 
 @Component({
     selector: 'app-signup',
-    templateUrl: './signup.page.html',
+    templateUrl: '.s/signup.page.html',
     styleUrls: ['./signup.page.scss'],
 })
 export class SignupPage implements OnInit {

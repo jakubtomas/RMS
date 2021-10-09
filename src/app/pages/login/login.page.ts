@@ -61,22 +61,17 @@ export class LoginPage implements OnInit {
     }
 
     loginUser(userFormObject: { email, password }) {
-        //todo use Observable ,
         this.authService.login(userFormObject.email, userFormObject.password).then((result) => {
-            if (result == null) {// null is success, false means there was an error
+            if (result == null) {// null is success
                 console.log("login successfully login.page");
                 this.router.navigate(['/dashboard']);
 
             } else {
-                console.log("login unsuccessfully login.page");
+                console.log("neprihalsesnz ");
                 console.log(result);
+
                 this.firebaseErrorMessage = result.message;
             }
-        })/*.catch((error) => {
-            console.log("odchytavam error");
-            console.log(error);
-
-
-        });*/
+        })
     }
 }
