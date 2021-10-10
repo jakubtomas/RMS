@@ -41,10 +41,10 @@
             <ion-input type="password" formControlName="password2" class="form-controll" required></ion-input>
         </ion-item>
 
-       <!-- <div *ngIf="password.errors?.required">
-            Name is required.
-        </div>-->
-
+        <!--<div *ngIf="registerForm.get('password2').hasError('mismatch')">
+            Passwords mismatch.
+        </div>
+-->
         <ng-container *ngFor="let error of error_msg.password2">
             <div
                     *ngIf="registerForm.get('password2').hasError(error.type) &&

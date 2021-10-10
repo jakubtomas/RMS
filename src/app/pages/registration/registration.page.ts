@@ -50,7 +50,7 @@ export class RegistrationPage implements OnInit {
             },
             {
                 type: 'mismatch',
-                message: 'Passwords mismatch'
+                message: 'Passwords do not match'
             }
         ]
     };
@@ -65,6 +65,9 @@ export class RegistrationPage implements OnInit {
     // get password(): FormControl { return this.registerForm.get('password') as FormControl; }
 
     ngOnInit() {
+
+       // console.log("ngonitin password 2 have error " + this.registerForm.get("password2").hasError("mismatch"));
+
         this.firebaseErrorMessage = null;
         this.registerForm = new FormGroup(
             {
@@ -84,7 +87,7 @@ export class RegistrationPage implements OnInit {
             this.passwordMatchValidator
         );
 
-         this.registerForm.setValue({email: "jakubshoop@gmail.com", password: '123123',password2: '123123'})
+       //  this.registerForm.setValue({email: "jakubshoop@gmail.com", password: '123123',password2: '123123'})
        //  this.registerForm.setValue({email: this.generateEmail(), password: '123123',password2: '123123'})
 
     }
@@ -105,6 +108,7 @@ export class RegistrationPage implements OnInit {
 
                 const errorMismatch = {"mismatch": true};
                 password2.setErrors(errorMismatch);
+
                 return errorMismatch;
             } else {
                 password2.setErrors(null);
