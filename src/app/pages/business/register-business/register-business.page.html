@@ -1,65 +1,194 @@
 <ion-header>
-  <ion-toolbar color="">
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
+    <ion-toolbar color="">
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
 
-    <ion-title>Registration business</ion-title>
-  </ion-toolbar>
+        <ion-title>Registration business/organization/service</ion-title>
+    </ion-toolbar>
 </ion-header>
 
 
 <ion-content class="ion-padding">
-  <form class="form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-    <ion-item>
-      <ion-label position="floating">Email</ion-label>
-      <ion-input type="text" formControlName="email"></ion-input>
-    </ion-item>
-
-    <ng-container *ngFor="let error of error_msg.email">
-      <div
-              *ngIf="registerForm.get('email').hasError(error.type) && (registerForm.get('email').dirty || registerForm.get('email').touched)">
-        {{ error.message }}
-      </div>
-    </ng-container>
-
-    <ion-item>
-      <ion-label position="floating">Password</ion-label>
-      <ion-input type="password" formControlName="password" class="form-controll" required></ion-input>
-    </ion-item>
 
 
-    <ng-container *ngFor="let error of error_msg.password">
-      <div
-              *ngIf="registerForm.get('password').hasError(error.type) && (registerForm.get('password').dirty || registerForm.get('password').touched)">
-        {{ error.message }}
-      </div>
-    </ng-container>
+    <form class="form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <ion-item>
+            <ion-label position="floating">Name organization</ion-label>
+            <ion-input type="text" formControlName="nameOrganization"></ion-input>
+        </ion-item>
 
-
-    <ion-item>
-      <ion-label position="floating">Repeat Password</ion-label>
-      <ion-input type="password" formControlName="password2"  class="form-controll" required></ion-input>
-    </ion-item>
-
-    <!--<ng-container *ngFor="let error of error_msg.password2">
-        <div
-                *ngIf="registerForm.get('password2').hasError(error.type) && (registerForm.get('password2').dirty || registerForm.get('password2').touched)">
-            {{ error.message }}
+        <!--TODO  set error minimum -->
+        <div *ngIf="nameOrganization.errors?.required && nameOrganization.touched">
+           <strong> Name organization is required.</strong>
         </div>
-    </ng-container>-->
 
 
-    <ion-card *ngIf="firebaseErrorMessage">
-      <ion-item color="warning">
-        <label class="ion-text-center">{{firebaseErrorMessage}}</label>
-      </ion-item>
-    </ion-card>
 
-    <ion-button type="submit" expand="block"
-                [disabled]="!registerForm.valid">Register
-    </ion-button>
+        <ion-item>
+            <ion-label position="floating">Owner name</ion-label>
+            <ion-input type="text" formControlName="ownerName"></ion-input>
+        </ion-item>
 
-  </form>
-  <p class="ion-text-center">Already registered? <a (click)="goToLogin()">Login</a></p>
+        <div *ngIf="ownerName.errors?.required && ownerName.touched">
+            <strong> Owner name  is required.</strong>
+        </div>
+
+
+
+
+        <ion-item>
+            <ion-label position="floating">Phone number from organization</ion-label>
+            <ion-input type="text" formControlName="phoneNumber"></ion-input>
+        </ion-item>
+
+        <div *ngIf="phoneNumber.errors?.required && phoneNumber.touched">
+            <strong> Phone number  is required.</strong>
+        </div>
+
+
+
+
+        <ion-item><!-- todo check minimum size of zip code -->
+            <ion-label position="floating">Zip Code</ion-label>
+            <ion-input type="number" formControlName="zipCode"></ion-input>
+        </ion-item>
+
+        <div *ngIf="zipCode.errors?.required && zipCode.touched">
+            <strong> Zip code  is required.</strong>
+        </div>
+
+
+
+        <ion-item> <!--todo input only number-->
+            <ion-label position="floating">City</ion-label>
+            <ion-input type="text" formControlName="city"></ion-input>
+        </ion-item>
+
+        <div *ngIf="city.errors?.required && city.touched">
+            <strong> City is required.</strong>
+        </div>
+
+        <ion-item>
+            <ion-label position="floating">Street with number</ion-label>
+            <ion-input type="text" formControlName="street"></ion-input>
+        </ion-item>
+
+        <div *ngIf="street.errors?.required && street.touched">
+            <strong> City is required.</strong>
+        </div>
+
+
+
+
+        <!-- <ng-container *ngFor="let error of error_msg.email">
+           <div
+                   *ngIf="registerForm.get('email').hasError(error.type) && (registerForm.get('email').dirty || registerForm.get('email').touched)">
+             {{ error.message }}
+           </div>
+         </ng-container>-->
+
+        <!--<ion-list>
+          <ion-item>
+            <ion-label>Start Time</ion-label>
+            <ion-datetime displayFormat="h:mm A" pickerFormat="h:mm A" value="1997-08-04T08:30Z"></ion-datetime>
+          </ion-item>
+          <ion-item>
+            <ion-label>Ends</ion-label>
+            <ion-datetime value="1998-05-25" placeholder="Select Date"></ion-datetime>
+          </ion-item>
+          <ion-item>
+            <ion-label>Specific Format</ion-label>
+            <ion-datetime displayFormat="YYYY" placeholder="Select Year"></ion-datetime>
+          </ion-item>
+        </ion-list>-->
+
+        <ion-item>
+            <ion-label>Opening hours start</ion-label>
+            <ion-datetime display-format="H:mm" picker-format="H:mm "
+                          formControlName="openingHours"></ion-datetime>
+        </ion-item>
+
+        <div *ngIf="openingHours.errors?.required && openingHours.touched">
+            <strong> Opening hours  is required.</strong>
+        </div>
+
+
+        <ion-item>
+            <ion-label>Ending hours end</ion-label>
+            <ion-datetime display-format="H:mm" picker-format="H:mm "
+                          formControlName="endingHours"></ion-datetime>
+        </ion-item>
+
+        <div *ngIf="endingHours.errors?.required && endingHours.touched">
+            <strong> Ending hours is required.</strong>
+        </div>
+
+        <!--
+
+            <ion-item>
+              <ion-input type="number" placeholder="zip code try"></ion-input>
+            </ion-item>
+        -->
+
+        <!--
+            <ion-item>
+              <ion-label position="floating">Type of organization </ion-label>
+              <ion-input type="text" formControlName="typeOrganization" class="form-controll" required></ion-input>
+            </ion-item>
+        -->
+
+        <ion-item>
+            <ion-label>Type of organization</ion-label>
+            <ion-select interface="popover" formControlName="typeOrganization">
+                <ion-select-option value="nes">Health Care</ion-select-option>
+                <ion-select-option value="n64">Food/Restaurant</ion-select-option>
+                <ion-select-option value="ps">Transport</ion-select-option>
+                <ion-select-option value="fin">Financial Services</ion-select-option>
+                <ion-select-option value="wellnes">Wellness & Personal Grooming</ion-select-option>
+                <ion-select-option value="sports">Sports & Fitness</ion-select-option>
+
+
+            </ion-select>
+        </ion-item>
+
+        <div *ngIf="typeOrganization.errors?.required && typeOrganization.touched">
+            <strong> Type of organization  is required.</strong>
+        </div>
+
+
+
+        <!--<ng-container *ngFor="let error of error_msg.password">
+          <div
+                  *ngIf="registerForm.get('password').hasError(error.type) && (registerForm.get('password').dirty || registerForm.get('password').touched)">
+            {{ error.message }}
+          </div>
+        </ng-container>
+    -->
+        <!--
+            <ion-item>
+              <ion-label position="floating">Repeat Password</ion-label>
+              <ion-input type="password" formControlName="password2"  class="form-controll" required></ion-input>
+            </ion-item>-->
+
+        <!--<ng-container *ngFor="let error of error_msg.password2">
+            <div
+                    *ngIf="registerForm.get('password2').hasError(error.type) && (registerForm.get('password2').dirty || registerForm.get('password2').touched)">
+                {{ error.message }}
+            </div>
+        </ng-container>-->
+
+
+        <ion-card *ngIf="firebaseErrorMessage">
+            <ion-item color="warning">
+                <label class="ion-text-center">{{firebaseErrorMessage}}</label>
+            </ion-item>
+        </ion-card>
+
+        <ion-button type="submit" expand="block"
+                    [disabled]="!registerForm.valid">Register
+        </ion-button>
+
+    </form>
+
 </ion-content>

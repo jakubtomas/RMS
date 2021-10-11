@@ -29,6 +29,7 @@ export class AppComponent
     }
   ];
 
+  businessMode: boolean = false;
   loggedIn = false;
   dark = false;
   firebaseErrorMessage: void;
@@ -57,5 +58,10 @@ export class AppComponent
 
   }
 
+  update(value) {
+    console.log(value);
+    
+  }
+  
 
 }
