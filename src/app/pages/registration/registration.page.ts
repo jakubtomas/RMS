@@ -33,6 +33,19 @@ export class RegistrationPage implements OnInit {
                 message: 'Email is not valid.'
             }
         ],
+        'firstName': [
+            {
+                type: 'required',
+                message: 'First name required'
+            }
+
+        ],
+        'lastName': [
+            {
+                type: 'required',
+                message: 'Last name required'
+            }
+        ],
         'password': [
             {
                 type: 'required',
@@ -76,6 +89,9 @@ export class RegistrationPage implements OnInit {
                     Validators.email,
                     //Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,}$'),
                 ]),
+                firstName: new FormControl('', Validators.required),
+                lastName: new FormControl('', Validators.required),
+
                 password: new FormControl('', [
                     Validators.required,
                     Validators.minLength(6),
@@ -135,16 +151,12 @@ export class RegistrationPage implements OnInit {
         const email: string = this.registerForm.get('email').value;
         const password: string = this.registerForm.get('password').value;
 
-        //const email:string = this.registerForm.get('email').value;
-        //const password:string =this.registerForm.get('password').value;
-
-        //console.log("email and password are " + email + " password  " + email);
 
 
         this.authService.createUser(email, password).then((result) => {
             if (result == null) {// null is success, false means there was an error
                 console.log("successful registration createUser.ts");
-                //todo send also message successfully
+                //todo send arlso message successfully
                  this.router.navigate(['/dashboard']);
 
             } else {

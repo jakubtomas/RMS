@@ -1,6 +1,8 @@
 import {Injectable} from '@angular/core';
 import {AngularFireAuth} from "@angular/fire/compat/auth";
 import {Router} from "@angular/router";
+import firebase from "firebase/compat";
+import UserCredential = firebase.auth.UserCredential;
 
 //import {auth} from "firebase/compat";
 
@@ -10,6 +12,8 @@ import {Router} from "@angular/router";
 })
 export class AuthService {
 
+    /*
+    * */
     constructor(
         private router: Router,
         public afAuth: AngularFireAuth
@@ -26,11 +30,13 @@ export class AuthService {
 
 
     // string , validacia
-    createUser(email, password): Promise<any> {
+    createUser(email:string, password:string): Promise<null | {code: string,message: string} > {
 
         return this.afAuth.createUserWithEmailAndPassword(email, password)
-            .then((result) => {
+            .then((result: UserCredential ) => {
+
                 result.user.sendEmailVerification();
+
                 return null;
             }).catch((error) => {
 
@@ -53,7 +59,8 @@ export class AuthService {
             {"code": "auth/user-disabled", "message": "The user corresponding to the given email has been disabled."},
             {"code": "auth/user-not-found", "message": "User/Email not found "},
             {"code": "auth/wrong-password", "message": "The password is invalid "},
-        ];
+        ]; /*todo osetrit moznu result a pozri dalsie dokumentaciu
+        auth/too-many-requests*/
         //return the array only with one object
         return messages.filter(object => object.code === errorCode);
 
@@ -61,7 +68,7 @@ export class AuthService {
     }
 
     //Login
-    login(email, password): Promise<any> {//observable
+    login(email:string, password:string): Promise<any> {//observable
         return this.afAuth.signInWithEmailAndPassword(email, password)
             .then((result) => {
                 console.log('Auth Service: loginUser: success');
@@ -69,6 +76,7 @@ export class AuthService {
 
                 // localStorage.setItem("",,JSON.stringify(result.user))
                 // this.router.navigate(['dashboard']);
+                return null;
             })
             .catch(error => {
                 console.log('Auth Service: login error...');
@@ -91,14 +99,14 @@ export class AuthService {
 
     }
 
-    SendVerificationMail() {
+    /*SendVerificationMail() {
         return this.afAuth.currentUser.then(u => u.sendEmailVerification())
             .then(() => {
                 //this.router.navigate(['email-verification']);
 
                 //this.router.navigate(['dashboard']);
             });
-    }
+    }*/
 
     signOut(): Promise<void> {
         return this.afAuth.signOut()

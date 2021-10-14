@@ -59,7 +59,7 @@ export class RegisterBusinessPage implements OnInit {
         this.registerForm = new FormGroup(
             {
                 nameOrganization: new FormControl('', Validators.required),
-                ownerName: new FormControl('', Validators.required),
+                /*todo delete */ownerName: new FormControl('', Validators.required),
                 phoneNumber: new FormControl('', Validators.required),
                 zipCode: new FormControl('', Validators.required),
                 city: new FormControl('', Validators.required),
