@@ -1,5 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {BusinessService} from "../../../services/business.service";
+import {Business} from "../../../interfaces/business";
 
 @Component({
     selector: 'app-register-business',
@@ -42,16 +44,17 @@ export class RegisterBusinessPage implements OnInit {
     get openingHours(): FormControl {
         return this.registerForm.get('openingHours') as FormControl;
     }
+
     get endingHours(): FormControl {
         return this.registerForm.get('endingHours') as FormControl;
     }
+
     get typeOrganization(): FormControl {
         return this.registerForm.get('typeOrganization') as FormControl;
     }
 
 
-
-    constructor() {
+    constructor(private businessService: BusinessService) {
     }
 
     ngOnInit() {
@@ -75,13 +78,62 @@ export class RegisterBusinessPage implements OnInit {
             // this.passwordMatchValidator
         );
 
+        this.registerForm.setValue({
+            nameOrganization: "mnau coffe kosice",
+            ownerName: 'jankohrakos',
+            phoneNumber: "0950478654",
+            zipCode: "014440",
+            city: "Presov",
+            street: 'presovska 58',
+            openingHours: '08:00',
+            endingHours: '19:30',
+            typeOrganization: "wellnes"
+        })
+
 
     }
-        //todo notes which value from opening,closing hours will save ??????
+
+    //todo notes which value from opening,closing hours will save ??????
     onSubmit() {
         console.log('resutl');
 
-        console.log(this.registerForm);
+        /*
+                console.log(this.registerForm);
+                console.log("----------------------------------------");
+                console.log(this.registerForm.controls);
+
+                console.log("----------------------------------------");
+                console.log(this.registerForm.controls.city.value);
+                // busi
+        */
+
+        console.log(this.registerForm.controls.openingHours.value);
+
+        let businessData: Business = {
+
+            nameOrganization: this.nameOrganization.value,
+            phoneNumber: this.phoneNumber.value,
+            zipCode: this.zipCode.value,
+            city: this.city.value,
+            nameStreetWithNumber: this.street.value,
+            openingHours: this.openingHours.value,
+            endingHours: this.endingHours.value,
+            TypeOfOrganization: this.typeOrganization.value
+        };
+
+
+        this.businessService.create(businessData).then((res) => {
+            console.log(res);
+
+            console.log("response from server to save data ");
+
+
+        }).catch((error) => {
+            console.log("resposne error ");
+            console.log(error);
+
+        });
+
 
     }
 
