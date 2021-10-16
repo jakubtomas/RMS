@@ -37,7 +37,10 @@ export class AppComponent
 
   constructor(public afAuth: AngularFireAuth,
               private authService: AuthService,
-              private router: Router) {}
+              private router: Router) {
+
+    
+  }
 
 
   signOut() {

@@ -19,4 +19,19 @@
       </ion-label>
     </ion-item>
   </ion-card>
+
+
+  <ion-card *ngIf="messageFirebase">
+    <ion-item color="success">
+      <label class="ion-text-center" >{{messageFirebase}}</label>
+    </ion-item >
+  </ion-card>
+
+
+  <ion-card *ngIf="!emailVerified">
+    <ion-item color="warning">
+      <label class="ion-text-center" >Email is not verified. Please confirm your email address. </label>
+    </ion-item >
+  </ion-card>
+
 </ion-content>

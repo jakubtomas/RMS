@@ -3,6 +3,7 @@ import {AngularFireAuth} from "@angular/fire/compat/auth";
 import {Router} from "@angular/router";
 import firebase from "firebase/compat";
 import UserCredential = firebase.auth.UserCredential;
+import {Observable} from "rxjs";
 
 //import {auth} from "firebase/compat";
 
@@ -12,20 +13,30 @@ import UserCredential = firebase.auth.UserCredential;
 })
 export class AuthService {
 
-    /*
-    * */
+    user: any;
+
     constructor(
-        private router: Router,
         public afAuth: AngularFireAuth
     ) {//todo maybe is better use localStorage
-        /*this.afAuth.authState.subscribe(user => {
-            if (user){
+        console.log(this.afAuth.authState);
+        console.log('chekc this ');
+        
+        
+        this.afAuth.authState.subscribe(user => {
+            if (user) {
+                console.log("priradenie localStorage ");
+                console.log(user.emailVerified);
+                
                 this.user = user;
-                localStorage.setItem('user', JSON.stringify(this.user));
+                localStorage.setItem('idUser', user.uid);
+                localStorage.setItem('email', user.email);
+                localStorage.setItem('emailVerified', user.emailVerified+"");
+
             } else {
-                localStorage.setItem('user', null);
+                localStorage.setItem('idUser', null);
+                localStorage.setItem('email', null);
             }
-        })*/
+        })
     }
 
 

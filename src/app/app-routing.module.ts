@@ -35,7 +35,8 @@ const routes: Routes = [
   },
   {
     path: 'register-business',
-    loadChildren: () => import('./pages/business/register-business/register-business.module').then( m => m.RegisterBusinessPageModule)
+    loadChildren: () => import('./pages/business/register-business/register-business.module').then( m => m.RegisterBusinessPageModule),
+    canActivate:[AuthGuard]
   },
 
 

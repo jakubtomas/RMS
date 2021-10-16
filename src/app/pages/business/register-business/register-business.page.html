@@ -11,7 +11,6 @@
 
 <ion-content class="ion-padding">
 
-
     <form class="form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
         <ion-item>
             <ion-label position="floating">Name organization</ion-label>
@@ -103,6 +102,7 @@
           </ion-item>
         </ion-list>-->
 
+<!--
         <ion-item>
             <ion-label>Opening hours start</ion-label>
             <ion-datetime display-format="H:mm" picker-format="H:mm "
@@ -123,6 +123,7 @@
         <div *ngIf="endingHours.errors?.required && endingHours.touched">
             <strong> Ending hours is required.</strong>
         </div>
+-->
 
         <!--
 
@@ -143,7 +144,7 @@
             <ion-select interface="popover" formControlName="typeOrganization">
                 <ion-select-option value="nes">Health Care</ion-select-option>
                 <ion-select-option value="n64">Food/Restaurant</ion-select-option>
-                <ion-select-option valuer="ps">Transport</ion-select-option>
+                <ion-select-option value="ps">Transport</ion-select-option>
                 <ion-select-option value="fin">Financial Services</ion-select-option>
                 <ion-select-option value="wellnes">Wellness & Personal Grooming</ion-select-option>
                 <ion-select-option value="sports">Sports & Fitness</ion-select-option>
@@ -190,5 +191,42 @@
         </ion-button>
 
     </form>
+
+    <div *ngIf="createdNewBusiness">
+
+        <h1>uspesne vytvorenz </h1>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!--<ion-button   type="submit" expand="block" (click) ="getItems()" >
+        Click
+    </ion-button>
+
+    <ion-button type="submit" expand="block" (click)="getBusinessList()">
+      get business list
+    </ion-button>
+
+    <ion-button type="submit" expand="block" (click)="getOneBusiness()">
+        my business
+    </ion-button>-->
+
 
 </ion-content>
