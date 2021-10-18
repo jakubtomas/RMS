@@ -20,6 +20,7 @@ export class RegisterBusinessPage implements OnInit {
     firebaseErrorMessage: string;
     createdNewBusiness: boolean = false;
 
+    typesOrganization: object = null;
 
     get nameOrganization(): FormControl {
         return this.registerForm.get('nameOrganization') as FormControl;
@@ -67,6 +68,10 @@ export class RegisterBusinessPage implements OnInit {
         this.createdNewBusiness = false;
 
         this.firebaseErrorMessage = null;
+
+
+        this.typesOrganization = this.getTypesOrganization();
+
         this.registerForm = new FormGroup(
             {
                 nameOrganization: new FormControl('', Validators.required),
@@ -129,10 +134,11 @@ export class RegisterBusinessPage implements OnInit {
                 console.log('id businessPermission' + value.id);
 
                 this.createdNewBusiness = true;
-                //this.router.navigate(['/dashboard', {createdBusiness: true}]);
+                this.router.navigate(['/create-calendar', {createdBusiness: true}]);
             }).catch((error) => {
                 console.log(error);
                 //todo delete from organization
+                //todo create message for not saving data
             });
 
 
@@ -146,17 +152,23 @@ export class RegisterBusinessPage implements OnInit {
         /*
                 this.businessService.create(businessData).then((res) => {
                     console.log(res);
-        
+
                     console.log("response from server to save data ");
-        
-        
+
+
                 }).catch((error) => {
                     console.log("resposne error ");
                     console.log(error);
-        
+
                 });
         */
     }
+
+    getTypesOrganization() {
+        return this.businessService.typesOfOrganization;
+    }
+
+
 
     getBusinessList() {
         this.businessService.getBusinessList().subscribe(value => {

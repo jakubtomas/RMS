@@ -21,7 +21,6 @@ export class DashboardPage implements OnInit {
         private router: Router,
         private authService: AuthService,
         private afAuth: AngularFireAuth
-        //    private fb: FormBuilder
     ) {
         this.user = null;
     }

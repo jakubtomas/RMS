@@ -38,6 +38,10 @@ const routes: Routes = [
     loadChildren: () => import('./pages/business/register-business/register-business.module').then( m => m.RegisterBusinessPageModule),
     canActivate:[AuthGuard]
   },
+  {
+    path: 'create-calendar',
+    loadChildren: () => import('./pages/business/create-calendar/create-calendar.module').then( m => m.CreateCalendarPageModule)
+  },
 
 
 ];
