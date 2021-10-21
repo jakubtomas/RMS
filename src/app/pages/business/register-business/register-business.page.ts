@@ -46,13 +46,6 @@ export class RegisterBusinessPage implements OnInit {
         return this.registerForm.get('street') as FormControl;
     }
 
-    /*get openingHours(): FormControl {
-        return this.registerForm.get('openingHours') as FormControl;
-    }
-
-    get endingHours(): FormControl {
-        return this.registerForm.get('endingHours') as FormControl;
-    }*/
 
     get typeOrganization(): FormControl {
         return this.registerForm.get('typeOrganization') as FormControl;
@@ -119,7 +112,7 @@ export class RegisterBusinessPage implements OnInit {
         };
 
 
-        this.businessService.addBusiness(businessData).then(value => {
+        this.businessService.addBusiness(businessData)/*.then(value => {
             console.log("save Into business successfully done");
             console.log('ID business organization' + value.id);
 
@@ -139,15 +132,15 @@ export class RegisterBusinessPage implements OnInit {
                 console.log(error);
                 //todo delete from organization
                 //todo create message for not saving data
-            });
+            });*/
 
-
+/*
         }).catch((error) => {
             console.log("error you got error ");
 
             console.log(error);
             this.firebaseErrorMessage = 'Something is wrong.'
-        })
+        })*/
 
         /*
                 this.businessService.create(businessData).then((res) => {
