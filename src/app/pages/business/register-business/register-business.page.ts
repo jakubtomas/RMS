@@ -66,9 +66,9 @@ export class RegisterBusinessPage implements OnInit {
         this.typesOrganization = this.getTypesOrganization();
 
         this.registerForm = new FormGroup(
-            {
+            {/*todo doplnit */
                 nameOrganization: new FormControl('', Validators.required),
-                /*todo delete */ownerName: new FormControl('', Validators.required),
+                ownerName: new FormControl('', Validators.required),
                 phoneNumber: new FormControl('', Validators.required),
                 zipCode: new FormControl('', Validators.required),
                 city: new FormControl('', Validators.required),
@@ -111,50 +111,23 @@ export class RegisterBusinessPage implements OnInit {
             typeOfOrganization: this.typeOrganization.value
         };
 
+// this. create busines ´true a este router
+        this.businessService.addBusiness(businessData).then(value => {
+           //todo delete console
+            console.log('-------------------------------');
+            console.log("save into businessPermission ");
+            console.log('id businessPermission' + value.id);
 
-        this.businessService.addBusiness(businessData)/*.then(value => {
-            console.log("save Into business successfully done");
-            console.log('ID business organization' + value.id);
-
-            let businessPermissionObject:BusinessPermission = {
-                idUser: localStorage.getItem('idUser'),
-                idOrganization: value.id,
-            };
-            
-            this.businessService.addBusinessPermission(businessPermissionObject).then(value => {
-                console.log('-------------------------------');
-                console.log("save into businessPermission ");
-                console.log('id businessPermission' + value.id);
-
-                this.createdNewBusiness = true;
-                this.router.navigate(['/create-calendar', {createdBusiness: true}]);
-            }).catch((error) => {
-                console.log(error);
-                //todo delete from organization
-                //todo create message for not saving data
-            });*/
-
-/*
+              this.createdNewBusiness = true;
+              //todo redirect na page list of business wiht new value from DB business where can create calendar
+             this.router.navigate(['/list-business', {createdBusiness: true}]);
         }).catch((error) => {
             console.log("error you got error ");
 
             console.log(error);
             this.firebaseErrorMessage = 'Something is wrong.'
-        })*/
-
-        /*
-                this.businessService.create(businessData).then((res) => {
-                    console.log(res);
-
-                    console.log("response from server to save data ");
-
-
-                }).catch((error) => {
-                    console.log("resposne error ");
-                    console.log(error);
-
-                });
-        */
+            //todo maybe do delete values from db because one value unsuccessfully save
+        })
     }
 
     getTypesOrganization() {

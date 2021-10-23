@@ -42,6 +42,10 @@ const routes: Routes = [
     path: 'create-calendar',
     loadChildren: () => import('./pages/business/create-calendar/create-calendar.module').then( m => m.CreateCalendarPageModule)
   },
+  {
+    path: 'list-business',
+    loadChildren: () => import('./pages/business/list-business/list-business.module').then( m => m.ListBusinessPageModule)
+  },
 
 
 ];

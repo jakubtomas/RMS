@@ -1,0 +1,89 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Create Calendar</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-card *ngIf="messageFirebase">
+    <ion-item color="success">
+      <label class="ion-text-center" >{{messageFirebase}}</label>
+    </ion-item >
+  </ion-card>
+
+  <ion-card>
+    <ion-item>
+      <h3>Let's create calendar with opening hours </h3>
+    </ion-item>
+  </ion-card>
+
+
+  <form class="form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <ion-item>
+      <ion-label position="floating">Name calendar</ion-label>
+      <ion-input type="text" formControlName="nameCalendar"></ion-input>
+    </ion-item>
+
+    <!--TODO  set error minimum -->
+    <div *ngIf="nameCalendar.errors?.required && nameCalendar.touched">
+      <strong> Name calendar is required.</strong>
+    </div>
+
+
+
+
+    <ion-item><h3>Monday</h3></ion-item>
+    <ion-item>
+      <br>
+      <ion-label>Opening hours start</ion-label>
+      <ion-datetime display-format="H:mm" picker-format="H:mm "
+      formControlName="openingHours"></ion-datetime>
+      <ion-label>closing hour</ion-label>
+
+      <ion-datetime display-format="H:mm" picker-format="H:mm "
+                    formControlName="openingHours"></ion-datetime>
+    </ion-item>
+
+    <div *ngIf="openingHours.errors?.required && openingHours.touched">
+      <strong> Opening hours  is required.</strong>
+    </div>
+
+
+    <ion-item><h3>Tuesday</h3></ion-item>
+    <ion-item>
+      <br>
+      <ion-label>Opening hours start</ion-label>
+      <ion-datetime display-format="H:mm" picker-format="H:mm "
+                    formControlName="openingHours"></ion-datetime>
+      <ion-label>closing hour</ion-label>
+
+      <ion-datetime display-format="H:mm" picker-format="H:mm "
+                    formControlName="openingHours"></ion-datetime>
+    </ion-item>
+
+    <div *ngIf="openingHours.errors?.required && openingHours.touched">
+      <strong> Opening hours  is required.</strong>
+    </div>
+
+
+
+
+    <ion-button type="submit" expand="block"
+    [disabled]="!registerForm.valid">Create calendar
+    </ion-button>
+
+  </form>
+
+  <ion-card *ngIf="firebaseErrorMessage">
+    <ion-item color="warning">
+      <label class="ion-text-center">{{firebaseErrorMessage}}</label>
+    </ion-item>
+  </ion-card>
+
+
+
+
+
+
+</ion-content>

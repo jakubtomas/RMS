@@ -1,37 +1,35 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
 
-    <ion-title>dashboard</ion-title>
-  </ion-toolbar>
+        <ion-title>Dashboard</ion-title>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
-<h1>this is Dashboard welcome </h1>
+    <ion-card *ngIf="!emailVerified">
+        <ion-item color="warning">
+            <label class="ion-text-center">Email is not verified. Please confirm your email address. </label>
+        </ion-item>
+    </ion-card>
 
-  <ion-card>
-    <ion-item button (click)="logout()" detail="false">
-      <ion-icon slot="start" name="log-out"></ion-icon>
-      <ion-label>
-        Logout
-      </ion-label>
-    </ion-item>
-  </ion-card>
+    <ion-card>
+        <a routerLink="/registration">registration</a>
+        <br>
+        <p><a routerLink="/register-business">register-business</a></p>
+        <a routerLink="/create-calendar">Create Calendar</a>
+        <p><a routerLink="/list-business">list of businesses </a></p>
+    </ion-card>
 
-
-  <ion-card *ngIf="messageFirebase">
-    <ion-item color="success">
-      <label class="ion-text-center" >{{messageFirebase}}</label>
-    </ion-item >
-  </ion-card>
-
-
-  <ion-card *ngIf="!emailVerified">
-    <ion-item color="warning">
-      <label class="ion-text-center" >Email is not verified. Please confirm your email address. </label>
-    </ion-item >
-  </ion-card>
+    <ion-card>
+        <ion-item button (click)="logout()" detail="false">
+            <ion-icon slot="start" name="log-out"></ion-icon>
+            <ion-label>
+                Logout
+            </ion-label>
+        </ion-item>
+    </ion-card>
 
 </ion-content>

@@ -11,7 +11,6 @@ import {AuthService} from "../../services/auth.service";
 })
 export class DashboardPage implements OnInit {
 
-    messageFirebase: string = '';
     user: Observable<any>;
     emailVerified: boolean = false;
     email: string = ' ';
@@ -39,10 +38,10 @@ export class DashboardPage implements OnInit {
 
         });
 
-
+/*
         if (this.route.snapshot.paramMap.get('createdBusiness')) {
             this.messageFirebase = 'Business successfully created'
-        }//todo how to do with subscribe
+        }*///todo how to do with subscribe caching parameter
         /*this.route.params.subscribe((params: Params) => {
                     console.log('Parameter  ' + params);
                     console.log('Parameter  ' + params['createdBusiness']);

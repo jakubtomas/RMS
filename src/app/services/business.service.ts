@@ -83,55 +83,25 @@ export class BusinessService {
     getNewBusiness(): Observable<unknown[]> {
         return this.afs.collection('businessPermission',
             ref => ref.orderBy('city', 'asc'))
-            .valueChanges();
+            .valueChanges()
     }
 
-
-    addBusiness(businessData: Business): any {
-        // return this.businessCollection.add(businessData);
-        return this.businessCollection.add(businessData).then(value => {
+    addBusiness(businessData: Business): Promise<DocumentReference<BusinessPermission>> {
+        //todo add typ then value
+        return this.businessCollection.add(businessData).then((value) => {
 
             let businessPermissionObject: BusinessPermission = {
                 idUser: localStorage.getItem('idUser'),
                 idOrganization: value.id,
             };
 
-           return this.addBusinessPermission(businessPermissionObject).then(value => {
-               console.log('-------------------------------');
-               console.log("save into businessPermission ");
-               console.log('id businessPermission' + value.id);
-
-             //  this.createdNewBusiness = true;
-              // this.router.navigate(['/create-calendar', {createdBusiness: true}]);
-           })
+            return this.addBusinessPermission(businessPermissionObject);
         });
-
-        /*
-        * .then(value => {
-                console.log("save Into business successfully done");
-                console.log('ID business organization' + value.id);
-
-                let businessPermissionObject:BusinessPermission = {
-                    idUser: localStorage.getItem('idUser'),
-                    idOrganization: value.id,
-                };
-
-                this.businessService.addBusinessPermission(businessPermissionObject).then(value => {
-                    console.log('-------------------------------');
-                    console.log("save into businessPermission ");
-                    console.log('id businessPermission' + value.id);
-
-                    this.createdNewBusiness = true;
-                    this.router.navigate(['/create-calendar', {createdBusiness: true}]);
-                }).catch((error) => {
-                    console.log(error);
-                    //todo delete from organization
-                    //todo create message for not saving data
-                });*/
-
     }
-        // otypovat todo
-    addBusinessPermission(businessPermissionObject: BusinessPermission) {
+
+    addBusinessPermission(businessPermissionObject: BusinessPermission): Promise<DocumentReference<BusinessPermission>> {
+        console.log('ulozenie do druhe tabulkz ');
+
         return this.businessPermissionCollection.add(businessPermissionObject);
     }
 
