@@ -11,53 +11,16 @@
         </ion-item>
     </ion-card>
 
-    <ion-button   type="submit" expand="block" (click) ="getItems()" >
-        Get Items
+    <!--<ion-button   type="submit" expand="block" (click) ="getAllBusinesses()" >
+        Get Businesses
     </ion-button>
 
-
-    <!--<ion-list>
-        <ion-item-sliding>
-            <ion-item>
-                <ion-label>Item</ion-label>
-            </ion-item>
-            <ion-item-options side="end">
-                <ion-item-option (click)="unread(item)">Unread</ion-item-option>
-            </ion-item-options>
-        </ion-item-sliding>
-
-        <ion-item-sliding>
-            <ion-item>
-                <ion-label>Item</ion-label>
-            </ion-item>
-            <ion-item-options side="end">
-                <ion-item-option (click)="unread(item)">Unread</ion-item-option>
-            </ion-item-options>
-        </ion-item-sliding>
-    </ion-list>-->
-
-
-    <div *ngIf="items?.length > 0;else noItems">
-        <ul *ngFor="let item of items" class="collection">
-            <li class="collection-item"><strong>{{item.title}}: </strong> {{item.description}} <a href="#" class="secondary-content">
-                <i (click)="editItem($event, item)" class="fa fa-pencil"></i>
-                <i *ngIf="editState && itemToEdit.id == item.id" (click)="clearState()" class="fa fa-compress"></i>
-            </a>
-
-            </li>
-        </ul>
-    </div>
-
-
-    <ng-template #noItems>
-        <hr>
-        <h5>There are no items to list</h5>
-    </ng-template>
-
+-->
     <ion-list >
-        <ion-item-sliding *ngFor="let item of items" >
-            <ion-item (click)="chooseItem(item)" class="item">
-                <ion-label style="cursor:pointer">{{item.name}} {{item.age}}</ion-label>
+        <ion-item-sliding *ngFor="let item of businesses" >
+            <ion-item (click)="chooseBusiness(item)" class="item">
+                <ion-label style="cursor:pointer">{{item.nameOrganization}} </ion-label>
+                <ion-label style="cursor:pointer">{{item.nameStreetWithNumber}}</ion-label>
             </ion-item>
         </ion-item-sliding>
 

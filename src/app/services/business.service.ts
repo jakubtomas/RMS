@@ -4,7 +4,7 @@ import {Business} from "../interfaces/business";
 import {FormGroup} from "@angular/forms";
 
 //import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
-import {Observable} from "rxjs";
+import {Observable,Subscriber} from "rxjs";
 import {map} from 'rxjs/operators';
 import {
 
@@ -30,13 +30,34 @@ interface Item {
 })
 export class BusinessService {
 
+
     itemsCollection: AngularFirestoreCollection<Item>;
     businessCollection: AngularFirestoreCollection<Business>;
     businessPermissionCollection: AngularFirestoreCollection<BusinessPermission>;
-    items: Observable<Item[]>;
+
     itemDoc: AngularFirestoreDocument<Item>;
 
     idUser: string = '';
+    items: Observable<Item[]>;
+
+
+    businesses: Observable<Business[]>;
+
+    // todo vyfiltrovat data
+    businessesData: Business[] = [];
+
+    private _businessesSubscriber: Subscriber<Business>;
+
+    getBusinessObservable(bussinessId:string):Observable<Business> {
+        return new Observable(subscriber => {
+            this._businessesSubscriber = subscriber;
+            subscriber.next(this.getOneBusiness(bussinessId));
+        })
+    }
+
+    getOneBusiness(id :string) : Business{
+        return this.businessesData.filter(value => value.id === id)[0];
+    }
 
 
     typesOfOrganization = [
@@ -49,7 +70,6 @@ export class BusinessService {
     ];
 
 
-    ref: any;
 
     constructor(public afs: AngularFirestore,
                 public afAuth: AngularFireAuth) {
@@ -59,14 +79,14 @@ export class BusinessService {
 
         this.itemsCollection = this.afs.collection('items', ref => ref.orderBy('name', 'asc'));
         //  this.businessCollection = this.afs.collection('business', ref => ref.orderBy('name','asc'));
-        this.businessCollection = this.afs.collection('business');
+        this.businessCollection = this.afs.collection('business',ref => ref.orderBy('nameOrganization', 'asc'));
         //this.businessPermissionCollection= this.afs.collection('businessPermission', ref => ref.orderBy('idUser','asc'));
         this.businessPermissionCollection = this.afs.collection('businessPermission');
 
         //  this.ref = this.afs.collection()
 
     }
-
+        //todo opakuje sa tu kode create the function
     getItems(): Observable<Item[]> {
         return this.items = this.itemsCollection.snapshotChanges().pipe(
             map(changes => {
@@ -77,7 +97,20 @@ export class BusinessService {
                 });
             }));
 
-        //return this.items
+        //return this.items00
+    }
+
+    getAllBusinesses():Observable<Business[]> {
+        return this.businesses = this.businessCollection.snapshotChanges().pipe(
+            map(changes => {
+                return   changes.map(a => {
+                    const data = a.payload.doc.data() as Business;
+                    data.id = a.payload.doc.id;
+                    this.businessesData.push(data);
+                    return data;
+                });
+            }));
+
     }
 
     getNewBusiness(): Observable<unknown[]> {

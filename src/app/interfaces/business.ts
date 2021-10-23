@@ -1,5 +1,5 @@
 export interface Business {
-
+    id?: string;
     nameOrganization: string;
     phoneNumber: string;
     zipCode: string;
