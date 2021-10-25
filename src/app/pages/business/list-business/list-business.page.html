@@ -1,8 +1,14 @@
 <ion-header>
     <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+
         <ion-title>List of Businesses</ion-title>
     </ion-toolbar>
 </ion-header>
+
+
 
 <ion-content class="ion-padding">
     <ion-card *ngIf="messageFirebase">
@@ -16,15 +22,21 @@
     </ion-button>
 
 -->
-    <ion-list >
-        <ion-item-sliding *ngFor="let item of businesses" >
-            <ion-item (click)="chooseBusiness(item)" class="item">
-                <ion-label style="cursor:pointer">{{item.nameOrganization}} </ion-label>
-                <ion-label style="cursor:pointer">{{item.nameStreetWithNumber}}</ion-label>
-            </ion-item>
-        </ion-item-sliding>
+    <ion-item>
+        <h3>Click for details</h3>
+    </ion-item>
 
-    </ion-list>
+    <ion-card>
+        <ion-list>
+            <ion-item-sliding *ngFor="let item of businesses">
+                <ion-item (click)="chooseBusiness(item)" class="item">
+                    <ion-label style="cursor:pointer">{{item.nameOrganization}} </ion-label>
+                    <ion-label style="cursor:pointer">{{item.nameStreetWithNumber}}</ion-label>
+                </ion-item>
+            </ion-item-sliding>
+
+        </ion-list>
+    </ion-card>
 
 
 </ion-content>

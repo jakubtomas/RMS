@@ -3,7 +3,7 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {BusinessService} from "../../../services/business.service";
 import {Business} from "../../../interfaces/business";
 import {error} from "selenium-webdriver";
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {BusinessPermission} from "../../../interfaces/businessPermission";
 
 @Component({
@@ -53,10 +53,17 @@ export class RegisterBusinessPage implements OnInit {
 
 
     constructor(private businessService: BusinessService,
-                private router: Router) {
-    }
+                private router: Router,
+                private route: ActivatedRoute) {}
 
     ngOnInit() {
+
+
+        if (this.route.snapshot.paramMap.get('updateBusiness')) {
+            //this.messageFirebase = 'Business successfully created'
+            console.log("  i am here from update busines s");
+        }
+
 
         this.createdNewBusiness = false;
 
@@ -91,8 +98,8 @@ export class RegisterBusinessPage implements OnInit {
             zipCode: "014440",
             city: "Presov",
             street: 'presovska 42',
-           /* openingHours: '08:00',
-            endingHours: '19:30',*/
+            /* openingHours: '08:00',
+             endingHours: '19:30',*/
             typeOrganization: "wellnes"
         })
 
@@ -113,14 +120,14 @@ export class RegisterBusinessPage implements OnInit {
 
 // this. create busines ´true a este router
         this.businessService.addBusiness(businessData).then(value => {
-           //todo delete console
+            //todo delete console
             console.log('-------------------------------');
             console.log("save into businessPermission ");
             console.log('id businessPermission' + value.id);
 
-              this.createdNewBusiness = true;
-              //todo redirect na page list of business wiht new value from DB business where can create calendar
-             this.router.navigate(['/list-business', {createdBusiness: true}]);
+            this.createdNewBusiness = true;
+            //todo redirect na page list of business wiht new value from DB business where can create calendar
+            this.router.navigate(['/list-business', {createdBusiness: true}]);
         }).catch((error) => {
             console.log("error you got error ");
 
@@ -135,7 +142,6 @@ export class RegisterBusinessPage implements OnInit {
     }
 
 
-
     getBusinessList() {
         this.businessService.getBusinessList().subscribe(value => {
             console.log('pocet zaznamov ' + value.length)
@@ -145,7 +151,7 @@ export class RegisterBusinessPage implements OnInit {
     getOneBusiness() {
         this.businessService.getNewBusiness().subscribe(value => {
             console.log("Get One business");
-            
+
             console.log(value)
         })
     }
