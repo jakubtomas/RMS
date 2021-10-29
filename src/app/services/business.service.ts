@@ -4,14 +4,16 @@ import {Business} from "../interfaces/business";
 import {FormGroup} from "@angular/forms";
 
 //import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
-import {Observable,Subscriber} from "rxjs";
+import {BehaviorSubject, Observable, Subject, Subscriber} from "rxjs";
 import {map} from 'rxjs/operators';
 import {
 
+    Action,
     AngularFirestore,
     AngularFirestoreCollection,
     AngularFirestoreDocument,
-    DocumentChangeAction
+    DocumentChangeAction,
+    DocumentSnapshot
 } from '@angular/fire/compat/firestore';
 import firebase from "firebase/compat";
 import DocumentReference = firebase.firestore.DocumentReference;
@@ -40,12 +42,13 @@ export class BusinessService {
     idUser: string = '';
     items: Observable<Item[]>;
 
-
+    //todo delete this
     businesses: Observable<Business[]>;
 
     // todo vyfiltrovat data
     businessesData: Business[] = [];
 
+/*
     private _businessesSubscriber: Subscriber<Business>;
 
     getBusinessObservable(bussinessId:string):Observable<Business> {
@@ -58,7 +61,16 @@ export class BusinessService {
     getOneBusiness(id :string) : Business{
         return this.businessesData.filter(value => value.id === id)[0];
     }
+*/
+    business$:  Subject<Business>;
+    businessObservable: Observable<Business>;
+    //businessBehavior$: BehaviorSubject<boolean>;
 
+    setBusiness$(business: any) {
+        console.log('nastavenie hodnoty business ');
+       // this.businessBehavior$.next(true);
+        this.business$.next(business);
+    }
 
     typesOfOrganization = [
         {name: "Health Care"},
@@ -101,17 +113,26 @@ export class BusinessService {
     }
 
     getAllBusinesses():Observable<Business[]> {
-        return this.businesses = this.businessCollection.snapshotChanges().pipe(
+        return  this.businessCollection.snapshotChanges().pipe(
             map(changes => {
                 return   changes.map(a => {
                     const data = a.payload.doc.data() as Business;
                     data.id = a.payload.doc.id;
-                    this.businessesData.push(data);
+                   // this.businessesData.push(data);
                     return data;
                 });
             }));
+    }
+
+    getOneBusiness(documentId: string): Observable<Business> {
+        //this.afs.doc("business/3x9djdyxErliKZ2V1MCA");
+        //this.setBusiness$('hello');
+
+        return this.businessObservable = this.businessCollection.doc(documentId).valueChanges();
 
     }
+
+
 
     getNewBusiness(): Observable<unknown[]> {
         return this.afs.collection('businessPermission',

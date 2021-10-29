@@ -3,7 +3,7 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {BusinessService} from "../../../services/business.service";
 import {Business} from "../../../interfaces/business";
 import {error} from "selenium-webdriver";
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, Params, Router} from '@angular/router';
 import {BusinessPermission} from "../../../interfaces/businessPermission";
 
 @Component({
@@ -59,10 +59,25 @@ export class RegisterBusinessPage implements OnInit {
     ngOnInit() {
 
 
-        if (this.route.snapshot.paramMap.get('updateBusiness')) {
-            //this.messageFirebase = 'Business successfully created'
-            console.log("  i am here from update busines s");
-        }
+        this.route.params.subscribe((params: Params) => {
+            console.log('Parameter  ' + JSON.stringify(params));
+            console.log('daj my sem ten parameter  ' + params['updateBusiness']);
+
+            if (params['updateBusiness']) {
+
+                //todo zobrat hodnoty cez observable alebo subject alebo behavior subject
+                //todo alebo priamo znova volat funkcio getOnebusiness s paramterom id business
+                //todo dane hodnoty nastavit do formulura
+                //todo napisat podmienku pre update /register button
+                //todo aj pre nadpis update registrtion
+            this.businessService.businessObservable.subscribe(value => {
+                console.log("update buisnes ");
+                
+                console.log(value);
+                
+            })
+            }
+        });
 
 
         this.createdNewBusiness = false;

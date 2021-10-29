@@ -38,6 +38,10 @@ export class ListBusinessPage implements OnInit {
         if (this.route.snapshot.paramMap.get('createdBusiness')) {
             this.messageFirebase = 'Business successfully created'
         }
+        /*this.route.params.subscribe((params: Params) => {
+                    console.log('Parameter  ' + params);
+                    console.log('Parameter  ' + params['createdBusiness']);
+                });*/
 
         if (this.messageFirebase === 'Business successfully created') {
 
