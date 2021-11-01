@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute, Params, Router} from "@angular/router";
 import {AuthService} from "../../../services/auth.service";
 import {BusinessService} from "../../../services/business.service";
 import {Business} from "../../../interfaces/business";
@@ -35,17 +35,20 @@ export class ListBusinessPage implements OnInit {
         this.messageFirebase = null;
 
 
-        if (this.route.snapshot.paramMap.get('createdBusiness')) {
-            this.messageFirebase = 'Business successfully created'
-        }
-        /*this.route.params.subscribe((params: Params) => {
-                    console.log('Parameter  ' + params);
-                    console.log('Parameter  ' + params['createdBusiness']);
-                });*/
+        this.route.params.subscribe((params: Params) => {
+            console.log('Parameter  ' + JSON.stringify(params));
+            console.log('daj my sem ten parameter  ' + params['businessId']);
 
-        if (this.messageFirebase === 'Business successfully created') {
+            if (params['deletedBusiness']) {
+              this.messageFirebase= 'Business successfully deleted'
+            }
 
-        }
+            if (params['createdBusiness'] != undefined) {
+                this.messageFirebase = 'Business successfully created'
+            }
+
+        });
+
     }
     //todo is essential thing set messagefirbase to null in another function which we call
 

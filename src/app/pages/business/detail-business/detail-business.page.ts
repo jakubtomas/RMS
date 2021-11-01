@@ -3,6 +3,9 @@ import {ActivatedRoute, Params, Router} from "@angular/router";
 import {catchError} from 'rxjs/operators';
 import {BusinessService} from "../../../services/business.service";
 import {Business} from "../../../interfaces/business";
+import {AlertController} from '@ionic/angular';
+import {async} from 'rxjs';
+import {errorObject} from "rxjs/internal-compatibility";
 
 @Component({
     selector: 'app-detail-business',
@@ -15,8 +18,9 @@ export class DetailBusinessPage implements OnInit {
     selectedBusinessId: string;
 
     constructor(private route: ActivatedRoute,
-                private businessService: BusinessService,
-                private router: Router) {
+        private businessService: BusinessService,
+        private router: Router,
+        public alertController: AlertController) {
     }
 
 
@@ -25,17 +29,16 @@ export class DetailBusinessPage implements OnInit {
 
         this.route.params.subscribe((params: Params) => {
             /*console.log('Parameter  ' + JSON.stringify(params));
-            console.log('daj my sem ten paramreter  ' + params['businessId']);
-*/
+             console.log('daj my sem ten paramreter  ' + params['businessId']);
+             */
             if (params['businessId'] != undefined) {
                 this.selectedBusinessId = params['businessId'];
                 this.getOneBusiness(params['businessId']);
 
             }
             if (params["updateDone"]) {
-                this.messageFirebase= "Business successfully updated"
+                this.messageFirebase = "Business successfully updated"
             }
-
 
 
         });
@@ -49,12 +52,9 @@ export class DetailBusinessPage implements OnInit {
                 console.log("---------------------");
                 console.log(business);
 
-                console.log("---------------------");
-
                 this.business = business;
-                this.business.id = this.selectedBusinessId;
 
-                // this.businessService.setBusiness$(business);
+
             }, error => {
                 console.log(error);
             }
@@ -62,16 +62,58 @@ export class DetailBusinessPage implements OnInit {
     }
 
     editBusiness() {
-        console.log("clikc edit busines " + this.business.id);
+        console.log("clikc edit busines " + this.selectedBusinessId);
         //todo potrebne odchyteni id business najlepsie asi ulozit do services
-        this.router.navigate(['/register-business', {businessId: this.business.id}])
+        this.router.navigate(['/register-business', {businessId: this.selectedBusinessId}])
 
     }
 
-    deleteBusiness() {
-        console.log("click delete nudinsadfasd");
-        ///create-calendar
+
+    async showAlert() {
+        console.log('delete business');
+
+        const alert = await this.alertController.create({
+            cssClass: 'my-custom-class',
+            header: 'Confirm Deletion',
+            animated: true,
+            backdropDismiss:true,
+            message: 'Are you sure you want to permanently remove this item?',
+            buttons: [
+                {
+                    text: 'Cancel',
+                    role: 'cancel',
+                    cssClass: 'secondary',
+                    handler: () => {}
+                }, {
+                    text: 'Yes',
+                    handler: () => {
+                        console.log('Confirm Okay');
+                        this.deleteBusiness();
+                    }
+                }
+            ]
+        });
+
+        await alert.present();
     }
+
+    deleteBusiness():void {
+        this.businessService.deleteBusiness(this.selectedBusinessId).then(() => {
+            //redirect
+            this.router.navigate(['/list-business', {deletedBusiness: true}]);
+            this.business = null;
+            this.selectedBusinessId = null;
+
+
+        }).catch((error) => {
+            console.log("error you got error ");
+            console.log(error);
+
+            this.messageFirebase = "Something is wrong";
+        });
+
+    }
+
 
     createCalendar() {
         console.log("create calendar ");

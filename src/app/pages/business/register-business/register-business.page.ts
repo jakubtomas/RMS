@@ -7,16 +7,11 @@ import {ActivatedRoute, Params, Router} from '@angular/router';
 import {BusinessPermission} from "../../../interfaces/businessPermission";
 
 
-interface User {
-    id: number;
-    first: string;
-    last: string;
-}
 @Component({
-               selector: 'app-register-business',
-               templateUrl: './register-business.page.html',
-               styleUrls: ['./register-business.page.scss'],
-           })
+    selector: 'app-register-business',
+    templateUrl: './register-business.page.html',
+    styleUrls: ['./register-business.page.scss'],
+})
 export class RegisterBusinessPage implements OnInit {
 
     registerForm: FormGroup;
@@ -31,48 +26,6 @@ export class RegisterBusinessPage implements OnInit {
     ionButton: string;
 
     selectedOption: string = "Health Care";
-
-
-
-    users: User[] = [
-        {
-            id: 1,
-            first: 'Alice',
-            last: 'Smith',
-        },
-        {
-            id: 2,
-            first: 'Bob',
-            last: 'Davis',
-        },
-        {
-            id: 3,
-            first: 'Charlie',
-            last: 'Rosenburg',
-        }
-    ];
-
-    compareWith(o1: User, o2: User) {
-        return o1 && o2 ? o1.id === o2.id : o1 === o2;
-    }
-
-    customAlertOptions: any = {
-        header: 'Pizza Toppings',
-        subHeader: 'Select your toppings',
-        message: '$1.00 per topping',
-        translucent: true
-    };
-
-    customPopoverOptions: any = {
-        header: 'Hair Color',
-        subHeader: 'Select your hair color',
-        message: 'Only select your dominant hair color'
-    };
-
-    customActionSheetOptions: any = {
-        header: 'Colors',
-        subHeader: 'Select your favorite color'
-    };
 
 
     get nameOrganization(): FormControl {
@@ -117,6 +70,7 @@ export class RegisterBusinessPage implements OnInit {
         this.typesOrganization = this.getTypesOrganization();
 
 
+        //todo vytvorit subject, a spravit nanho subsribe nameisto observable
         this.route.params.subscribe((params: Params) => {
             console.log('Parameter  ' + JSON.stringify(params));
             console.log('daj my sem ten parameter  ' + params['businessId']);
@@ -127,17 +81,6 @@ export class RegisterBusinessPage implements OnInit {
 
                 this.updateBusinessPage = true;
                 this.setValuesForPage();
-
-                //todo problem je ze funkcia ngonINt ako nespusti  po druhy krat ked
-                //nacitam data
-
-                //todo zobrat hodnoty cez observable alebo subject alebo behavior subject
-                //todo alebo priamo znova volat funkcio getOnebusiness s paramterom id business
-
-
-                //todo dane hodnoty nastavit do formulura
-                //todo napisat podmienku pre update /register button
-                //todo aj pre nadpis update registrtion
                 this.getOneBusinessForUpdate(businessId)
             }
         });
@@ -194,8 +137,8 @@ export class RegisterBusinessPage implements OnInit {
             console.log("Update business page true ");
             console.log("-----------------------------");
             console.log(businessData);
-            
-           // this.updateBusiness(businessData)
+
+            this.updateBusiness(businessData)
 
         } else {
             this.createBusiness(businessData);
@@ -228,11 +171,14 @@ export class RegisterBusinessPage implements OnInit {
 
 
             // redirect to detail buisinne s with message
-            //   this.router.navigate(['/detail-business', {businessId: businessData.id, updateDone: true}]);
+            console.log("after success update ");
+
+            console.log(this.businessId);
+            this.router.navigate(['/detail-business', {businessId: this.businessId, updateDone: true}]);
 
         }).catch((error) => {
             console.log(error);
-
+            this.firebaseErrorMessage = "Something is wrong"
         });
     }
 
@@ -248,12 +194,10 @@ export class RegisterBusinessPage implements OnInit {
     }
 
     getOneBusinessForUpdate(businessId: string) {
+
         this.businessId = businessId;
-
-
         this.businessService.getOneBusiness(businessId).subscribe((business) => {
             this.business = business;
-            //put value into the Form
             this.setRegisterFormValues();
 
         });
@@ -266,27 +210,27 @@ export class RegisterBusinessPage implements OnInit {
 
 
             this.registerForm.setValue({
-                                           nameOrganization: this.business.nameOrganization,
-                                           phoneNumber: this.business.phoneNumber,
-                                           zipCode: this.business.zipCode,
-                                           city: this.business.city,
-                                           street: this.business.nameStreetWithNumber,
-                                           /* openingHours: '08:00',
-                                            endingHours: '19:30',*/
-                                           typeOrganization: this.typesOrganization
-                                       });
+                nameOrganization: this.business.nameOrganization,
+                phoneNumber: this.business.phoneNumber,
+                zipCode: this.business.zipCode,
+                city: this.business.city,
+                street: this.business.nameStreetWithNumber,
+                /* openingHours: '08:00',
+                 endingHours: '19:30',*/
+                typeOrganization: this.typesOrganization
+            });
         } else {
             // todo delete after develop mode
             console.log("nastavauje register Form ");
 
             this.registerForm.setValue({
-                                           nameOrganization: "mnau coffe kosice",
-                                           phoneNumber: "0950478654",
-                                           zipCode: "014440",
-                                           city: "Presov",
-                                           street: 'presovska 42',
-                                           typeOrganization: "wellnes"
-                                       });
+                nameOrganization: "mnau coffe kosice",
+                phoneNumber: "0950478654",
+                zipCode: "014440",
+                city: "Presov",
+                street: 'presovska 42',
+                typeOrganization: "wellnes"
+            });
 
         }
     }

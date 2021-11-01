@@ -28,8 +28,8 @@ interface Item {
 }
 
 @Injectable({
-                providedIn: 'root'
-            })
+    providedIn: 'root'
+})
 export class BusinessService {
 
 
@@ -98,14 +98,9 @@ export class BusinessService {
         //this.businessPermissionCollection= this.afs.collection('businessPermission', ref => ref.orderBy('idUser','asc'));
         this.businessPermissionCollection = this.afs.collection('businessPermission');
 
-
-        this.setBusiness$("hello");
-
-        //  this.ref = this.afs.collection()
-
     }
 
-    //todo opakuje sa tu kode create the function
+    //todo repeat the same code , create the function
     getItems(): Observable<Item[]> {
         return this.items = this.itemsCollection.snapshotChanges().pipe(
             map(changes => {
@@ -115,8 +110,6 @@ export class BusinessService {
                     return data;
                 });
             }));
-
-        //return this.items00
     }
 
     getAllBusinesses(): Observable<Business[]> {
@@ -132,16 +125,9 @@ export class BusinessService {
     }
 
     getOneBusiness(documentId: string): Observable<Business> {
-
         return this.businessCollection.doc(documentId).valueChanges();
     }
 
-
-    getNewBusiness(): Observable<unknown[]> {
-        return this.afs.collection('businessPermission',
-                                   ref => ref.orderBy('city', 'asc'))
-                   .valueChanges()
-    }
 
     addBusiness(businessData: Business): Promise<DocumentReference<BusinessPermission>> {
         //todo add typ then value
@@ -157,12 +143,13 @@ export class BusinessService {
     }
 
     updateBusiness(businessData: Business, businessId: string): Promise<void> {
-        
-        console.log(businessData.id);
-        console.log('update idecko ' + businessId);
-        
-
         return this.businessCollection2.doc(businessId).update(businessData);
+    }
+
+    deleteBusiness(businessId: string): Promise<void> {
+        return this.businessCollection2.doc(businessId).delete();
+
+        //todo important delete also in another table in firestroe do not forget this
     }
 
     addBusinessPermission(businessPermissionObject: BusinessPermission): Promise<DocumentReference<BusinessPermission>> {
@@ -175,14 +162,5 @@ export class BusinessService {
                    .snapshotChanges();
     }
 
-    deleteItem(item: Item) {
-        this.itemDoc = this.afs.doc(`items/${item.id}`);
-        this.itemDoc.delete();
-    }
-
-    updateItem(item: Item) {
-        this.itemDoc = this.afs.doc(`items/${item.id}`);
-        this.itemDoc.update(item);
-    }
 
 }
