@@ -12,6 +12,7 @@ import {Business} from "../../../interfaces/business";
 export class DetailBusinessPage implements OnInit {
     messageFirebase: string;
     business: Business;
+    selectedBusinessId: string;
 
     constructor(private route: ActivatedRoute,
                 private businessService: BusinessService,
@@ -26,24 +27,45 @@ export class DetailBusinessPage implements OnInit {
             /*console.log('Parameter  ' + JSON.stringify(params));
             console.log('daj my sem ten paramreter  ' + params['businessId']);
 */
-            if (params['businessId'] != '') {
+            if (params['businessId'] != undefined) {
+                this.selectedBusinessId = params['businessId'];
                 this.getOneBusiness(params['businessId']);
+
             }
+            if (params["updateDone"]) {
+                this.messageFirebase= "Business successfully updated"
+            }
+
+
+
         });
 
     }
+
 
     getOneBusiness(documentID: string) {
         this.businessService.getOneBusiness(documentID).subscribe((business) => {
-            this.business = business;
-           // this.businessService.setBusiness$(business);
-        });
+                console.log("get one business");
+                console.log("---------------------");
+                console.log(business);
+
+                console.log("---------------------");
+
+                this.business = business;
+                this.business.id = this.selectedBusinessId;
+
+                // this.businessService.setBusiness$(business);
+            }, error => {
+                console.log(error);
+            }
+        );
     }
 
     editBusiness() {
-        console.log("clikc hello ");
+        console.log("clikc edit busines " + this.business.id);
         //todo potrebne odchyteni id business najlepsie asi ulozit do services
-        this.router.navigate(['/register-business', {updateBusiness: true}]);
+        this.router.navigate(['/register-business', {businessId: this.business.id}])
+
     }
 
     deleteBusiness() {

@@ -28,13 +28,14 @@ interface Item {
 }
 
 @Injectable({
-    providedIn: 'root'
-})
+                providedIn: 'root'
+            })
 export class BusinessService {
 
 
     itemsCollection: AngularFirestoreCollection<Item>;
     businessCollection: AngularFirestoreCollection<Business>;
+    businessCollection2: AngularFirestoreCollection<Business>;
     businessPermissionCollection: AngularFirestoreCollection<BusinessPermission>;
 
     itemDoc: AngularFirestoreDocument<Item>;
@@ -48,28 +49,30 @@ export class BusinessService {
     // todo vyfiltrovat data
     businessesData: Business[] = [];
 
-/*
-    private _businessesSubscriber: Subscriber<Business>;
+    /*
+     private _businessesSubscriber: Subscriber<Business>;
 
-    getBusinessObservable(bussinessId:string):Observable<Business> {
-        return new Observable(subscriber => {
-            this._businessesSubscriber = subscriber;
-            subscriber.next(this.getOneBusiness(bussinessId));
-        })
-    }
+     getBusinessObservable(bussinessId:string):Observable<Business> {
+     return new Observable(subscriber => {
+     this._businessesSubscriber = subscriber;
+     subscriber.next(this.getOneBusiness(bussinessId));
+     })
+     }
 
-    getOneBusiness(id :string) : Business{
-        return this.businessesData.filter(value => value.id === id)[0];
-    }
-*/
-    business$:  Subject<Business>;
+     getOneBusiness(id :string) : Business{
+     return this.businessesData.filter(value => value.id === id)[0];
+     }
+     */
+    business$ = new Subject<any>();
     businessObservable: Observable<Business>;
+
     //businessBehavior$: BehaviorSubject<boolean>;
 
     setBusiness$(business: any) {
         console.log('nastavenie hodnoty business ');
-       // this.businessBehavior$.next(true);
+        // this.businessBehavior$.next(true);
         this.business$.next(business);
+        this.business$.complete();
     }
 
     typesOfOrganization = [
@@ -82,23 +85,27 @@ export class BusinessService {
     ];
 
 
-
     constructor(public afs: AngularFirestore,
-                public afAuth: AngularFireAuth) {
+        public afAuth: AngularFireAuth) {
         //this.items = this.afs.collection('items').valueChanges();
         this.idUser = localStorage.getItem('idUser');
         console.log('your user id is ' + this.idUser);
 
         this.itemsCollection = this.afs.collection('items', ref => ref.orderBy('name', 'asc'));
         //  this.businessCollection = this.afs.collection('business', ref => ref.orderBy('name','asc'));
-        this.businessCollection = this.afs.collection('business',ref => ref.orderBy('nameOrganization', 'asc'));
+        this.businessCollection = this.afs.collection('business', ref => ref.orderBy('nameOrganization', 'asc'));
+        this.businessCollection2 = this.afs.collection('business');
         //this.businessPermissionCollection= this.afs.collection('businessPermission', ref => ref.orderBy('idUser','asc'));
         this.businessPermissionCollection = this.afs.collection('businessPermission');
+
+
+        this.setBusiness$("hello");
 
         //  this.ref = this.afs.collection()
 
     }
-        //todo opakuje sa tu kode create the function
+
+    //todo opakuje sa tu kode create the function
     getItems(): Observable<Item[]> {
         return this.items = this.itemsCollection.snapshotChanges().pipe(
             map(changes => {
@@ -112,32 +119,28 @@ export class BusinessService {
         //return this.items00
     }
 
-    getAllBusinesses():Observable<Business[]> {
-        return  this.businessCollection.snapshotChanges().pipe(
+    getAllBusinesses(): Observable<Business[]> {
+        return this.businessCollection.snapshotChanges().pipe(
             map(changes => {
-                return   changes.map(a => {
+                return changes.map(a => {
                     const data = a.payload.doc.data() as Business;
                     data.id = a.payload.doc.id;
-                   // this.businessesData.push(data);
+                    // this.businessesData.push(data);
                     return data;
                 });
             }));
     }
 
     getOneBusiness(documentId: string): Observable<Business> {
-        //this.afs.doc("business/3x9djdyxErliKZ2V1MCA");
-        //this.setBusiness$('hello');
 
-        return this.businessObservable = this.businessCollection.doc(documentId).valueChanges();
-
+        return this.businessCollection.doc(documentId).valueChanges();
     }
-
 
 
     getNewBusiness(): Observable<unknown[]> {
         return this.afs.collection('businessPermission',
-            ref => ref.orderBy('city', 'asc'))
-            .valueChanges()
+                                   ref => ref.orderBy('city', 'asc'))
+                   .valueChanges()
     }
 
     addBusiness(businessData: Business): Promise<DocumentReference<BusinessPermission>> {
@@ -153,16 +156,23 @@ export class BusinessService {
         });
     }
 
-    addBusinessPermission(businessPermissionObject: BusinessPermission): Promise<DocumentReference<BusinessPermission>> {
-        console.log('ulozenie do druhe tabulkz ');
+    updateBusiness(businessData: Business, businessId: string): Promise<void> {
+        
+        console.log(businessData.id);
+        console.log('update idecko ' + businessId);
+        
 
+        return this.businessCollection2.doc(businessId).update(businessData);
+    }
+
+    addBusinessPermission(businessPermissionObject: BusinessPermission): Promise<DocumentReference<BusinessPermission>> {
         return this.businessPermissionCollection.add(businessPermissionObject);
     }
 
     getBusinessList(): Observable<DocumentChangeAction<unknown>[]> {
         return this.afs
-            .collection("business")
-            .snapshotChanges();
+                   .collection("business")
+                   .snapshotChanges();
     }
 
     deleteItem(item: Item) {

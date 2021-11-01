@@ -9,12 +9,11 @@
 </ion-header>
 
 <ion-content>
-    <!--<div *ngIf="business">
-        {{business.nameStreetWithNumber}}
-        {{business.id}}
-        {{business}}
-    </div>-->
-
+    <ion-card *ngIf="messageFirebase">
+        <ion-item color="success">
+            <label class="ion-text-center">{{messageFirebase}}</label>
+        </ion-item>
+    </ion-card>
 
     <!-- <ion-card>
          <ion-item>d

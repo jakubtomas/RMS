@@ -4,7 +4,7 @@
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
 
-        <ion-title>Registration business/organization/service</ion-title>
+        <ion-title>{{ionTitle}}</ion-title>
     </ion-toolbar>
 </ion-header>
 
@@ -19,21 +19,8 @@
 
         <!--TODO  set error minimum -->
         <div *ngIf="nameOrganization.errors?.required && nameOrganization.touched">
-           <strong> Name organization is required.</strong>
+            <em> Name organization is required.</em>
         </div>
-
-
-
-        <ion-item>
-            <ion-label position="floating">Owner name</ion-label>
-            <ion-input type="text" formControlName="ownerName"></ion-input>
-        </ion-item>
-
-        <div *ngIf="ownerName.errors?.required && ownerName.touched">
-            <strong> Owner name  is required.</strong>
-        </div>
-
-
 
 
         <ion-item>
@@ -42,10 +29,8 @@
         </ion-item>
 
         <div *ngIf="phoneNumber.errors?.required && phoneNumber.touched">
-            <strong> Phone number  is required.</strong>
+            <em> Phone number is required.</em>
         </div>
-
-
 
 
         <ion-item><!-- todo check minimum size of zip code -->
@@ -54,9 +39,8 @@
         </ion-item>
 
         <div *ngIf="zipCode.errors?.required && zipCode.touched">
-            <strong> Zip code  is required.</strong>
+            <em> Zip code is required.</em>
         </div>
-
 
 
         <ion-item> <!--todo input only number-->
@@ -65,7 +49,7 @@
         </ion-item>
 
         <div *ngIf="city.errors?.required && city.touched">
-            <strong> City is required.</strong>
+            <em> City is required.</em>
         </div>
 
         <ion-item>
@@ -74,74 +58,13 @@
         </ion-item>
 
         <div *ngIf="street.errors?.required && street.touched">
-            <strong> City is required.</strong>
+            <em> City is required.</em>
         </div>
-
-
-
-
-        <!-- <ng-container *ngFor="let error of error_msg.email">
-           <div
-                   *ngIf="registerForm.get('email').hasError(error.type) && (registerForm.get('email').dirty || registerForm.get('email').touched)">
-             {{ error.message }}
-           </div>
-         </ng-container>-->
-
-        <!--<ion-list>
-          <ion-item>
-            <ion-label>Start Time</ion-label>
-            <ion-datetime displayFormat="h:mm A" pickerFormat="h:mm A" value="1997-08-04T08:30Z"></ion-datetime>
-          </ion-item>
-          <ion-item>
-            <ion-label>Ends</ion-label>
-            <ion-datetime value="1998-05-25" placeholder="Select Date"></ion-datetime>
-          </ion-item>
-          <ion-item>
-            <ion-label>Specific Format</ion-label>
-            <ion-datetime displayFormat="YYYY" placeholder="Select Year"></ion-datetime>
-          </ion-item>
-        </ion-list>-->
-
-<!--
-        <ion-item>
-            <ion-label>Opening hours start</ion-label>
-            <ion-datetime display-format="H:mm" picker-format="H:mm "
-                          formControlName="openingHours"></ion-datetime>
-        </ion-item>
-
-        <div *ngIf="openingHours.errors?.required && openingHours.touched">
-            <strong> Opening hours  is required.</strong>
-        </div>
-
-
-        <ion-item>
-            <ion-label>Ending hours end</ion-label>
-            <ion-datetime display-format="H:mm" picker-format="H:mm "
-                          formControlName="endingHours"></ion-datetime>
-        </ion-item>
-
-        <div *ngIf="endingHours.errors?.required && endingHours.touched">
-            <strong> Ending hours is required.</strong>
-        </div>
--->
-
-        <!--
-
-            <ion-item>
-              <ion-input type="number" placeholder="zip code try"></ion-input>
-            </ion-item>
-        -->
-
-        <!--
-            <ion-item>
-              <ion-label position="floating">Type of organization </ion-label>
-              <ion-input type="text" formControlName="typeOrganization" class="form-controll" required></ion-input>
-            </ion-item>
-        -->
 
         <ion-item>
             <ion-label>Type of organization</ion-label>
-            <ion-select interface="popover" formControlName="typeOrganization">
+            <ion-select interface="popover" formControlName="typeOrganization" placeholder="Select One"
+            mode="md">
                 <ion-select-option *ngFor="let type of typesOrganization" value="{{ type.name }}">
                     {{ type.name }}
                 </ion-select-option>
@@ -153,14 +76,15 @@
         </ion-item>
 
         <div *ngIf="typeOrganization.errors?.required && typeOrganization.touched">
-            <strong> Type of organization  is required.</strong>
+            <em> Type of organization is required.</em>
         </div>
 
 
-
-        <ion-button type="submit" expand="block"
-        [disabled]="!registerForm.valid">Register
+        <ion-button
+                    type="submit" expand="block"
+                    [disabled]="!registerForm.valid">{{ionButton}}
         </ion-button>
+
 
     </form>
 
@@ -169,7 +93,6 @@
             <label class="ion-text-center">{{firebaseErrorMessage}}</label>
         </ion-item>
     </ion-card>
-
 
 
 </ion-content>
