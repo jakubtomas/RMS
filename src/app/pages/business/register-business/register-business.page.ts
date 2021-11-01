@@ -6,6 +6,12 @@ import {error} from "selenium-webdriver";
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {BusinessPermission} from "../../../interfaces/businessPermission";
 
+
+interface User {
+    id: number;
+    first: string;
+    last: string;
+}
 @Component({
                selector: 'app-register-business',
                templateUrl: './register-business.page.html',
@@ -26,6 +32,47 @@ export class RegisterBusinessPage implements OnInit {
 
     selectedOption: string = "Health Care";
 
+
+
+    users: User[] = [
+        {
+            id: 1,
+            first: 'Alice',
+            last: 'Smith',
+        },
+        {
+            id: 2,
+            first: 'Bob',
+            last: 'Davis',
+        },
+        {
+            id: 3,
+            first: 'Charlie',
+            last: 'Rosenburg',
+        }
+    ];
+
+    compareWith(o1: User, o2: User) {
+        return o1 && o2 ? o1.id === o2.id : o1 === o2;
+    }
+
+    customAlertOptions: any = {
+        header: 'Pizza Toppings',
+        subHeader: 'Select your toppings',
+        message: '$1.00 per topping',
+        translucent: true
+    };
+
+    customPopoverOptions: any = {
+        header: 'Hair Color',
+        subHeader: 'Select your hair color',
+        message: 'Only select your dominant hair color'
+    };
+
+    customActionSheetOptions: any = {
+        header: 'Colors',
+        subHeader: 'Select your favorite color'
+    };
 
 
     get nameOrganization(): FormControl {
@@ -146,7 +193,9 @@ export class RegisterBusinessPage implements OnInit {
             // update function
             console.log("Update business page true ");
             console.log("-----------------------------");
-            this.updateBusiness(businessData)
+            console.log(businessData);
+            
+           // this.updateBusiness(businessData)
 
         } else {
             this.createBusiness(businessData);
