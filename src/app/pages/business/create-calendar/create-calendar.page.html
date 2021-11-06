@@ -24,10 +24,22 @@
             <ion-label>Firstname</ion-label>
             <ion-input formControlName="firstName"></ion-input>
         </ion-item>
+
+
         <ion-item>
-            <ion-label>Lastname</ion-label>
-            <ion-input formControlName="lastName"></ion-input>
+            <ion-label>Opening hour</ion-label>
+            <ion-datetime displayFormat="HH:mm" formControlName="openingHours"
+                          placeholder="Select Time"></ion-datetime>
+
         </ion-item>
+
+        <ion-item>
+            <ion-label>Closing hour</ion-label>
+            <ion-datetime displayFormat="HH:mm" formControlName="closingHours"
+                          placeholder="Select Time"></ion-datetime>
+        </ion-item>
+
+
         <ng-container formArrayName="options">
             <ion-item *ngFor="let dessert of dessertOptions; let i = index">
                 <ion-label>{{ dessert }}</ion-label>
@@ -35,55 +47,17 @@
             </ion-item>
         </ng-container>
         <ion-item>
-            <ion-label> {{ contactForm.value.options | json }}<br /> </ion-label>
+            <ion-label> {{ contactForm.value.options | json }}<br/></ion-label>
         </ion-item>
         <ion-row>
             <ion-col>
                 <ion-button type="submit" expand="block" [disabled]="!contactForm.valid"
-                >Submit</ion-button
+                >Set
+                </ion-button
                 >
             </ion-col>
         </ion-row>
     </form>
-
-
-
-
-    <ion-list-header>Characters</ion-list-header>
-    <ion-item>
-        <ion-label>Monday</ion-label>
-        <ion-checkbox color="primary" checked slot="start"></ion-checkbox>
-    </ion-item>
-
-    <ion-item>
-        <ion-label>Tuesday</ion-label>
-        <ion-checkbox color="primary" checked slot="start"></ion-checkbox>
-    </ion-item>
-
-    <ion-item>
-        <ion-label>Wednesday</ion-label>
-        <ion-checkbox color="primary" checked slot="start"></ion-checkbox>
-    </ion-item>
-
-    <ion-item>
-        <ion-label>Thursday</ion-label>
-        <ion-checkbox color="primary" checked slot="start"></ion-checkbox>
-    </ion-item>
-
-    <ion-item>
-        <ion-label>Friday</ion-label>
-        <ion-checkbox color="primary" checked slot="start"></ion-checkbox>
-    </ion-item>
-
-    <ion-item>
-        <ion-label>Saturday</ion-label>
-        <ion-checkbox color="primary" checked slot="start"></ion-checkbox>
-    </ion-item>
-
-    <ion-item>
-        <ion-label>Sunday</ion-label>
-        <ion-checkbox color="primary" checked slot="start"></ion-checkbox>
-    </ion-item>
 
 
     <form class="form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
@@ -98,7 +72,7 @@
         </div>
 
 
-        <!--    <ion-item><h3>Monday</h3></ion-item>
+        <!--  <ion-item><h3>Monday</h3></ion-item>
             <ion-item>
               <br>
               <ion-label>Opening hours start</ion-label>
@@ -114,7 +88,6 @@
               <em> Opening hours  is required.</em>
             </div>
 
-
             <ion-item><h3>Tuesday</h3></ion-item>
             <ion-item>
               <br>
@@ -127,129 +100,9 @@
                             formControlName="openingHours"></ion-datetime>
             </ion-item>
 
-
-
-
-
             <div *ngIf="openingHours.errors?.required && openingHours.touched">
               <em> Opening hours  is required.</em>
             </div>-->
-        <ion-item>
-            <ion-label class="day">Monday</ion-label>
-        </ion-item>
-
-        <ion-item>
-            <ion-label>Opening hour</ion-label>
-            <ion-datetime displayFormat="HH:mm" placeholder="Select Time"></ion-datetime>
-        </ion-item>
-
-        <ion-item>
-            <ion-label>Closing hour</ion-label>
-            <ion-datetime displayFormat="HH:mm" placeholder="Select Time"></ion-datetime>
-        </ion-item>
-
-        <!--/////////////////////////////////////////////////////////////-->
-        <ion-item>
-            <ion-label class="day">Tuesday</ion-label>
-        </ion-item>
-
-        <ion-item>
-            <ion-label>Opening hour</ion-label>
-            <ion-datetime displayFormat="HH:mm" placeholder="Select Time"></ion-datetime>
-
-        </ion-item>
-
-        <ion-item>
-            <ion-label>Closing hour</ion-label>
-            <ion-datetime displayFormat="HH:mm" placeholder="Select Time"></ion-datetime>
-        </ion-item>
-
-        <!--/////////////////////////////////////////////////////////////-->
-
-        <ion-item>
-            <ion-label class="day">Wednesday</ion-label>
-        </ion-item>
-
-        <ion-item>
-            <ion-label>Opening hour</ion-label>
-            <ion-datetime displayFormat="HH:mm" placeholder="Select Time"></ion-datetime>
-
-        </ion-item>
-
-        <ion-item>
-            <ion-label>Closing hour</ion-label>
-            <ion-datetime displayFormat="HH:mm" placeholder="Select Time"></ion-datetime>
-        </ion-item>
-
-
-        <!--/////////////////////////////////////////////////////////////-->
-
-        <ion-item>
-            <ion-label class="day">Thursday</ion-label>
-        </ion-item>
-
-        <ion-item>
-            <ion-label>Opening hour</ion-label>
-            <ion-datetime displayFormat="HH:mm" placeholder="Select Time"></ion-datetime>
-
-        </ion-item>
-
-        <ion-item>
-            <ion-label>Closing hour</ion-label>
-            <ion-datetime displayFormat="HH:mm" placeholder="Select Time"></ion-datetime>
-        </ion-item>
-
-        <!--/////////////////////////////////////////////////////////////-->
-
-        <ion-item>
-            <ion-label class="day">Friday</ion-label>
-        </ion-item>
-
-        <ion-item>
-            <ion-label>Opening hour</ion-label>
-            <ion-datetime displayFormat="HH:mm" placeholder="Select Time"></ion-datetime>
-
-        </ion-item>
-
-        <ion-item>
-            <ion-label>Closing hour</ion-label>
-            <ion-datetime displayFormat="HH:mm" placeholder="Select Time"></ion-datetime>
-        </ion-item>
-
-        <!--/////////////////////////////////////////////////////////////-->
-
-
-        <ion-item>
-            <ion-label class="day">Saturday</ion-label>
-        </ion-item>
-
-        <ion-item>
-            <ion-label>Opening hour</ion-label>
-            <ion-datetime displayFormat="HH:mm" placeholder="Select Time"></ion-datetime>
-
-        </ion-item>
-
-        <ion-item>
-            <ion-label>Closing hour</ion-label>
-            <ion-datetime displayFormat="HH:mm" placeholder="Select Time"></ion-datetime>
-        </ion-item>
-
-        <!--/////////////////////////////////////////////////////////////-->
-        <ion-item>
-            <ion-label class="day">Sunday</ion-label>
-        </ion-item>
-
-        <ion-item>
-            <ion-label>Opening hour</ion-label>
-            <ion-datetime displayFormat="HH:mm" placeholder="Select Time"></ion-datetime>
-
-        </ion-item>
-
-        <ion-item>
-            <ion-label>Closing hour</ion-label>
-            <ion-datetime displayFormat="HH:mm" placeholder="Select Time"></ion-datetime>
-        </ion-item>
-
 
         <ion-button type="submit" expand="block"
                     [disabled]="!registerForm.valid">Create calendar
@@ -262,6 +115,32 @@
             <label class="ion-text-center">{{firebaseErrorMessage}}</label>
         </ion-item>
     </ion-card>
+
+
+    <ion-list>
+        <ion-item-sliding *ngFor="let item of businesses">
+            <ion-item (click)="chooseBusiness(item)" class="item">
+                <ion-label style="cursor:pointer">{{item.nameOrganization}} </ion-label>
+                <ion-label style="cursor:pointer">{{item.nameStreetWithNumber}}</ion-label>
+            </ion-item>
+        </ion-item-sliding>
+
+    </ion-list>
+
+    <div *ngFor="let item of result" class="schedule ">
+        <ion-row>
+            <ion-col>
+                <div>{{item.day}}</div>
+            </ion-col>
+            <ion-col>
+                <div>{{item.open}}</div>
+            </ion-col>
+            <ion-col>
+                <div>{{item.closing}}</div>
+            </ion-col>
+        </ion-row>
+    </div>
+
 
 
 </ion-content>
