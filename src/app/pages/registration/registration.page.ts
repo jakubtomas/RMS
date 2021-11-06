@@ -33,6 +33,19 @@ export class RegistrationPage implements OnInit {
                 message: 'Email is not valid.'
             }
         ],
+        'firstName': [
+            {
+                type: 'required',
+                message: 'First name required'
+            }
+
+        ],
+        'lastName': [
+            {
+                type: 'required',
+                message: 'Last name required'
+            }
+        ],
         'password': [
             {
                 type: 'required',
@@ -50,7 +63,7 @@ export class RegistrationPage implements OnInit {
             },
             {
                 type: 'mismatch',
-                message: 'Passwords mismatch'
+                message: 'Passwords do not match'
             }
         ]
     };
@@ -65,6 +78,9 @@ export class RegistrationPage implements OnInit {
     // get password(): FormControl { return this.registerForm.get('password') as FormControl; }
 
     ngOnInit() {
+
+       // console.log("ngonitin password 2 have error " + this.registerForm.get("password2").hasError("mismatch"));
+
         this.firebaseErrorMessage = null;
         this.registerForm = new FormGroup(
             {
@@ -73,6 +89,9 @@ export class RegistrationPage implements OnInit {
                     Validators.email,
                     //Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,}$'),
                 ]),
+                firstName: new FormControl('', Validators.required),
+                lastName: new FormControl('', Validators.required),
+
                 password: new FormControl('', [
                     Validators.required,
                     Validators.minLength(6),
@@ -84,7 +103,7 @@ export class RegistrationPage implements OnInit {
             this.passwordMatchValidator
         );
 
-         this.registerForm.setValue({email: "jakubshoop@gmail.com", password: '123123',password2: '123123'})
+       //  this.registerForm.setValue({email: "jakubshoop@gmail.com", password: '123123',password2: '123123'})
        //  this.registerForm.setValue({email: this.generateEmail(), password: '123123',password2: '123123'})
 
     }
@@ -105,6 +124,7 @@ export class RegistrationPage implements OnInit {
 
                 const errorMismatch = {"mismatch": true};
                 password2.setErrors(errorMismatch);
+
                 return errorMismatch;
             } else {
                 password2.setErrors(null);
@@ -131,16 +151,12 @@ export class RegistrationPage implements OnInit {
         const email: string = this.registerForm.get('email').value;
         const password: string = this.registerForm.get('password').value;
 
-        //const email:string = this.registerForm.get('email').value;
-        //const password:string =this.registerForm.get('password').value;
-
-        //console.log("email and password are " + email + " password  " + email);
 
 
         this.authService.createUser(email, password).then((result) => {
             if (result == null) {// null is success, false means there was an error
                 console.log("successful registration createUser.ts");
-                //todo send also message successfully
+                //todo send arlso message successfully
                  this.router.navigate(['/dashboard']);
 
             } else {

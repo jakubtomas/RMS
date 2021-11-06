@@ -1,0 +1,64 @@
+<ion-header>
+
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>detailBusiness</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-card *ngIf="messageFirebase">
+        <ion-item color="success">
+            <label class="ion-text-center">{{messageFirebase}}</label>
+        </ion-item>
+    </ion-card>
+
+    <!-- <ion-card>
+         <ion-item>d
+             <ion-icon name="pin" slot="start"></ion-icon>
+             <ion-label>ion-item in a card, icon left, button right</ion-label>
+             <ion-button fill="outline" slot="end">View</ion-button>
+         </ion-item>
+
+         <ion-card-content>
+             This is content, without any paragraph or header tags,
+             within an ion-card-content element.
+         </ion-card-content>
+     </ion-card>
+ -->
+
+    <ion-card *ngIf="business">
+        <ion-card-header>
+            <ion-card-title>Name  {{business.nameOrganization}}</ion-card-title>
+            <ion-card-subtitle>Address {{business.nameStreetWithNumber}}</ion-card-subtitle>
+            <ion-card-subtitle>City {{business.city}}</ion-card-subtitle>
+            <ion-card-subtitle>zipcode {{business.zipCode}}</ion-card-subtitle>
+        </ion-card-header>
+<!--
+        <ion-card-content>
+            Founded in 1829 on an isthmus between Lake Monona and Lake Mendota, Madison was named the capital of the
+            Wisconsin Territory in 1836.
+        </ion-card-content>
+-->
+
+        <section>
+            <header>Possibility with business</header>
+            <ion-button color="warning"  (click)="editBusiness()">Edit</ion-button>
+            <ion-button color="danger"  (click)="showAlert()">Delete</ion-button>
+        </section>
+
+        <br>
+
+        <section>
+            <header>Calendar</header>
+            <ion-button expand="block" (click)="createCalendar()">Create calendar</ion-button>
+        </section>
+    </ion-card>
+
+
+    <!--create content with data -->
+    <!--create buttons with edit and delete -->
+    <!--create buttons with create calendar-->
+</ion-content>

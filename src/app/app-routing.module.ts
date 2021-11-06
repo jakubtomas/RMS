@@ -33,7 +33,23 @@ const routes: Routes = [
     path: 'registration',
     loadChildren: () => import('./pages/registration/registration.module').then( m => m.RegistrationPageModule)
   },
-
+  {
+    path: 'register-business',
+    loadChildren: () => import('./pages/business/register-business/register-business.module').then( m => m.RegisterBusinessPageModule),
+    canActivate:[AuthGuard]
+  },
+  {
+    path: 'create-calendar',
+    loadChildren: () => import('./pages/business/create-calendar/create-calendar.module').then( m => m.CreateCalendarPageModule)
+  },
+  {
+    path: 'list-business',
+    loadChildren: () => import('./pages/business/list-business/list-business.module').then( m => m.ListBusinessPageModule)
+  },
+  {
+    path: 'detail-business',
+    loadChildren: () => import('./pages/business/detail-business/detail-business.module').then( m => m.DetailBusinessPageModule)
+  },
 
 
 ];

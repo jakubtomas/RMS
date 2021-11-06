@@ -29,6 +29,7 @@ export class AppComponent
     }
   ];
 
+  businessMode: boolean = false;
   loggedIn = false;
   dark = false;
   firebaseErrorMessage: void;
@@ -36,7 +37,10 @@ export class AppComponent
 
   constructor(public afAuth: AngularFireAuth,
               private authService: AuthService,
-              private router: Router) {}
+              private router: Router) {
+
+    
+  }
 
 
   signOut() {
@@ -57,5 +61,10 @@ export class AppComponent
 
   }
 
+  update(value) {
+    console.log(value);
+    
+  }
+  
 
 }
