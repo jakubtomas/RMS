@@ -71,7 +71,7 @@
             <ion-label>Type of organization</ion-label>
             <ion-select interface="popover" formControlName="typeOrganization" placeholder="Select One"
                         mode="md">
-                <ion-select-option *ngFor="let type of typesOrganization" >
+                <ion-select-option *ngFor="let type of typesOrganization" [value]="type.name">
                     {{ type.name }}
                 </ion-select-option>
 

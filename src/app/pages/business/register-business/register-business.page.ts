@@ -217,7 +217,7 @@ export class RegisterBusinessPage implements OnInit {
                 street: this.business.nameStreetWithNumber,
                 /* openingHours: '08:00',
                  endingHours: '19:30',*/
-                typeOrganization: this.typesOrganization
+                typeOrganization: this.business.typeOfOrganization
             });
         } else {
             // todo delete after develop mode

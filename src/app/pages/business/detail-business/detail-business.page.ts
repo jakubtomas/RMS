@@ -100,6 +100,9 @@ export class DetailBusinessPage implements OnInit {
     deleteBusiness():void {
         this.businessService.deleteBusiness(this.selectedBusinessId).then(() => {
             //redirect
+
+            //show notification , toast show on another page
+            // d
             this.router.navigate(['/list-business', {deletedBusiness: true}]);
             this.business = null;
             this.selectedBusinessId = null;
