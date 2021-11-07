@@ -53,8 +53,6 @@ export class DetailBusinessPage implements OnInit {
                 console.log(business);
 
                 this.business = business;
-
-
             }, error => {
                 console.log(error);
             }
@@ -111,18 +109,16 @@ export class DetailBusinessPage implements OnInit {
         }).catch((error) => {
             console.log("error you got error ");
             console.log(error);
-
             this.messageFirebase = "Something is wrong";
         });
 
     }
 
-
     createCalendar() {
         console.log("create calendar ");
 
         //todo odchytenie id business
-        this.router.navigate(['/create-calendar']);
+      this.router.navigate(['/create-calendar', {businessId: this.selectedBusinessId}]);
 
     }
 

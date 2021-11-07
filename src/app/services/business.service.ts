@@ -43,37 +43,12 @@ export class BusinessService {
     idUser: string = '';
     items: Observable<Item[]>;
 
-    //todo delete this
-    businesses: Observable<Business[]>;
 
-    // todo vyfiltrovat data
-    businessesData: Business[] = [];
-
-    /*
-     private _businessesSubscriber: Subscriber<Business>;
-
-     getBusinessObservable(bussinessId:string):Observable<Business> {
-     return new Observable(subscriber => {
-     this._businessesSubscriber = subscriber;
-     subscriber.next(this.getOneBusiness(bussinessId));
-     })
-     }
-
-     getOneBusiness(id :string) : Business{
-     return this.businessesData.filter(value => value.id === id)[0];
-     }
-     */
     business$ = new Subject<any>();
     businessObservable: Observable<Business>;
 
     //businessBehavior$: BehaviorSubject<boolean>;
 
-    setBusiness$(business: any) {
-        console.log('nastavenie hodnoty business ');
-        // this.businessBehavior$.next(true);
-        this.business$.next(business);
-        this.business$.complete();
-    }
 
     typesOfOrganization = [
         {name: "Health Care"},
