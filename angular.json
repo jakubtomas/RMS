@@ -13,7 +13,7 @@
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
-          "options": {
+          "daysOfWeek": {
             "outputPath": "www",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -72,7 +72,7 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
+          "daysOfWeek": {
             "browserTarget": "app:build"
           },
           "configurations": {
@@ -86,13 +86,13 @@
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
+          "daysOfWeek": {
             "browserTarget": "app:build"
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
-          "options": {
+          "daysOfWeek": {
             "main": "src/test.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.spec.json",
@@ -121,7 +121,7 @@
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
-          "options": {
+          "daysOfWeek": {
             "lintFilePatterns": [
               "src/**/*.ts",
               "src/**/*.html"
@@ -130,7 +130,7 @@
         },
         "e2e": {
           "builder": "@angular-devkit/build-angular:protractor",
-          "options": {
+          "daysOfWeek": {
             "protractorConfig": "e2e/protractor.conf.js",
             "devServerTarget": "app:serve"
           },
@@ -145,7 +145,7 @@
         },
         "ionic-cordova-build": {
           "builder": "@ionic/angular-toolkit:cordova-build",
-          "options": {
+          "daysOfWeek": {
             "browserTarget": "app:build"
           },
           "configurations": {
@@ -156,7 +156,7 @@
         },
         "ionic-cordova-serve": {
           "builder": "@ionic/angular-toolkit:cordova-serve",
-          "options": {
+          "daysOfWeek": {
             "cordovaBuildTarget": "app:ionic-cordova-build",
             "devServerTarget": "app:serve"
           },

@@ -57,7 +57,7 @@
         </ion-item>
       </ng-container>
       <ion-item>
-        <ion-label> {{ contactForm.value.options | json }}<br/></ion-label>
+        <ion-label> {{ contactForm.value.daysOfWeek | json }}<br/></ion-label>
       </ion-item>
       <ion-row>
         <ion-col>
@@ -88,7 +88,7 @@
 
     </ion-list>
 
-    <div *ngFor="let item of result" class="schedule ">
+    <div *ngFor="let item of options" class="schedule ">
       <ion-row>
         <ion-col>
           <div>{{item.day}}</div>

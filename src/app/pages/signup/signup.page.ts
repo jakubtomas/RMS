@@ -111,17 +111,17 @@ export class SignupPage implements OnInit {
         console.log("email and password are " + userFormValues.email + " password  " + userFormValues.email);
 
 
-        this.authService.createUser(userFormValues.email, userFormValues.password).then((result) => {
-            if (result == null) {// null is success, false means there was an error
+        this.authService.createUser(userFormValues.email, userFormValues.password).then((options) => {
+            if (options == null) {// null is success, false means there was an error
                 console.log("successful registration createUser.ts");
             } else {
                 console.log("unsuccessful registration account createUser.ts  ");
-                this.firebaseErrorMessage = result.message;
+                this.firebaseErrorMessage = options.message;
 
-                console.log(result);
-                console.log(result.message);
+                console.log(options);
+                console.log(options.message);
 
-                console.log(result.isValid);
+                console.log(options.isValid);
                 console.log('resut message ');
             }
         }).catch((error) => {
