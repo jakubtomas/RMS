@@ -57,7 +57,7 @@
         </ion-item>
       </ng-container>
       <ion-item>
-        <ion-label> {{ contactForm.value.daysOfWeek | json }}<br/></ion-label>
+        <ion-label> {{ contactForm.value.options | json }}<br/></ion-label>
       </ion-item>
       <ion-row>
         <ion-col>
@@ -78,15 +78,6 @@
     </ion-card>
 
 
-    <ion-list>
-      <ion-item-sliding *ngFor="let item of businesses">
-        <ion-item (click)="chooseBusiness(item)" class="item">
-          <ion-label style="cursor:pointer">{{item.nameOrganization}} </ion-label>
-          <ion-label style="cursor:pointer">{{item.nameStreetWithNumber}}</ion-label>
-        </ion-item>
-      </ion-item-sliding>
-
-    </ion-list>
 
     <div *ngFor="let item of options" class="schedule ">
       <ion-row>
@@ -94,10 +85,10 @@
           <div>{{item.day}}</div>
         </ion-col>
         <ion-col>
-          <div>{{item.open}}</div>
+          <div>{{item.openingHours}}</div>
         </ion-col>
         <ion-col>
-          <div>{{item.closing}}</div>
+          <div>{{item.closingHours}}</div>
         </ion-col>
       </ion-row>
     </div>

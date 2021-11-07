@@ -1,7 +1,9 @@
+import {Day} from "./day";
+
 export interface Calendar {
     id?: string;
     idBusiness: string;
     nameCalendar: string;
-    schedule: any;
+    week: Day[];
     break: any;
 }

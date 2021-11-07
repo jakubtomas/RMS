@@ -70,7 +70,7 @@ export class AuthService {
             {"code": "auth/user-disabled", "message": "The user corresponding to the given email has been disabled."},
             {"code": "auth/user-not-found", "message": "User/Email not found "},
             {"code": "auth/wrong-password", "message": "The password is invalid "},
-        ]; /*todo osetrit moznu options a pozri dalsie dokumentaciu
+        ]; /*todo osetrit moznu result a pozri dalsie dokumentaciu
         auth/too-many-requests*/
         //return the array only with one object
         return messages.filter(object => object.code === errorCode);
@@ -85,7 +85,7 @@ export class AuthService {
                 console.log('Auth Service: loginUser: success');
                 console.log(result);
 
-                // localStorage.setItem("",,JSON.stringify(options.user))
+                // localStorage.setItem("",,JSON.stringify(result.user))
                 // this.router.navigate(['dashboard']);
                 return null;
             })

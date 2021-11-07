@@ -6,6 +6,8 @@ import {Business} from "../../../interfaces/business";
 import {AlertController} from '@ionic/angular';
 import {async} from 'rxjs';
 import {errorObject} from "rxjs/internal-compatibility";
+import {CalendarService} from "../../../services/calendar.service";
+import {Calendar} from "../../../interfaces/calendar";
 
 @Component({
     selector: 'app-detail-business',
@@ -16,11 +18,16 @@ export class DetailBusinessPage implements OnInit {
     messageFirebase: string;
     business: Business;
     selectedBusinessId: string;
+    calendar : Calendar;
+    daysOfWeek: any;
+    pole: any;
 
     constructor(private route: ActivatedRoute,
         private businessService: BusinessService,
         private router: Router,
-        public alertController: AlertController) {
+        public alertController: AlertController,
+        private calendarService: CalendarService,
+    ) {
     }
 
 
@@ -28,19 +35,15 @@ export class DetailBusinessPage implements OnInit {
         console.log(this.route.snapshot.paramMap.get('businessId'));
 
         this.route.params.subscribe((params: Params) => {
-            /*console.log('Parameter  ' + JSON.stringify(params));
-             console.log('daj my sem ten paramreter  ' + params['businessId']);
-             */
             if (params['businessId'] != undefined) {
                 this.selectedBusinessId = params['businessId'];
                 this.getOneBusiness(params['businessId']);
-
+               // this.getCalendar();
+                this.getCalendar();
             }
             if (params["updateDone"]) {
                 this.messageFirebase = "Business successfully updated"
             }
-
-
         });
 
     }
@@ -48,10 +51,6 @@ export class DetailBusinessPage implements OnInit {
 
     getOneBusiness(documentID: string) {
         this.businessService.getOneBusiness(documentID).subscribe((business) => {
-                console.log("get one business");
-                console.log("---------------------");
-                console.log(business);
-
                 this.business = business;
             }, error => {
                 console.log(error);
@@ -59,52 +58,17 @@ export class DetailBusinessPage implements OnInit {
         );
     }
 
-    editBusiness() {
+    editBusiness(): void {
         console.log("clikc edit busines " + this.selectedBusinessId);
-        //todo potrebne odchyteni id business najlepsie asi ulozit do services
         this.router.navigate(['/register-business', {businessId: this.selectedBusinessId}])
 
     }
 
-
-    async showAlert() {
-        console.log('delete business');
-
-        const alert = await this.alertController.create({
-            cssClass: 'my-custom-class',
-            header: 'Confirm Deletion',
-            animated: true,
-            backdropDismiss:true,
-            message: 'Are you sure you want to permanently remove this item?',
-            buttons: [
-                {
-                    text: 'Cancel',
-                    role: 'cancel',
-                    cssClass: 'secondary',
-                    handler: () => {}
-                }, {
-                    text: 'Yes',
-                    handler: () => {
-                        console.log('Confirm Okay');
-                        this.deleteBusiness();
-                    }
-                }
-            ]
-        });
-
-        await alert.present();
-    }
-
-    deleteBusiness():void {
+    deleteBusiness(): void {
         this.businessService.deleteBusiness(this.selectedBusinessId).then(() => {
-            //redirect
-
-            //show notification , toast show on another page
-            // d
             this.router.navigate(['/list-business', {deletedBusiness: true}]);
             this.business = null;
             this.selectedBusinessId = null;
-
 
         }).catch((error) => {
             console.log("error you got error ");
@@ -114,12 +78,78 @@ export class DetailBusinessPage implements OnInit {
 
     }
 
-    createCalendar() {
-        console.log("create calendar ");
 
-        //todo odchytenie id business
-      this.router.navigate(['/create-calendar', {businessId: this.selectedBusinessId}]);
+    async showAlert(): Promise<any> {
+        console.log("show alert");
 
+        const alert = await this.alertController.create({
+            cssClass: 'my-custom-class',
+            header: 'Confirm Deletion',
+            animated: true,
+            backdropDismiss: true,
+            message: 'Are you sure you want to permanently remove this item?',
+            buttons: [
+                {
+                    text: 'Cancel',
+                    role: 'cancel',
+                    cssClass: 'secondary',
+                    handler: () => {
+                    }
+                }, {
+                    text: 'Yes',
+                    handler: () => {
+                        console.log('Confirm Okay');
+                        this.deleteBusiness();
+                    }
+                }]
+        });
+
+        await alert.present();
+    }
+
+    getCalendar() {
+       /* this.calendarService.findCalendar(this.selectedBusinessId).subscribe((calendars)=> {
+
+            this.calendar = calendars[0];
+
+            console.log(calendars);
+
+            console.log(this.calendar);
+            console.log("----------------------------------------");
+
+            if (this.calendar.week !== undefined) {
+                console.log(this.calendar.week);
+                console.log("som in claendar");
+                
+
+            }
+            
+           // this.daysOfWeek = calendars[0].week;
+        } )*/
+
+
+
+        this.calendarService.clearData(this.selectedBusinessId)
+
+
+
+
+    }
+
+   /* getCalendar(): void {
+        this.calendarService.getOneCalendar(this.selectedBusinessId).subscribe((value) => {
+            /!*   this.router.navigate(['/list-business', {deletedBusiness: true}]);
+             this.business = null;
+             this.selectedBusinessId = null;*!/
+            console.log(value);
+            console.log("yeeeah you got calendar");
+        }, error => {
+            console.log(error);
+        })
+    }*/
+
+    createCalendar(): void {
+        this.router.navigate(['/create-calendar', {businessId: this.selectedBusinessId}]);
     }
 
 

@@ -36,21 +36,38 @@
             <ion-card-subtitle>City {{business.city}}</ion-card-subtitle>
             <ion-card-subtitle>zipcode {{business.zipCode}}</ion-card-subtitle>
         </ion-card-header>
-<!--
-        <ion-card-content>
-            Founded in 1829 on an isthmus between Lake Monona and Lake Mendota, Madison was named the capital of the
-            Wisconsin Territory in 1836.
-        </ion-card-content>
--->
+        <!--
+                <ion-card-content>
+                    Founded in 1829 on an isthmus between Lake Monona and Lake Mendota, Madison was named the capital of the
+                    Wisconsin Territory in 1836.
+                </ion-card-content>
+        -->
 
         <section>
             <header>Possibility with business</header>
-            <ion-button color="warning"  (click)="editBusiness()">Edit</ion-button>
-            <ion-button color="danger"  (click)="showAlert()">Delete</ion-button>
+            <ion-button color="warning" (click)="editBusiness()">Edit</ion-button>
+            <ion-button color="danger" (click)="showAlert()">Delete</ion-button>
         </section>
 
         <br>
 
+
+        <div *ngFor="let item of daysOfWeek" class="schedule ">
+            <ion-row>
+                <ion-col>
+                    <div>{{item.day}}</div>
+                </ion-col>
+                <ion-col>
+                    <div>{{item.openingHours}}</div>
+                </ion-col>
+                <ion-col>
+                    <div>{{item.closingHours}}</div>
+                </ion-col>
+            </ion-row>
+        </div>
+
+
+        <!--todo condition ked mam kalendar button disabled for new calendar-->
         <section>
             <header>Calendar</header>
             <ion-button expand="block" (click)="createCalendar()">Create calendar</ion-button>

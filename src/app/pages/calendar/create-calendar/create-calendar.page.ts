@@ -1,11 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Params} from "@angular/router";
+import {ActivatedRoute, Params, Router} from "@angular/router";
 import {FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
 import {CalendarService} from "../../../services/calendar.service";
 //import { ToastController } from 'ionic-angular';
 import {Calendar} from "../../../interfaces/calendar";
 import {ToastController} from "@ionic/angular";
 import {__await} from "tslib";
+
 @Component({
     selector: 'app-create-calendar',
     templateUrl: './create-calendar.page.html',
@@ -13,25 +14,44 @@ import {__await} from "tslib";
 })
 export class CreateCalendarPage implements OnInit {
 
-
     messageFirebase: string;
     validForm: boolean = false;
     selectedBusinessId: string;
 
+
+
+
     //registerForm: FormGroup;
     options = [
-        {day: "Monday", open: "empty", closing: "empty"},
-        {day: "Tuesday", open: "empty", closing: "empty"},
-        {day: "Wednesday", open: "empty", closing: "empty"},
-        {day: "Thursday", open: "empty", closing: "empty"},
-        {day: "Friday", open: "empty", closing: "empty"},
-        {day: "Saturday", open: "empty", closing: "empty"},
-        {day: "Sunday", open: "empty", closing: "empty"},
+        {day: "Monday", openingHours: "empty", closingHours: "empty"},
+        {day: "Tuesday", openingHours: "empty", closingHours: "empty"},
+        {day: "Wednesday", openingHours: "empty", closingHours: "empty"},
+        {day: "Thursday", openingHours: "empty", closingHours: "empty"},
+        {day: "Friday", openingHours: "empty", closingHours: "empty"},
+        {day: "Saturday", openingHours: "empty", closingHours: "empty"},
+        {day: "Sunday", openingHours: "empty", closingHours: "empty"},
     ];
+
+    get calendarName(): FormControl {
+        return this.contactForm.get('calendarName') as FormControl;
+    }
+
+    get openingHours(): FormControl {
+        return this.contactForm.get('openingHours') as FormControl;
+    }
+
+    get closingHours(): FormControl {
+        return this.contactForm.get('closingHours') as FormControl;
+    }
+
+    get ordersFormArray() {
+        return this.contactForm.controls.options as FormArray;
+    }
 
     constructor(private route: ActivatedRoute,
         private calendarService: CalendarService,
-        private toastCtrl: ToastController) {
+        private toastCtrl: ToastController,
+        private router: Router) {
         this.dessertOptions.forEach(() => {
             this.ordersFormArray.push(new FormControl(false))
         })
@@ -47,40 +67,34 @@ export class CreateCalendarPage implements OnInit {
                 this.selectedBusinessId = params['businessId'];
             }
         });
+
+        //todo delete only for develop
+        /* this.contactForm.setValue({
+         calendarName: "Calendar s",
+         openingHours: "10:45",
+         closingHours: "10:45",
+         });*/
+
     }
 
-    /*////////////////////////////////////////////////////////*/
 
-    contactForm = new FormGroup({
-        calendarName: new FormControl("", Validators.required),
-        openingHours: new FormControl('', Validators.required),
-        closingHours: new FormControl('', Validators.required),
-        daysOfWeek: new FormArray([]),
-    });
+    contactForm = new FormGroup(
+        {
+            calendarName: new FormControl("", Validators.required),
+            openingHours: new FormControl('', Validators.required),
+            closingHours: new FormControl('', Validators.required),
+            options: new FormArray([]),
+        });
 
     dessertOptions: string[] = ["Monday", "Tuesday", "Wednesday",
                                 "Thursday", "Friday", "Saturday", "Sunday"];
 
-    get calendarName(): FormControl {
-        return this.contactForm.get('calendarName') as FormControl;
-    }
 
-    get openingHours(): FormControl {
-        return this.contactForm.get('openingHours') as FormControl;
-    }
-
-    get closingHours(): FormControl {
-        return this.contactForm.get('closingHours') as FormControl;
-    }
-
-    get ordersFormArray() {
-        return this.contactForm.controls.daysOfWeek as FormArray;
-    }
-    async showToast(msg :string) {
-        let toast =  await this.toastCtrl.create({
+    async showToast(msg: string) {
+        let toast = await this.toastCtrl.create({
             message: msg,
-            duration: 3000,
-            position: 'bottom'
+            duration: 5000,
+            position: 'middle'
         });
 
         toast.onDidDismiss();
@@ -93,22 +107,19 @@ export class CreateCalendarPage implements OnInit {
         const closingHour = this.contactForm.value.closingHours;
         const calendarName = this.contactForm.value.calendarName;
 
-        const array = this.contactForm.value.daysOfWeek;
+        const array = this.contactForm.value.options;
 
         array.forEach((element, index) => {
-            //let nameDay = [this.options[index].day];
-            //console.log(nameDay);
 
             if (element === true) {
-                this.options[index] = {day: this.options[index].day, open: openingHour, closing: closingHour};
+                this.options[index] = {
+                    day: this.options[index].day,
+                    openingHours: openingHour, closingHours: closingHour
+                };
+
                 this.validForm = true;
             }
         });
-
-        console.log('what is options ');
-        console.log(this.options);
-        console.log(this.options[0].open);
-
 
     }
 
@@ -119,11 +130,11 @@ export class CreateCalendarPage implements OnInit {
         let calendar: Calendar = {
             idBusiness: this.selectedBusinessId,
             nameCalendar: calendarName,
-            schedule: this.options,
-            break: ['attempt'],
-            
-        };
-        
+            week: this.options,
+            break: 'hello',
+        };//todo prestavky niesu nastavene
+        //todo typovanie v interface
+
         /*{
          id?: string;
          idBusiness: string;
@@ -132,14 +143,20 @@ export class CreateCalendarPage implements OnInit {
          break: string;
          }
          */
+        console.log("save datat");
 
         this.calendarService.addCalendar(calendar).then(value => {
 
             console.log("pridane do db");
             console.log(value);
-            this.showToast("Calendar successfully created")
+
+            this.showToast("Calendar successfully created");
+
+            this.router.navigate(['/detail-business', {businessId: this.selectedBusinessId}])
 
         }).catch((error) => {
+            console.log('this is error');
+
             console.log(error);
             this.showToast("Something is wrong")
         });
