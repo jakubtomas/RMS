@@ -5,12 +5,12 @@ import {Business} from "../interfaces/business";
 import {BusinessPermission} from "../interfaces/businessPermission";
 import {Observable} from "rxjs";
 import {map} from "rxjs/operators";
+import {error} from "selenium-webdriver";
 
 @Injectable({
     providedIn: 'root'
 })
 export class CalendarService {
-
 
     calendarCollection: AngularFirestoreCollection<Calendar>;
 
@@ -24,39 +24,23 @@ export class CalendarService {
         return this.calendarCollection.add(calendarData);
     }
 
-    findCalendar(selectedId: string): Observable<Calendar[]> {
+    getCalendars(): Observable<Calendar[] | undefined> {
         return this.calendarCollection.snapshotChanges().pipe(
             map(changes => {
                 return changes.map(a => {
                     const data = a.payload.doc.data() as Calendar;
                     data.id = a.payload.doc.id;
-
-                    if (data.idBusiness === selectedId) {
-                        console.log("return true manakoasdfhas o ");
-                        return data;
-                    }
-
+                    return data;
                 });
             }));
     }
 
-    clearData(selectedId : string){
-
-        return this.findCalendar(selectedId).subscribe(value => {
-
-            value.filter(value1 => value1.idBusiness  )
-
-        },error => {
-            console.log("error");
-
-            console.log(error);
-
-        })
+    getOneCalendar(documentId: string): Observable<Calendar> {
+        return this.calendarCollection.doc(documentId).valueChanges();
     }
 
-
-    // function select datat
-    getOneCalendar(documentId: string): Observable<Calendar | undefined> {
-        return this.calendarCollection.doc("dEIrTxdU711uqdaEh3sG").valueChanges();
+    updateCalendar(docCalendarId:string, calendarData: Calendar): Promise<void> {
+        return this.calendarCollection.doc(docCalendarId).update(calendarData);
     }
 }
+

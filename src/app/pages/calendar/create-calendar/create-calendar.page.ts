@@ -6,6 +6,7 @@ import {CalendarService} from "../../../services/calendar.service";
 import {Calendar} from "../../../interfaces/calendar";
 import {ToastController} from "@ionic/angular";
 import {__await} from "tslib";
+import {Day} from "../../../interfaces/day";
 
 @Component({
     selector: 'app-create-calendar',
@@ -17,12 +18,10 @@ export class CreateCalendarPage implements OnInit {
     messageFirebase: string;
     validForm: boolean = false;
     selectedBusinessId: string;
+    calendar: Calendar;
+    isUpdateCalendar: boolean = false;
 
-
-
-
-    //registerForm: FormGroup;
-    options = [
+    options: Day[] = [
         {day: "Monday", openingHours: "empty", closingHours: "empty"},
         {day: "Tuesday", openingHours: "empty", closingHours: "empty"},
         {day: "Wednesday", openingHours: "empty", closingHours: "empty"},
@@ -63,20 +62,27 @@ export class CreateCalendarPage implements OnInit {
 
         this.route.params.subscribe((params: Params) => {
 
+            //
             if (params['businessId'] != undefined) {
                 this.selectedBusinessId = params['businessId'];
             }
+        console.log(params['docCalendarId'] + " docCalendar");
+        console.log(params['UpdateCalendar'] + "is Update Calendar");
+
+            if ((params['docCalendarId'] != undefined) && params['updateCalendar']) {
+
+                console.log("you got paramater docCalendarId " + params['docCalendarId']);
+
+                this.getOneCalendar(params['docCalendarId']);
+                this.isUpdateCalendar = true;
+            } else {
+                console.log("nemam id");
+                
+            }
+
         });
 
-        //todo delete only for develop
-        /* this.contactForm.setValue({
-         calendarName: "Calendar s",
-         openingHours: "10:45",
-         closingHours: "10:45",
-         });*/
-
     }
-
 
     contactForm = new FormGroup(
         {
@@ -93,7 +99,7 @@ export class CreateCalendarPage implements OnInit {
     async showToast(msg: string) {
         let toast = await this.toastCtrl.create({
             message: msg,
-            duration: 5000,
+            duration: 3000,
             position: 'middle'
         });
 
@@ -105,7 +111,6 @@ export class CreateCalendarPage implements OnInit {
         console.log(this.contactForm.value);
         const openingHour = this.contactForm.value.openingHours;
         const closingHour = this.contactForm.value.closingHours;
-        const calendarName = this.contactForm.value.calendarName;
 
         const array = this.contactForm.value.options;
 
@@ -162,4 +167,44 @@ export class CreateCalendarPage implements OnInit {
         });
     }
 
+    getOneCalendar(docCalendarId: string) {
+        this.calendarService.getOneCalendar(docCalendarId).subscribe(value => {
+            console.log("this is calendar updata");
+            console.log(value);
+            this.calendar = value;
+
+            this.options = value.week;
+            this.contactForm.setValue({
+                calendarName: this.calendar.nameCalendar,
+                openingHours: "",
+                closingHours: "",
+                options: []
+            })
+        }, error => {
+            console.log("you got error ");
+            console.log(error);
+        })
+    }
+    //set new value into function
+    updateCalendars(){
+        const calendarName = this.contactForm.value.calendarName;
+        let updateCalendar: Calendar = {
+            idBusiness: this.calendar.idBusiness,
+            nameCalendar: calendarName,
+            week: this.options,
+            break: 'hello',
+        };
+        // create data according the creat calendar ts
+    this.calendarService.updateCalendar(this.calendar.id, updateCalendar).then(() => {
+       // this.router.navigate(['/list-business', {deletedBusiness: true}]);
+        console.log("uspesny update ");
+
+
+    }).catch((error) => {
+        console.log("error you got error ");
+        console.log(error);
+       // this.messageFirebase = "Something is wrong";
+    });
+
+    }
 }

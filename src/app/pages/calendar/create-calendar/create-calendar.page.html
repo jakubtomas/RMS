@@ -1,101 +1,109 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Create Calendar.</ion-title>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-title>Create Calendar.</ion-title>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <div class="ion-content">
-    <ion-card *ngIf="messageFirebase">
-      <ion-item color="success">
-        <label class="ion-text-center">{{messageFirebase}}</label>
-      </ion-item>
-    </ion-card>
+    <div class="ion-content">
+        <ion-card *ngIf="messageFirebase">
+            <ion-item color="success">
+                <label class="ion-text-center">{{messageFirebase}}</label>
+            </ion-item>
+        </ion-card>
 
-    <ion-card>
-      <ion-item>
-        <h3>Let's create calendar with opening hours </h3>
-      </ion-item>
-    </ion-card>
-
-
-    <form [formGroup]="contactForm"  novalidate>
-      <ion-item>
-        <ion-label>Calendar Name</ion-label>
-        <ion-input formControlName="calendarName"></ion-input>
-      </ion-item>
-
-      <div *ngIf="calendarName.errors?.required && calendarName.touched">
-        <em> Name calendar is required.</em>
-      </div>
-
-      <ion-item>
-        <ion-label>Opening hour</ion-label>
-        <ion-datetime displayFormat="HH:mm" formControlName="openingHours"
-                      placeholder="Select Time"></ion-datetime>
-      </ion-item>
-
-      <div *ngIf="openingHours.errors?.required && openingHours.touched">
-        <em> Opening hours is required</em>
-      </div>
-
-      <ion-item>
-        <ion-label>Closing hour</ion-label>
-        <ion-datetime displayFormat="HH:mm" formControlName="closingHours"
-                      placeholder="Select Time"></ion-datetime>
-      </ion-item>
-
-      <div *ngIf="closingHours.errors?.required && closingHours.touched">
-        <em> Closing is required</em>
-      </div>
+        <ion-card>
+            <ion-item>
+                <h3>Let's create calendar with opening hours </h3>
+            </ion-item>
+        </ion-card>
 
 
-      <ng-container formArrayName="options">
-        <ion-item *ngFor="let dessert of dessertOptions; let i = index">
-          <ion-label>{{ dessert }}</ion-label>
-          <ion-checkbox slot="start" [formControlName]="i"></ion-checkbox>
-        </ion-item>
-      </ng-container>
-      <ion-item>
-        <ion-label> {{ contactForm.value.options | json }}<br/></ion-label>
-      </ion-item>
-      <ion-row>
-        <ion-col>
-          <ion-button (click)="setData()"
-                      type="submit" class="smallButton" expand="block" [disabled]="!contactForm.valid"
-          >Set values table
-          </ion-button>
-        </ion-col>
-      </ion-row>
-    </form>
+        <form [formGroup]="contactForm" novalidate>
+            <ion-item>
+                <ion-label>Calendar Name</ion-label>
+                <ion-input formControlName="calendarName"></ion-input>
+            </ion-item>
+
+            <div *ngIf="calendarName.errors?.required && calendarName.touched">
+                <em> Name calendar is required.</em>
+            </div>
+
+            <ion-item>
+                <ion-label>Opening hour</ion-label>
+                <ion-datetime displayFormat="HH:mm" formControlName="openingHours"
+                              placeholder="Select Time"></ion-datetime>
+            </ion-item>
+
+            <div *ngIf="openingHours.errors?.required && openingHours.touched">
+                <em> Opening hours is required</em>
+            </div>
+
+            <ion-item>
+                <ion-label>Closing hour</ion-label>
+                <ion-datetime displayFormat="HH:mm" formControlName="closingHours"
+                              placeholder="Select Time"></ion-datetime>
+            </ion-item>
+
+            <div *ngIf="closingHours.errors?.required && closingHours.touched">
+                <em> Closing is required</em>
+            </div>
 
 
+            <ng-container formArrayName="options">
+                <ion-item *ngFor="let dessert of dessertOptions; let i = index">
+                    <ion-label>{{ dessert }}</ion-label>
+                    <ion-checkbox slot="start" [formControlName]="i"></ion-checkbox>
+                </ion-item>
+            </ng-container>
+            <ion-item>
+                <ion-label> {{ contactForm.value.options | json }}<br/></ion-label>
+            </ion-item>
+            <ion-row>
+                <ion-col>
+                    <ion-button (click)="setData()"
+                                type="submit" class="smallButton" expand="block" [disabled]="!contactForm.valid"
+                    >Set values table
+                    </ion-button>
+                </ion-col>
+            </ion-row>
+        </form>
 
-    <ion-card *ngIf="firebaseErrorMessage">
-      <ion-item color="warning">
-        <label class="ion-text-center">{{firebaseErrorMessage}}</label>
-      </ion-item>
-    </ion-card>
+
+        <ion-card *ngIf="firebaseErrorMessage">
+            <ion-item color="warning">
+                <label class="ion-text-center">{{firebaseErrorMessage}}</label>
+            </ion-item>
+        </ion-card>
 
 
+        <div *ngFor="let item of options" class="schedule ">
+            <ion-row>
+                <ion-col>
+                    <div>{{item.day}}</div>
+                </ion-col>
+                <ion-col>
+                    <div>{{item.openingHours}}</div>
+                </ion-col>
+                <ion-col>
+                    <div>{{item.closingHours}}</div>
+                </ion-col>
+            </ion-row>
+        </div>
 
-    <div *ngFor="let item of options" class="schedule ">
-      <ion-row>
-        <ion-col>
-          <div>{{item.day}}</div>
-        </ion-col>
-        <ion-col>
-          <div>{{item.openingHours}}</div>
-        </ion-col>
-        <ion-col>
-          <div>{{item.closingHours}}</div>
-        </ion-col>
-      </ion-row>
+
+        <ion-button *ngIf="!isUpdateCalendar else updateButton " type="submit" expand="block" (click)="saveData()"
+                    [disabled]="!validForm">Save calendar data
+        </ion-button>
+
+        <ng-template #updateButton>
+
+            <section>
+                <header>Calendar</header>
+                <ion-button expand="block" (click)="updateCalendars()" [disabled]="!validForm">Update calendar
+                </ion-button>
+            </section>
+        </ng-template>
+
     </div>
-
-    <ion-button type="submit" expand="block" (click)="saveData()"
-                [disabled]="!validForm">Save calendar data
-    </ion-button>
-
-  </div>
 </ion-content>

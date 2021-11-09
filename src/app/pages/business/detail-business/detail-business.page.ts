@@ -8,6 +8,7 @@ import {async} from 'rxjs';
 import {errorObject} from "rxjs/internal-compatibility";
 import {CalendarService} from "../../../services/calendar.service";
 import {Calendar} from "../../../interfaces/calendar";
+import {object} from "@angular/fire/database";
 
 @Component({
     selector: 'app-detail-business',
@@ -18,7 +19,8 @@ export class DetailBusinessPage implements OnInit {
     messageFirebase: string;
     business: Business;
     selectedBusinessId: string;
-    calendar : Calendar;
+    calendar: Calendar;
+    calendars: Calendar[];
     daysOfWeek: any;
     pole: any;
 
@@ -38,8 +40,8 @@ export class DetailBusinessPage implements OnInit {
             if (params['businessId'] != undefined) {
                 this.selectedBusinessId = params['businessId'];
                 this.getOneBusiness(params['businessId']);
-               // this.getCalendar();
-                this.getCalendar();
+                // this.getCalendar();
+                this.getCalendars();
             }
             if (params["updateDone"]) {
                 this.messageFirebase = "Business successfully updated"
@@ -59,9 +61,7 @@ export class DetailBusinessPage implements OnInit {
     }
 
     editBusiness(): void {
-        console.log("clikc edit busines " + this.selectedBusinessId);
         this.router.navigate(['/register-business', {businessId: this.selectedBusinessId}])
-
     }
 
     deleteBusiness(): void {
@@ -107,46 +107,33 @@ export class DetailBusinessPage implements OnInit {
         await alert.present();
     }
 
-    getCalendar() {
-       /* this.calendarService.findCalendar(this.selectedBusinessId).subscribe((calendars)=> {
-
-            this.calendar = calendars[0];
-
-            console.log(calendars);
-
-            console.log(this.calendar);
-            console.log("----------------------------------------");
-
-            if (this.calendar.week !== undefined) {
-                console.log(this.calendar.week);
-                console.log("som in claendar");
+    getCalendars(): void {
+        this.calendarService.getCalendars().subscribe(calendars => {
+            this.calendars = calendars;
+            if (this.calendars.length > 0) {
+                console.log("run condition");
                 
-
+                this.calendars.forEach(calendar => {
+                    if (calendar.idBusiness === this.selectedBusinessId) {
+                        this.calendar = calendar;
+                    }
+                });
             }
-            
-           // this.daysOfWeek = calendars[0].week;
-        } )*/
+        }, error => {
+            console.log("you got error ");
+            console.log(error);
+        })
+    }
 
-
-
-        this.calendarService.clearData(this.selectedBusinessId)
-
-
-
+    editCalendar():void {
+        console.log("click edit calendar");
+        
+      //  this.router.navigate(['/register-business', {businessId: this.selectedBusinessId}])
+        this.router.navigate(['/create-calendar',
+            {docCalendarId: this.calendar.id, updateCalendar: true}]);
 
     }
 
-   /* getCalendar(): void {
-        this.calendarService.getOneCalendar(this.selectedBusinessId).subscribe((value) => {
-            /!*   this.router.navigate(['/list-business', {deletedBusiness: true}]);
-             this.business = null;
-             this.selectedBusinessId = null;*!/
-            console.log(value);
-            console.log("yeeeah you got calendar");
-        }, error => {
-            console.log(error);
-        })
-    }*/
 
     createCalendar(): void {
         this.router.navigate(['/create-calendar', {businessId: this.selectedBusinessId}]);
