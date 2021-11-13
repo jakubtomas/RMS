@@ -37,6 +37,7 @@ export class ListBusinessPage implements OnInit {
 
         this.route.params.subscribe((params: Params) => {
             console.log('Parameter  ' + JSON.stringify(params));
+            console.log('Parameter  ' + params);
             console.log('daj my sem ten parameter  ' + params['businessId']);
 
             if (params['deletedBusiness']) {
@@ -70,13 +71,15 @@ export class ListBusinessPage implements OnInit {
 
     chooseBusiness(business: Business) {
         console.log("call the function");
+        console.log(business.id);
         
         console.log('business is  ' + business.nameOrganization);
 
         if (business.id !== null) {
             //also send value that iam from list of businesses
             //send also the id
-            this.router.navigate(['/detail-business', {businessId: business.id}])
+            //this.router.navigate(['/detail-business', {businessId: business.id}])
+           this.router.navigate(['/detail-business'], { queryParams: { businessId: business.id}})
         }
     }
 

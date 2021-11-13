@@ -5,7 +5,7 @@ import {CalendarService} from "../../../services/calendar.service";
 //import { ToastController } from 'ionic-angular';
 import {Calendar} from "../../../interfaces/calendar";
 import {ToastController} from "@ionic/angular";
-import {__await} from "tslib";
+
 import {Day} from "../../../interfaces/day";
 
 @Component({
@@ -20,6 +20,7 @@ export class CreateCalendarPage implements OnInit {
     selectedBusinessId: string;
     calendar: Calendar;
     isUpdateCalendar: boolean = false;
+    docIdCalendar: string;
 
     options: Day[] = [
         {day: "Monday", openingHours: "empty", closingHours: "empty"},
@@ -61,23 +62,21 @@ export class CreateCalendarPage implements OnInit {
         this.messageFirebase = null;
 
         this.route.params.subscribe((params: Params) => {
-
-            //
             if (params['businessId'] != undefined) {
                 this.selectedBusinessId = params['businessId'];
             }
-        console.log(params['docCalendarId'] + " docCalendar");
-        console.log(params['UpdateCalendar'] + "is Update Calendar");
+            console.log(params['docCalendarId'] + " docCalendar");
+            console.log(params['UpdateCalendar'] + "is Update Calendar");
 
             if ((params['docCalendarId'] != undefined) && params['updateCalendar']) {
-
+                this.docIdCalendar = params['docCalendarId'];
                 console.log("you got paramater docCalendarId " + params['docCalendarId']);
 
                 this.getOneCalendar(params['docCalendarId']);
                 this.isUpdateCalendar = true;
             } else {
                 console.log("nemam id");
-                
+
             }
 
         });
@@ -149,44 +148,42 @@ export class CreateCalendarPage implements OnInit {
          }
          */
         console.log("save datat");
+        console.log(JSON.stringify(calendar));
 
         this.calendarService.addCalendar(calendar).then(value => {
-
-            console.log("pridane do db");
-            console.log(value);
-
             this.showToast("Calendar successfully created");
-
-            this.router.navigate(['/detail-business', {businessId: this.selectedBusinessId}])
+            //  this.router.navigate(['/detail-business', {businessId: this.selectedBusinessId}])
+            this.router.navigate(['/detail-business'], {queryParams: {businessId: this.selectedBusinessId}})
 
         }).catch((error) => {
-            console.log('this is error');
-
+            console.log('error');
             console.log(error);
             this.showToast("Something is wrong")
         });
     }
 
     getOneCalendar(docCalendarId: string) {
-        this.calendarService.getOneCalendar(docCalendarId).subscribe(value => {
+        this.calendarService.getOneCalendar(docCalendarId).subscribe(calendar$ => {
             console.log("this is calendar updata");
-            console.log(value);
-            this.calendar = value;
+            console.log(calendar$);
 
-            this.options = value.week;
-            this.contactForm.setValue({
-                calendarName: this.calendar.nameCalendar,
-                openingHours: "",
-                closingHours: "",
-                options: []
-            })
+            this.calendar = calendar$;
+            this.options = calendar$.week;
+
+             this.contactForm.setValue({
+             calendarName: calendar$.nameCalendar,
+             openingHours: "",
+             closingHours: "",
+             options: [false,false,false,false,false,false,false,]
+             })
         }, error => {
             console.log("you got error ");
             console.log(error);
         })
     }
+
     //set new value into function
-    updateCalendars(){
+    updateCalendars() {
         const calendarName = this.contactForm.value.calendarName;
         let updateCalendar: Calendar = {
             idBusiness: this.calendar.idBusiness,
@@ -195,16 +192,17 @@ export class CreateCalendarPage implements OnInit {
             break: 'hello',
         };
         // create data according the creat calendar ts
-    this.calendarService.updateCalendar(this.calendar.id, updateCalendar).then(() => {
-       // this.router.navigate(['/list-business', {deletedBusiness: true}]);
-        console.log("uspesny update ");
+        this.calendarService.updateCalendar(this.docIdCalendar, updateCalendar).then(() => {
+            // this.router.navigate(['/list-business', {deletedBusiness: true}]);
+            console.log("uspesny update ");
+            this.router.navigate(['/detail-business'], { queryParams: { businessId: updateCalendar.id}})
+            this.showToast("The Update Is Done Successfully")
 
-
-    }).catch((error) => {
-        console.log("error you got error ");
-        console.log(error);
-       // this.messageFirebase = "Something is wrong";
-    });
+        }).catch((error) => {
+            console.log("error you got error ");
+            console.log(error);
+            // this.messageFirebase = "Something is wrong";
+        });
 
     }
 }

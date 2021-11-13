@@ -43,13 +43,6 @@ export class BusinessService {
     idUser: string = '';
     items: Observable<Item[]>;
 
-
-    business$ = new Subject<any>();
-    businessObservable: Observable<Business>;
-
-    //businessBehavior$: BehaviorSubject<boolean>;
-
-
     typesOfOrganization = [
         {name: "Health Care"},
         {name: "Food/Restaurant"},
@@ -67,9 +60,8 @@ export class BusinessService {
         console.log('your user id is ' + this.idUser);
 
         this.itemsCollection = this.afs.collection('items', ref => ref.orderBy('name', 'asc'));
-        //  this.businessCollection = this.afs.collection('business', ref => ref.orderBy('name','asc'));
-        this.businessCollection = this.afs.collection('business', ref => ref.orderBy('nameOrganization', 'asc'));
-        this.businessCollection2 = this.afs.collection('business');
+         // this.businessCollection = this.afs.collection('business', ref => ref.orderBy('name','asc'));
+         this.businessCollection2 = this.afs.collection('business');
         //this.businessPermissionCollection= this.afs.collection('businessPermission', ref => ref.orderBy('idUser','asc'));
         this.businessPermissionCollection = this.afs.collection('businessPermission');
 
@@ -88,7 +80,7 @@ export class BusinessService {
     }
 
     getAllBusinesses(): Observable<Business[]> {
-        return this.businessCollection.snapshotChanges().pipe(
+        return this.businessCollection2.snapshotChanges().pipe(
             map(changes => {
                 return changes.map(a => {
                     const data = a.payload.doc.data() as Business;
@@ -100,13 +92,18 @@ export class BusinessService {
     }
 
     getOneBusiness(documentId: string): Observable<Business> {
-        return this.businessCollection.doc(documentId).valueChanges();
+        console.log(documentId);
+        
+        return this.businessCollection2.doc(documentId).valueChanges();
     }
 
 
     addBusiness(businessData: Business): Promise<DocumentReference<BusinessPermission>> {
         //todo add typ then value
-        return this.businessCollection.add(businessData).then((value) => {
+
+        console.log(JSON.stringify(businessData));
+
+        return this.businessCollection2.add(businessData).then((value) => {
 
             let businessPermissionObject: BusinessPermission = {
                 idUser: localStorage.getItem('idUser'),

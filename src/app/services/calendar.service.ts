@@ -1,11 +1,9 @@
 import {Injectable} from '@angular/core';
 import {AngularFirestore, AngularFirestoreCollection, DocumentReference} from "@angular/fire/compat/firestore";
 import {Calendar} from "../interfaces/calendar";
-import {Business} from "../interfaces/business";
-import {BusinessPermission} from "../interfaces/businessPermission";
 import {Observable} from "rxjs";
 import {map} from "rxjs/operators";
-import {error} from "selenium-webdriver";
+import {Business} from "../interfaces/business";
 
 @Injectable({
     providedIn: 'root'
@@ -13,34 +11,61 @@ import {error} from "selenium-webdriver";
 export class CalendarService {
 
     calendarCollection: AngularFirestoreCollection<Calendar>;
+    calendarCollection2: AngularFirestoreCollection<Calendar>;
 
     constructor(public afs: AngularFirestore) {
         this.calendarCollection = this.afs.collection('calendar', ref => ref.orderBy('nameCalendar', 'asc'));
+        this.calendarCollection2 = this.afs.collection('calendar' );
 
     }
 
     //addCalendar(calendarData: Business): Promise<DocumentReference<BusinessPermission>> {
     addCalendar(calendarData: Calendar): Promise<DocumentReference<Calendar>> {
+        console.log(" problem here");
         return this.calendarCollection.add(calendarData);
     }
 
-    getCalendars(): Observable<Calendar[] | undefined> {
+    getCalendars(): Observable<Calendar[] > {
         return this.calendarCollection.snapshotChanges().pipe(
             map(changes => {
                 return changes.map(a => {
                     const data = a.payload.doc.data() as Calendar;
                     data.id = a.payload.doc.id;
+
                     return data;
                 });
             }));
     }
 
+    /*getAllBusinesses(): Observable<Business[]> {
+        return this.businessCollection2.snapshotChanges().pipe(
+            map(changes => {
+                return changes.map(a => {
+                    const data = a.payload.doc.data() as Business;
+                    data.id = a.payload.doc.id;
+                    // this.businessesData.push(data);
+                    return data;
+                });
+            }));
+    }*/
+    
+    
+    
+    
+    
     getOneCalendar(documentId: string): Observable<Calendar> {
         return this.calendarCollection.doc(documentId).valueChanges();
     }
 
     updateCalendar(docCalendarId:string, calendarData: Calendar): Promise<void> {
-        return this.calendarCollection.doc(docCalendarId).update(calendarData);
+        console.log("docCalendarId:string" + docCalendarId);
+        console.log(" calendar data " + calendarData);
+        return this.calendarCollection2.doc(docCalendarId).update(calendarData);
     }
+
+    deleteCalendar(docIdCalendar: string): Promise<void> {
+        return this.calendarCollection2.doc(docIdCalendar).delete();
 }
+}
+
 

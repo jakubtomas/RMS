@@ -3,7 +3,7 @@ import {ActivatedRoute, Params, Router} from "@angular/router";
 import {catchError} from 'rxjs/operators';
 import {BusinessService} from "../../../services/business.service";
 import {Business} from "../../../interfaces/business";
-import {AlertController} from '@ionic/angular';
+import {AlertController, ToastController} from '@ionic/angular';
 import {async} from 'rxjs';
 import {errorObject} from "rxjs/internal-compatibility";
 import {CalendarService} from "../../../services/calendar.service";
@@ -27,6 +27,7 @@ export class DetailBusinessPage implements OnInit {
     constructor(private route: ActivatedRoute,
         private businessService: BusinessService,
         private router: Router,
+        private toastCtrl: ToastController,
         public alertController: AlertController,
         private calendarService: CalendarService,
     ) {
@@ -36,7 +37,8 @@ export class DetailBusinessPage implements OnInit {
     ngOnInit() {
         console.log(this.route.snapshot.paramMap.get('businessId'));
 
-        this.route.params.subscribe((params: Params) => {
+        this.route.queryParams.subscribe((params: Params) => {
+
             if (params['businessId'] != undefined) {
                 this.selectedBusinessId = params['businessId'];
                 this.getOneBusiness(params['businessId']);
@@ -50,8 +52,20 @@ export class DetailBusinessPage implements OnInit {
 
     }
 
+    async showToast(msg: string) {
+        let toast = await this.toastCtrl.create({
+            message: msg,
+            duration: 3000,
+            position: 'middle'
+        });
+
+        toast.onDidDismiss();
+        await toast.present();
+    }
+
 
     getOneBusiness(documentID: string) {
+
         this.businessService.getOneBusiness(documentID).subscribe((business) => {
                 this.business = business;
             }, error => {
@@ -75,12 +89,20 @@ export class DetailBusinessPage implements OnInit {
             console.log(error);
             this.messageFirebase = "Something is wrong";
         });
-
     }
 
-
-    async showAlert(): Promise<any> {
+    async showAlertForDelete(input:string): Promise<any> {
         console.log("show alert");
+        let deleteBusiness: boolean = null;
+
+        if (input === "business") {
+            deleteBusiness = true;
+        } else {
+            deleteBusiness = false;
+        }
+
+
+
 
         const alert = await this.alertController.create({
             cssClass: 'my-custom-class',
@@ -99,7 +121,14 @@ export class DetailBusinessPage implements OnInit {
                     text: 'Yes',
                     handler: () => {
                         console.log('Confirm Okay');
-                        this.deleteBusiness();
+
+                        if (deleteBusiness) {
+                            this.deleteBusiness();
+                        }
+                        if (!deleteBusiness) {
+                            this.deleteCalendar();
+                        }
+
                     }
                 }]
         });
@@ -107,16 +136,33 @@ export class DetailBusinessPage implements OnInit {
         await alert.present();
     }
 
+    deleteCalendar(): void {
+        this.calendarService.deleteCalendar(this.selectedBusinessId).then(() => {
+            this.showToast("Calendar has been deleted");
+            this.calendar = null;
+
+        }).catch((error) => {
+            console.log("error you got error ");
+            console.log(error);
+            this.messageFirebase = "Something is wrong";
+        });
+    }
+
     getCalendars(): void {
         this.calendarService.getCalendars().subscribe(calendars => {
+            console.log("details busines calendar");
+            console.log(calendars);
+
             this.calendars = calendars;
             if (this.calendars.length > 0) {
-                console.log("run condition");
-                
                 this.calendars.forEach(calendar => {
                     if (calendar.idBusiness === this.selectedBusinessId) {
                         this.calendar = calendar;
-                    }
+                        console.log(" podmienka splnena ");
+                    }/* else {
+                        console.log(" podmienka splnena ");
+                        this.calendar = null;
+                    }*/
                 });
             }
         }, error => {
@@ -125,10 +171,10 @@ export class DetailBusinessPage implements OnInit {
         })
     }
 
-    editCalendar():void {
+    editCalendar(): void {
         console.log("click edit calendar");
-        
-      //  this.router.navigate(['/register-business', {businessId: this.selectedBusinessId}])
+
+        //  this.router.navigate(['/register-business', {businessId: this.selectedBusinessId}])
         this.router.navigate(['/create-calendar',
             {docCalendarId: this.calendar.id, updateCalendar: true}]);
 

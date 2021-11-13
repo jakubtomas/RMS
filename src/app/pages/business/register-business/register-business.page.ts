@@ -193,7 +193,7 @@ export class RegisterBusinessPage implements OnInit {
         })
     }
 
-    getOneBusinessForUpdate(businessId: string) {
+    getOneBusinessForUpdate(businessId: string):void {
 
         this.businessId = businessId;
         this.businessService.getOneBusiness(businessId).subscribe((business) => {
