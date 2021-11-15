@@ -3,6 +3,7 @@ import {AngularFireAuth} from '@angular/fire/compat/auth';
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {Observable} from 'rxjs';
 import {AuthService} from "../../services/auth.service";
+import {BusinessService} from "../../services/business.service";
 
 @Component({
     selector: 'app-dashboard',
@@ -14,17 +15,21 @@ export class DashboardPage implements OnInit {
     user: Observable<any>;
     emailVerified: boolean = false;
     email: string = ' ';
+    isActiveMode: boolean = false;
 
     constructor(
         private route: ActivatedRoute,
         private router: Router,
         private authService: AuthService,
-        private afAuth: AngularFireAuth
+        private afAuth: AngularFireAuth,
+        private businessService: BusinessService
     ) {
         this.user = null;
     }
 
     ngOnInit() {
+
+        this.isActiveMode = this.businessService.isActiveMode;
         this.afAuth.authState.subscribe(user => {
             console.log('Dashboard: user', user);
 
@@ -35,7 +40,6 @@ export class DashboardPage implements OnInit {
                 this.email = null;
                 this.emailVerified = null
             }
-
         });
 
 /*

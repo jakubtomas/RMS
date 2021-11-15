@@ -75,12 +75,16 @@ export class DetailBusinessPage implements OnInit {
     }
 
     editBusiness(): void {
-        this.router.navigate(['/register-business', {businessId: this.selectedBusinessId}])
+        //this.router.navigate(['/register-business', {businessId: this.selectedBusinessId}]);
+        this.router.navigate(['/register-business'], { queryParams: {businessId: this.selectedBusinessId}})
+
     }
 
     deleteBusiness(): void {
         this.businessService.deleteBusiness(this.selectedBusinessId).then(() => {
-            this.router.navigate(['/list-business', {deletedBusiness: true}]);
+         //   this.router.navigate(['/list-business', {deletedBusiness: true}]);
+            this.router.navigate(['/list-business'], {queryParams: {deletedBusiness: true}});
+
             this.business = null;
             this.selectedBusinessId = null;
 
@@ -101,9 +105,6 @@ export class DetailBusinessPage implements OnInit {
             deleteBusiness = false;
         }
 
-
-
-
         const alert = await this.alertController.create({
             cssClass: 'my-custom-class',
             header: 'Confirm Deletion',
@@ -120,8 +121,6 @@ export class DetailBusinessPage implements OnInit {
                 }, {
                     text: 'Yes',
                     handler: () => {
-                        console.log('Confirm Okay');
-
                         if (deleteBusiness) {
                             this.deleteBusiness();
                         }
@@ -137,7 +136,7 @@ export class DetailBusinessPage implements OnInit {
     }
 
     deleteCalendar(): void {
-        this.calendarService.deleteCalendar(this.selectedBusinessId).then(() => {
+        this.calendarService.deleteCalendar(this.calendar.id).then(() => {
             this.showToast("Calendar has been deleted");
             this.calendar = null;
 
@@ -158,11 +157,7 @@ export class DetailBusinessPage implements OnInit {
                 this.calendars.forEach(calendar => {
                     if (calendar.idBusiness === this.selectedBusinessId) {
                         this.calendar = calendar;
-                        console.log(" podmienka splnena ");
-                    }/* else {
-                        console.log(" podmienka splnena ");
-                        this.calendar = null;
-                    }*/
+                    }
                 });
             }
         }, error => {
@@ -175,14 +170,17 @@ export class DetailBusinessPage implements OnInit {
         console.log("click edit calendar");
 
         //  this.router.navigate(['/register-business', {businessId: this.selectedBusinessId}])
-        this.router.navigate(['/create-calendar',
-            {docCalendarId: this.calendar.id, updateCalendar: true}]);
+      //  this.router.navigate(['/create-calendar', {docCalendarId: this.calendar.id, updateCalendar: true}]);
+        this.router.navigate(['/create-calendar'], { queryParams: { docCalendarId: this.calendar.id, updateCalendar: true}})
+
 
     }
 
 
     createCalendar(): void {
-        this.router.navigate(['/create-calendar', {businessId: this.selectedBusinessId}]);
+    //    this.router.navigate(['/create-calendar', {businessId: this.selectedBusinessId}]);
+        this.router.navigate(['/create-calendar'], { queryParams: { businessId: this.selectedBusinessId}})
+
     }
 
 

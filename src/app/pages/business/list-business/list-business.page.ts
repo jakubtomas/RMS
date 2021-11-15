@@ -21,6 +21,8 @@ export class ListBusinessPage implements OnInit {
     businesses: Business[];
     messageFirebase: string;
 
+    orderByName: string = "asc";
+
     constructor(private route: ActivatedRoute,
                 private businessService: BusinessService,
                 private router: Router) {
@@ -35,11 +37,8 @@ export class ListBusinessPage implements OnInit {
         this.messageFirebase = null;
 
 
-        this.route.params.subscribe((params: Params) => {
+        this.route.queryParams.subscribe((params: Params) => {
             console.log('Parameter  ' + JSON.stringify(params));
-            console.log('Parameter  ' + params);
-            console.log('daj my sem ten parameter  ' + params['businessId']);
-
             if (params['deletedBusiness']) {
               this.messageFirebase= 'Business successfully deleted'
             }
@@ -47,7 +46,9 @@ export class ListBusinessPage implements OnInit {
             if (params['createdBusiness'] != undefined) {
                 this.messageFirebase = 'Business successfully created'
             }
-
+        },  error => {
+            console.log("you got error ");
+            console.log(error);
         });
 
     }
@@ -61,12 +62,26 @@ export class ListBusinessPage implements OnInit {
         })
     }
 
-    getAllBusinesses() { ///todo osetrit error
-        this.businessService.getAllBusinesses().subscribe(value=> {
+    changeOrderByName() {
+        if (this.orderByName === "asc") {
+            this.orderByName = "desc";
+        } else {
+            this.orderByName = "asc";
+        }
+        this.getAllBusinesses();
+    }
+
+    getAllBusinesses() {
+
+        // send default value
+        this.businessService.getAllBusinesses(this.orderByName).subscribe(value=> {
             console.log(value);
             this.businesses = value;
 
-        } )
+        }, error => {
+            console.log("error");
+            console.log(error);
+        })
     }
 
     chooseBusiness(business: Business) {
@@ -76,12 +91,11 @@ export class ListBusinessPage implements OnInit {
         console.log('business is  ' + business.nameOrganization);
 
         if (business.id !== null) {
-            //also send value that iam from list of businesses
-            //send also the id
             //this.router.navigate(['/detail-business', {businessId: business.id}])
            this.router.navigate(['/detail-business'], { queryParams: { businessId: business.id}})
         }
     }
+
 
 
 }

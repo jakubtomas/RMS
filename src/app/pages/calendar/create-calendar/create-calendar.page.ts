@@ -22,6 +22,11 @@ export class CreateCalendarPage implements OnInit {
     isUpdateCalendar: boolean = false;
     docIdCalendar: string;
 
+    //component data
+    ionTitle: string;
+    ionButton: string;
+
+
     options: Day[] = [
         {day: "Monday", openingHours: "empty", closingHours: "empty"},
         {day: "Tuesday", openingHours: "empty", closingHours: "empty"},
@@ -60,8 +65,9 @@ export class CreateCalendarPage implements OnInit {
 
     ngOnInit() {
         this.messageFirebase = null;
+        this.isUpdateCalendar = false;
 
-        this.route.params.subscribe((params: Params) => {
+        this.route.queryParams.subscribe((params: Params) => {
             if (params['businessId'] != undefined) {
                 this.selectedBusinessId = params['businessId'];
             }
@@ -70,17 +76,27 @@ export class CreateCalendarPage implements OnInit {
 
             if ((params['docCalendarId'] != undefined) && params['updateCalendar']) {
                 this.docIdCalendar = params['docCalendarId'];
-                console.log("you got paramater docCalendarId " + params['docCalendarId']);
 
                 this.getOneCalendar(params['docCalendarId']);
                 this.isUpdateCalendar = true;
             } else {
                 console.log("nemam id");
-
             }
-
+            this.setValuesForPage();
         });
 
+    }
+
+
+    setValuesForPage() {
+        if (this.isUpdateCalendar) {
+            this.ionTitle = 'Update calendar';
+            this.ionButton = 'Update';
+        } else {
+            this.ionTitle = 'Create calendar';
+            this.ionButton = 'Create';
+
+        }
     }
 
     contactForm = new FormGroup(
@@ -164,18 +180,17 @@ export class CreateCalendarPage implements OnInit {
 
     getOneCalendar(docCalendarId: string) {
         this.calendarService.getOneCalendar(docCalendarId).subscribe(calendar$ => {
-            console.log("this is calendar updata");
             console.log(calendar$);
 
             this.calendar = calendar$;
             this.options = calendar$.week;
 
-             this.contactForm.setValue({
-             calendarName: calendar$.nameCalendar,
-             openingHours: "",
-             closingHours: "",
-             options: [false,false,false,false,false,false,false,]
-             })
+            this.contactForm.setValue({
+                calendarName: calendar$.nameCalendar,
+                openingHours: "",
+                closingHours: "",
+                options: [false, false, false, false, false, false, false,]
+            })
         }, error => {
             console.log("you got error ");
             console.log(error);
@@ -193,9 +208,8 @@ export class CreateCalendarPage implements OnInit {
         };
         // create data according the creat calendar ts
         this.calendarService.updateCalendar(this.docIdCalendar, updateCalendar).then(() => {
-            // this.router.navigate(['/list-business', {deletedBusiness: true}]);
             console.log("uspesny update ");
-            this.router.navigate(['/detail-business'], { queryParams: { businessId: updateCalendar.id}})
+            this.router.navigate(['/detail-business'], {queryParams: {businessId: updateCalendar.id}})
             this.showToast("The Update Is Done Successfully")
 
         }).catch((error) => {

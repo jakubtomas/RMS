@@ -1,70 +1,77 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {AngularFireAuth} from '@angular/fire/compat/auth';
 import {AuthService} from "./services/auth.service";
 import {Router} from "@angular/router";
+import {BusinessService} from "./services/business.service";
 
 @Component({
-  selector: 'app-root',
-  templateUrl: 'app.component.html',
-  styleUrls: ['app.component.scss'],
+    selector: 'app-root',
+    templateUrl: 'app.component.html',
+    styleUrls: ['app.component.scss'],
 })
-export class AppComponent
-{
-  appPages = [
-    {
-      title: 'Schedule',
-      url: '/tabs/tab1',
-      icon: 'calendar'
-    },
-    {
-      title: 'Dashboard',
-      url: '/dashboard',
-      icon: 'people'
-    },
+export class AppComponent {
+    appPages = [
+        {
+            title: 'Schedule',
+            url: '/tabs/tab1',
+            icon: 'calendar'
+        },
+        {
+            title: 'Dashboard',
+            url: '/dashboard',
+            icon: 'people'
+        },
 
-    {
-      title: 'About',
-      url: '/app/tabs/about',
-      icon: 'information-circle'
+        {
+            title: 'About',
+            url: '/app/tabs/about',
+            icon: 'information-circle'
+        }
+    ];
+
+    businessMode: boolean = false;
+    loggedIn = false;
+    dark = false;
+    firebaseErrorMessage: void;
+
+
+    constructor(
+        public afAuth: AngularFireAuth,
+        private authService: AuthService,
+        private businessService: BusinessService,
+        private router: Router) {}
+
+
+    signOut() {
+        console.log("logout function run");
+
+        this.authService.signOut().then((result) => {
+            if (result == null) {// null is success, false means there was an error
+                console.log("user successfully  singOut");
+                //todo message successfully signOut
+                // this.router.navigate(['/login']);
+
+            } else {
+                console.log("user unsuccessfully singOut");
+                console.log(result);
+                this.firebaseErrorMessage = result;
+            }
+        })
+
     }
-  ];
 
-  businessMode: boolean = false;
-  loggedIn = false;
-  dark = false;
-  firebaseErrorMessage: void;
+    clickToggle(toggle) {
+        console.log(toggle);
+        console.log(toggle.detail.checked);
 
-
-  constructor(public afAuth: AngularFireAuth,
-              private authService: AuthService,
-              private router: Router) {
-
-    
-  }
+        if (toggle.detail.checked) {
+            this.businessService.isActiveMode = true;
+        } else {
+            this.businessService.isActiveMode = false;
+        }
 
 
-  signOut() {
-    console.log("logout function run");
+    }
 
-    this.authService.signOut().then((result) => {
-      if (result == null) {// null is success, false means there was an error
-        console.log("user successfully  singOut");
-        //todo message successfully signOut
-       // this.router.navigate(['/login']);
-
-      } else {
-        console.log("user unsuccessfully singOut");
-        console.log(result);
-        this.firebaseErrorMessage = result;
-      }
-    })
-
-  }
-
-  update(value) {
-    console.log(value);
-    
-  }
-  
 
 }

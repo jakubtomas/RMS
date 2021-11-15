@@ -48,11 +48,7 @@ export class CalendarService {
                 });
             }));
     }*/
-    
-    
-    
-    
-    
+
     getOneCalendar(documentId: string): Observable<Calendar> {
         return this.calendarCollection.doc(documentId).valueChanges();
     }

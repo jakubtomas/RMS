@@ -1,6 +1,6 @@
 <ion-header>
     <ion-toolbar>
-        <ion-title>Create Calendar.</ion-title>
+        <ion-title>{{ionTitle}}</ion-title>
     </ion-toolbar>
 </ion-header>
 
@@ -100,7 +100,7 @@
 
             <section>
                 <header>Calendar</header>
-                <ion-button expand="block" (click)="updateCalendars()" [disabled]="!validForm">Update calendar
+                <ion-button expand="block" (click)="updateCalendars()" [disabled]="!validForm">{{ionButton}}
                 </ion-button>
             </section>
         </ng-template>

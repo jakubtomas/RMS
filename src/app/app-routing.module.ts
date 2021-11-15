@@ -52,7 +52,13 @@ const routes: Routes = [
   {
     path: 'create-calendar',
     loadChildren: () => import('./pages/calendar/create-calendar/create-calendar.module').then( m => m.CreateCalendarPageModule)
-  }
+  },  {
+    path: 'search-business',
+    loadChildren: () => import('./pages/business/search-business/search-business.module').then( m => m.SearchBusinessPageModule)
+  },
+
+
+
 
 ];
 

@@ -42,6 +42,8 @@ export class BusinessService {
 
     idUser: string = '';
     items: Observable<Item[]>;
+    isActiveMode: boolean = false;
+
 
     typesOfOrganization = [
         {name: "Health Care"},
@@ -61,9 +63,10 @@ export class BusinessService {
 
         this.itemsCollection = this.afs.collection('items', ref => ref.orderBy('name', 'asc'));
          // this.businessCollection = this.afs.collection('business', ref => ref.orderBy('name','asc'));
+         this.businessCollection = this.afs.collection('business',ref => ref.orderBy('nameOrganization', 'asc'));
          this.businessCollection2 = this.afs.collection('business');
         //this.businessPermissionCollection= this.afs.collection('businessPermission', ref => ref.orderBy('idUser','asc'));
-        this.businessPermissionCollection = this.afs.collection('businessPermission');
+         this.businessPermissionCollection = this.afs.collection('businessPermission');
 
     }
 
@@ -79,13 +82,34 @@ export class BusinessService {
             }));
     }
 
-    getAllBusinesses(): Observable<Business[]> {
-        return this.businessCollection2.snapshotChanges().pipe(
+    setOrderBy(directionOrderBy: string){
+
+        if (directionOrderBy === "desc") {
+            this.businessCollection = this.afs.collection('business',
+                ref => ref.orderBy('nameOrganization', "desc"));
+
+        } else {
+            this.businessCollection = this.afs.collection('business',
+                ref => ref.orderBy('nameOrganization', "asc"));
+
+        }
+
+
+    }
+
+
+    /// 1 create function set value , parameter
+    getAllBusinesses(orderByName? :string): Observable<Business[]> {
+
+        if (orderByName !== null) {
+            this.setOrderBy( orderByName)
+        }
+
+        return this.businessCollection.snapshotChanges().pipe(
             map(changes => {
                 return changes.map(a => {
                     const data = a.payload.doc.data() as Business;
                     data.id = a.payload.doc.id;
-                    // this.businessesData.push(data);
                     return data;
                 });
             }));

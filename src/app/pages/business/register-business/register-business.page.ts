@@ -22,6 +22,8 @@ export class RegisterBusinessPage implements OnInit {
     createdNewBusiness: boolean = false;
     updateBusinessPage: boolean = false;
     typesOrganization: object = null;
+
+   //component data
     ionTitle: string;
     ionButton: string;
 
@@ -71,7 +73,7 @@ export class RegisterBusinessPage implements OnInit {
 
 
         //todo vytvorit subject, a spravit nanho subsribe nameisto observable
-        this.route.params.subscribe((params: Params) => {
+        this.route.queryParams.subscribe((params: Params) => {
             console.log('Parameter  ' + JSON.stringify(params));
             console.log('daj my sem ten parameter  ' + params['businessId']);
 
@@ -101,19 +103,17 @@ export class RegisterBusinessPage implements OnInit {
                  ]),*/
                 typeOrganization: new FormControl('', Validators.required),
             }
-            // this.passwordMatchValidator
+
         );
         this.setRegisterFormValues();
-
-
     }
 
     setValuesForPage() {
         if (this.updateBusinessPage) {
-            this.ionTitle = 'Update business/organization';
+            this.ionTitle = 'Update business';
             this.ionButton = 'Update';
         } else {
-            this.ionTitle = 'Registration business/organization';
+            this.ionTitle = 'Registration business';
             this.ionButton = 'Register';
 
         }
@@ -166,15 +166,9 @@ export class RegisterBusinessPage implements OnInit {
     updateBusiness(businessData: Business): void {
         this.businessService.updateBusiness(businessData, this.businessId).then(value => {
 
-            //potrebne idecko
-            console.log("spravil si update ");
-
-
-            // redirect to detail buisinne s with message
-            console.log("after success update ");
-
             console.log(this.businessId);
-            this.router.navigate(['/detail-business', {businessId: this.businessId, updateDone: true}]);
+         //   this.router.navigate(['/detail-business', {businessId: this.businessId, updateDone: true}]);
+            this.router.navigate(['/detail-business'], { queryParams: { businessId: this.businessId, updateDone: true}})
 
         }).catch((error) => {
             console.log(error);
@@ -206,17 +200,12 @@ export class RegisterBusinessPage implements OnInit {
     setRegisterFormValues(): void {
         if (this.business != undefined) {
 
-            console.log('we have set gregistreformavlue ');
-
-
             this.registerForm.setValue({
                 nameOrganization: this.business.nameOrganization,
                 phoneNumber: this.business.phoneNumber,
                 zipCode: this.business.zipCode,
                 city: this.business.city,
                 street: this.business.nameStreetWithNumber,
-                /* openingHours: '08:00',
-                 endingHours: '19:30',*/
                 typeOrganization: this.business.typeOfOrganization
             });
         } else {
