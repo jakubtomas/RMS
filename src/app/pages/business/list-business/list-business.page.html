@@ -20,15 +20,17 @@
         <h3>Click for details</h3>
     </ion-item>
 
-    <ion-card><!--todo check header ,, zoradit podla mena -->
+    <ion-card>
         <ion-list>
             <ion-item>
-                <ion-button size="small" (click)="changeOrderByName()">Order by Name</ion-button>
-                <hr>
-                <ion-label> Name business and address</ion-label>
-                <ion-button size="small">Default</ion-button>
+                <ion-label class="orderBy" style="cursor:pointer"
+                        (click)="orderByName()"> <!--todo hover color and mouse type change-->
+                    Name business   &#x25B2; &#x25BC;</ion-label>
 
-                <ion-label>Address</ion-label>
+                <ion-label class="orderBy" style="cursor:pointer"
+                        (click)="orderByAddress()"> <!--todo hover color and mouse type change-->
+                    Address &#x25B2; &#x25BC; </ion-label>
+
             </ion-item>
             <ion-item-sliding *ngFor="let item of businesses ">
                 <ion-item (click)="chooseBusiness(item)" class="item">

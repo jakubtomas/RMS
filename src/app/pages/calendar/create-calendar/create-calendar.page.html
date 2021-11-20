@@ -20,53 +20,121 @@
 
 
         <form [formGroup]="contactForm" novalidate>
-            <ion-item>
+
+              <ion-item>
+                  <ion-label class="label">Day</ion-label>
+                  <ion-label class="label">Opening/Closing</ion-label>
+
+              </ion-item>
+
+            <div>
+                <ion-item class="item">
+                    <ion-label class="label1">Monday</ion-label>
+
+                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
+                                  formControlName="MondayOpening"
+                                  class="dateTime"
+                                  value="1990-02-19T07:43Z"></ion-datetime>
+
+                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
+                                  formControlName="MondayClosing"
+                                  class="dateTime1"
+                                  value="1990-02-19T07:43Z"></ion-datetime>
+                </ion-item>
+
+                <ion-item class="item">
+                    <ion-label class="label1">Tuesday</ion-label>
+
+                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
+                                  formControlName="TuesdayOpening"
+                                  class="dateTime"
+                                  value="1990-02-19T07:43Z"></ion-datetime>
+
+                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
+                                  formControlName="TuesdayClosing"
+                                  class="dateTime1"
+                                  value="1990-02-19T07:43Z"></ion-datetime>
+                </ion-item>
+
+
+                <ion-item class="item">
+                    <ion-label class="label1">Wednesday</ion-label>
+
+                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
+                                  formControlName="WednesdayOpening"
+                                  class="dateTime"
+                                  value="1990-02-19T07:43Z"></ion-datetime>
+
+                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
+                                  formControlName="WednesdayClosing"
+                                  class="dateTime1"
+                                  value="1990-02-19T07:43Z"></ion-datetime>
+                </ion-item>
+
+
+                <ion-item class="item">
+                    <ion-label class="label1">Thursday</ion-label>
+
+                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
+                                  formControlName="ThursdayOpening"
+                                  class="dateTime"
+                                  value="1990-02-19T07:43Z"></ion-datetime>
+
+                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
+                                  formControlName="ThursdayClosing"
+                                  class="dateTime1"
+                                  value="1990-02-19T07:43Z"></ion-datetime>
+                </ion-item>
+
+                <ion-item class="item">
+                    <ion-label class="label1">Friday</ion-label>
+
+                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
+                                  formControlName="FridayOpening"
+                                  class="dateTime"
+                                  value="1990-02-19T07:43Z"></ion-datetime>
+
+                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
+                                  formControlName="FridayClosing"
+                                  class="dateTime1"
+                                  value="1990-02-19T07:43Z"></ion-datetime>
+                </ion-item>
+
+                <ion-item class="item">
+                    <ion-label class="label1">Saturday</ion-label>
+
+                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
+                                  formControlName="SaturdayOpening"
+                                  class="dateTime"
+                                  value="1990-02-19T07:43Z"></ion-datetime>
+
+                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
+                                  formControlName="SaturdayClosing"
+                                  class="dateTime1"
+                                  value="1990-02-19T07:43Z"></ion-datetime>
+                </ion-item>
+
+                <ion-item class="item">
+                    <ion-label class="label1">Sunday</ion-label>
+
+                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
+                                  formControlName="SundayOpening"
+                                  class="dateTime"
+                                  value="1990-02-19T07:43Z"></ion-datetime>
+
+                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
+                                  formControlName="SundayClosing"
+                                  class="dateTime1"
+                                  value="1990-02-19T07:43Z"></ion-datetime>
+                </ion-item>
+
+            </div>
+
+           <!-- <ion-item>
                 <ion-label>Calendar Name</ion-label>
                 <ion-input formControlName="calendarName"></ion-input>
-            </ion-item>
+            </ion-item>-->
 
-            <div *ngIf="calendarName.errors?.required && calendarName.touched">
-                <em> Name calendar is required.</em>
-            </div>
-
-            <ion-item>
-                <ion-label>Opening hour</ion-label>
-                <ion-datetime displayFormat="HH:mm" formControlName="openingHours"
-                              placeholder="Select Time"></ion-datetime>
-            </ion-item>
-
-            <div *ngIf="openingHours.errors?.required && openingHours.touched">
-                <em> Opening hours is required</em>
-            </div>
-
-            <ion-item>
-                <ion-label>Closing hour</ion-label>
-                <ion-datetime displayFormat="HH:mm" formControlName="closingHours"
-                              placeholder="Select Time"></ion-datetime>
-            </ion-item>
-
-            <div *ngIf="closingHours.errors?.required && closingHours.touched">
-                <em> Closing is required</em>
-            </div>
-
-
-            <ng-container formArrayName="options">
-                <ion-item *ngFor="let dessert of dessertOptions; let i = index">
-                    <ion-label>{{ dessert }}</ion-label>
-                    <ion-checkbox slot="start" [formControlName]="i"></ion-checkbox>
-                </ion-item>
-            </ng-container>
-            <ion-item>
-                <ion-label> {{ contactForm.value.options | json }}<br/></ion-label>
-            </ion-item>
-            <ion-row>
-                <ion-col>
-                    <ion-button (click)="setData()"
-                                type="submit" class="smallButton" expand="block" [disabled]="!contactForm.valid"
-                    >Set values table
-                    </ion-button>
-                </ion-col>
-            </ion-row>
         </form>
 
 
@@ -76,31 +144,14 @@
             </ion-item>
         </ion-card>
 
-
-        <div *ngFor="let item of options" class="schedule ">
-            <ion-row>
-                <ion-col>
-                    <div>{{item.day}}</div>
-                </ion-col>
-                <ion-col>
-                    <div>{{item.openingHours}}</div>
-                </ion-col>
-                <ion-col>
-                    <div>{{item.closingHours}}</div>
-                </ion-col>
-            </ion-row>
-        </div>
-
-
         <ion-button *ngIf="!isUpdateCalendar else updateButton " type="submit" expand="block" (click)="saveData()"
-                    [disabled]="!validForm">Save calendar data
+                    [disabled]="!contactForm">Save calendar data
         </ion-button>
 
         <ng-template #updateButton>
 
             <section>
-                <header>Calendar</header>
-                <ion-button expand="block" (click)="updateCalendars()" [disabled]="!validForm">{{ionButton}}
+                <ion-button expand="block" (click)="updateCalendars()" [disabled]="!contactForm">{{ionButton}}
                 </ion-button>
             </section>
         </ng-template>

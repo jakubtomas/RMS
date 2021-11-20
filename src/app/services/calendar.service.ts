@@ -14,7 +14,8 @@ export class CalendarService {
     calendarCollection2: AngularFirestoreCollection<Calendar>;
 
     constructor(public afs: AngularFirestore) {
-        this.calendarCollection = this.afs.collection('calendar', ref => ref.orderBy('nameCalendar', 'asc'));
+        this.calendarCollection = this.afs.collection('calendar',
+                ref => ref.orderBy('idBusiness', 'asc'));
         this.calendarCollection2 = this.afs.collection('calendar' );
 
     }
@@ -31,7 +32,6 @@ export class CalendarService {
                 return changes.map(a => {
                     const data = a.payload.doc.data() as Calendar;
                     data.id = a.payload.doc.id;
-
                     return data;
                 });
             }));

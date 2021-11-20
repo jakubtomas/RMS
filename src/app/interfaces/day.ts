@@ -1,5 +1,5 @@
 export interface Day {
     day: string;
-    openingHours: string;
-    closingHours: string;
+    openingHours: any;
+    closingHours: any;
 }

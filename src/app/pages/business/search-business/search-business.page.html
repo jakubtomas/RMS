@@ -1,89 +1,94 @@
 <ion-header>
-  <ion-toolbar >
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
 
-    <ion-title>Search business</ion-title>
-  </ion-toolbar>
+        <ion-title>Search business</ion-title>
+    </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding" >
+<ion-content class="ion-padding">
+    <div class="ion-content">
+        <p>* require parameter</p>
+        <form class="form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <ion-item>
+                <ion-label position="floating">Name organization</ion-label>
+                <ion-input type="text" formControlName="nameOrganization"></ion-input>
+            </ion-item>
 
-  <form class="form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-    <ion-item>
-      <ion-label position="floating">Name organization</ion-label>
-      <ion-input type="text" formControlName="nameOrganization"></ion-input>
-    </ion-item>
+            <ion-item> <!--todo input only number-->
+                <ion-label position="floating">City</ion-label>
+                <ion-input type="text" formControlName="city"></ion-input>
+            </ion-item>
 
-    <!--TODO  set error minimum -->
-    <div *ngIf="nameOrganization.errors?.required && nameOrganization.touched">
-      <em> Name organization is required.</em>
-    </div>
+            <ion-item>
+                <ion-label position="floating">zipCode</ion-label>
+                <ion-input type="text" formControlName="zipCode"></ion-input>
+            </ion-item>
 
+            <!--todo when we have zipCode check the length -->
+            <div *ngIf="zipCode.errors?.required && zipCode.touched">
+                <em> zipCode  is required.</em>
+            </div>
 
-    <ion-item> <!--todo input only number-->
-      <ion-label position="floating">City</ion-label>
-      <ion-input type="text" formControlName="city"></ion-input>
-    </ion-item>
+            <ion-item>
+                <ion-label><sup>*</sup> Type of organization </ion-label>
+                <ion-select interface="popover" formControlName="typeOrganization" placeholder="Select One"
+                            mode="md">
+                    <ion-select-option *ngFor="let type of typesOrganization" [value]="type.name">
+                        {{ type.name }}
+                    </ion-select-option>
 
-    <div *ngIf="city.errors?.required && city.touched">
-      <em> City is required.</em>
-    </div>
+                    <!--<div *ngFor="let field of countries">
+                        <ion-select-option value="{{field.name}}">{{field.name}}</ion-select-option>
+                    </div>-->
+                </ion-select>
+            </ion-item>
 
-    <ion-item>
-      <ion-label position="floating">Street with number</ion-label>
-      <ion-input type="text" formControlName="street"></ion-input>
-    </ion-item>
+            <div *ngIf="typeOrganization.errors?.required && typeOrganization.touched">
+                <em> Type of organization is required.</em>
+            </div>
 
-    <div *ngIf="street.errors?.required && street.touched">
-      <em> City is required.</em>
-    </div>
-
-    <ion-item>
-      <ion-label>Type of organization</ion-label>
-      <ion-select interface="popover" formControlName="typeOrganization" placeholder="Select One"
-                  mode="md">
-        <ion-select-option *ngFor="let type of typesOrganization" [value]="type.name">
-          {{ type.name }}
-        </ion-select-option>
-
-        <!--<div *ngFor="let field of countries">
-            <ion-select-option value="{{field.name}}">{{field.name}}</ion-select-option>
-        </div>-->
-      </ion-select>
-    </ion-item>
-
-    <div *ngIf="typeOrganization.errors?.required && typeOrganization.touched">
-      <em> Type of organization is required.</em>
-    </div>
-
-    <ion-button
-            type="submit" expand="block"
-            [disabled]="!registerForm.valid">Search
-    </ion-button>
-  </form>
+            <ion-button
+                    type="submit" expand="block"
+                    [disabled]="!registerForm.valid">Search
+            </ion-button>
+        </form>
 
 
-  <ion-item>
-    <h3>Choose business</h3>
-  </ion-item>
-
-  <ion-card><!--todo check header ,, zoradit podla mena -->
-    <ion-list>
-      <ion-item>
-        <ion-button size="small" (click)="changeOrderByName()">Order by Name</ion-button>
-        <hr>
-        <ion-label> Name business and address</ion-label>
-        <ion-label>Address</ion-label>
-      </ion-item>
-      <ion-item-sliding *ngFor="let item of businesses ">
-        <ion-item (click)="chooseBusiness(item)" class="item">
-          <ion-label style="cursor:pointer">{{item.nameOrganization}} </ion-label>
-          <ion-label style="cursor:pointer">{{item.city + " " + item.nameStreetWithNumber}}</ion-label>
+        <ion-item>
+            <h3>Choose business</h3>
         </ion-item>
-      </ion-item-sliding>
 
-    </ion-list>
-  </ion-card>
+        <ion-card><!--todo check header ,, zoradit podla mena -->
+            <ion-list>
+                <ion-item>
+                    <ion-label class="orderBy" style="cursor:pointer"
+                               (click)="orderByName()"> <!--todo hover color and mouse type change-->
+                        Name business   &#x25B2; &#x25BC;</ion-label>
+
+                    <ion-label class="orderBy" style="cursor:pointer"
+                               (click)="orderByAddress()"> <!--todo hover color and mouse type change-->
+                        Address &#x25B2; &#x25BC; </ion-label>
+                </ion-item>
+
+                <ion-item-sliding *ngFor="let item of businesses ">
+                    <ion-item (click)="chooseBusiness(item)" class="item">
+                        <ion-label style="cursor:pointer">{{item.nameOrganization}} </ion-label>
+                        <ion-label style="cursor:pointer">{{item.city + " " + item.nameStreetWithNumber}}</ion-label>
+                    </ion-item>
+                </ion-item-sliding>
+
+            </ion-list>
+
+            <ion-card *ngIf="noResultMessage">
+                <ion-item color="warning">
+                    <label class="ion-text-center">We couldn’t find any string matching </label>
+                </ion-item>
+            </ion-card>
+        </ion-card>
+
+
+    </div>
 </ion-content>

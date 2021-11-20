@@ -61,12 +61,16 @@ export class BusinessService {
         this.idUser = localStorage.getItem('idUser');
         console.log('your user id is ' + this.idUser);
 
-        this.itemsCollection = this.afs.collection('items', ref => ref.orderBy('name', 'asc'));
+        this.itemsCollection = this.afs.collection('items',
+                ref => ref.orderBy('name', 'asc'));
          // this.businessCollection = this.afs.collection('business', ref => ref.orderBy('name','asc'));
-         this.businessCollection = this.afs.collection('business',ref => ref.orderBy('nameOrganization', 'asc'));
+         this.businessCollection = this.afs.collection('business',
+                 ref => ref.orderBy('nameOrganization', 'asc'));
          this.businessCollection2 = this.afs.collection('business');
         //this.businessPermissionCollection= this.afs.collection('businessPermission', ref => ref.orderBy('idUser','asc'));
          this.businessPermissionCollection = this.afs.collection('businessPermission');
+
+
 
     }
 
@@ -82,15 +86,15 @@ export class BusinessService {
             }));
     }
 
-    setOrderBy(directionOrderBy: string){
+    setOrderBy(orderBy: string){
 
-        if (directionOrderBy === "desc") {
+        if (orderBy === "nameOrganization") {
             this.businessCollection = this.afs.collection('business',
-                ref => ref.orderBy('nameOrganization', "desc"));
+                ref => ref.orderBy('nameOrganization', "asc"));
 
         } else {
             this.businessCollection = this.afs.collection('business',
-                ref => ref.orderBy('nameOrganization', "asc"));
+                ref => ref.orderBy('city', "asc"));
 
         }
 
@@ -99,10 +103,11 @@ export class BusinessService {
 
 
     /// 1 create function set value , parameter
-    getAllBusinesses(orderByName? :string): Observable<Business[]> {
+    //todo reminder change orderBY ? because search page , set parameter
+    getAllBusinesses(orderBy:string): Observable<Business[]> {
 
-        if (orderByName !== null) {
-            this.setOrderBy( orderByName)
+        if (orderBy !== null) {
+            this.setOrderBy(orderBy);
         }
 
         return this.businessCollection.snapshotChanges().pipe(
@@ -152,6 +157,10 @@ export class BusinessService {
         return this.businessPermissionCollection.add(businessPermissionObject);
     }
 
+    //todo finish the function check response type
+    /*getBusinessPermission(businessPermissionObject: BusinessPermission): Promise<DocumentReference<BusinessPermission>> {
+        return this.businessPermissionCollection.add(businessPermissionObject);
+    }*/
     getBusinessList(): Observable<DocumentChangeAction<unknown>[]> {
         return this.afs
                    .collection("business")

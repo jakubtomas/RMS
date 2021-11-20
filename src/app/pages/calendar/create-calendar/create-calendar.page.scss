@@ -23,3 +23,20 @@
 .smallButton{
   max-width: 200px;
 }
+
+.label{
+  display: flex;
+  justify-content: flex-start;
+}
+.label1{
+
+  max-width: 30%;
+}
+.dateTime1{
+  margin-left: 10%;
+}
+ion-datetime{
+  background-color: #b54747;
+  border-radius: 7px;
+  min-width: 80px;
+}

@@ -20,12 +20,12 @@ export class ListBusinessPage implements OnInit {
     items: Item[];
     businesses: Business[];
     messageFirebase: string;
+    orderBy: string = 'nameOrganization';
 
-    orderByName: string = "asc";
 
     constructor(private route: ActivatedRoute,
-                private businessService: BusinessService,
-                private router: Router) {
+        private businessService: BusinessService,
+        private router: Router) {
     }
 
     ngOnInit() {
@@ -40,19 +40,20 @@ export class ListBusinessPage implements OnInit {
         this.route.queryParams.subscribe((params: Params) => {
             console.log('Parameter  ' + JSON.stringify(params));
             if (params['deletedBusiness']) {
-              this.messageFirebase= 'Business successfully deleted'
+                this.messageFirebase = 'Business successfully deleted'
             }
 
             if (params['createdBusiness'] != undefined) {
                 this.messageFirebase = 'Business successfully created'
             }
-        },  error => {
+        }, error => {
             console.log("you got error ");
             console.log(error);
         });
 
     }
-    //todo is essential thing set messagefirbase to null in another function which we call
+
+    //todo is essential thing set messagefirebase to null in another function which we call
 
 
     getItems() {
@@ -62,19 +63,29 @@ export class ListBusinessPage implements OnInit {
         })
     }
 
-    changeOrderByName() {
-        if (this.orderByName === "asc") {
-            this.orderByName = "desc";
+    orderByName() {
+        if (this.orderBy === 'nameOrganization') {
+            this.businesses.reverse();
         } else {
-            this.orderByName = "asc";
+            this.orderBy = 'nameOrganization';
+            this.getAllBusinesses();
         }
-        this.getAllBusinesses();
     }
+
+    orderByAddress() {
+        if (this.orderBy === 'city') {
+            this.businesses.reverse();
+        } else {
+            this.orderBy = 'city';
+            this.getAllBusinesses();
+        }
+    }
+
 
     getAllBusinesses() {
 
-        // send default value
-        this.businessService.getAllBusinesses(this.orderByName).subscribe(value=> {
+            // send default value
+        this.businessService.getAllBusinesses(this.orderBy).subscribe(value => {
             console.log(value);
             this.businesses = value;
 
@@ -87,15 +98,14 @@ export class ListBusinessPage implements OnInit {
     chooseBusiness(business: Business) {
         console.log("call the function");
         console.log(business.id);
-        
+
         console.log('business is  ' + business.nameOrganization);
 
         if (business.id !== null) {
             //this.router.navigate(['/detail-business', {businessId: business.id}])
-           this.router.navigate(['/detail-business'], { queryParams: { businessId: business.id}})
+            this.router.navigate(['/detail-business'], {queryParams: {businessId: business.id}})
         }
     }
-
 
 
 }

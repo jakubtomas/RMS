@@ -44,6 +44,9 @@ export class DetailBusinessPage implements OnInit {
                 this.getOneBusiness(params['businessId']);
                 // this.getCalendar();
                 this.getCalendars();
+
+                // check am I owner this business?? for update,delete
+
             }
             if (params["updateDone"]) {
                 this.messageFirebase = "Business successfully updated"
@@ -171,7 +174,7 @@ export class DetailBusinessPage implements OnInit {
 
         //  this.router.navigate(['/register-business', {businessId: this.selectedBusinessId}])
       //  this.router.navigate(['/create-calendar', {docCalendarId: this.calendar.id, updateCalendar: true}]);
-        this.router.navigate(['/create-calendar'], { queryParams: { docCalendarId: this.calendar.id, updateCalendar: true}})
+        this.router.navigate(['/create-calendar'], { queryParams: { docCalendarId: this.calendar.id}})
 
 
     }
