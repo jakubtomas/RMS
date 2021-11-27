@@ -22,7 +22,7 @@ export class ListBusinessPage implements OnInit {
     messageFirebase: string;
     private orderBy: string = 'nameOrganization';
     private businessPermission;
-    myBusinesses: [] = [];
+    myBusinesses = [];
 
     constructor(private route: ActivatedRoute,
         private businessService: BusinessService,
@@ -85,7 +85,7 @@ export class ListBusinessPage implements OnInit {
 
     // get all ID business which are my /
     private getAllBusinessesPermission():void{
-        this.businessService.getBusinessPermission()
+        this.businessService.getBusinessPermissions()
             .subscribe(permission => {
             console.log(permission);
 
@@ -125,27 +125,28 @@ export class ListBusinessPage implements OnInit {
     getAllBusinesses():void {
         console.log(" get All businesses");
         
-        this.businessService.getOneBusinessDemo('TXYWmaBy0gxMFJuJhaXj');
-
+        this.businessService.getOneBusinessDemo();
+        this.businessService.subject.subscribe(value => {
+          //  this.myBusinesses = value;
+            
+            console.log("vypisanie hodnot ");
+            console.log(value);
+            //this.myBusinesses.push(value);
+            
+        })
        // this.businessService.getAllOwnerBusinesses();
        // this.getAllBusinessesPermission();
             // send default value
-        this.businessService.getAllBusinesses(this.orderBy)
+
+        /*this.businessService.getAllBusinesses(this.orderBy)
             .subscribe(business => {
             console.log(business);
             this.businesses = business;
 
-
-
-          // todo potrebne zobrazit tam kde mam iba svoje id
-          // todo take all value from business Persmission
-          // kde mam id zobrat tie data
-          //
-
         }, error => {
             console.log("error");
             console.log(error);
-        })
+        })*/
 
 }
     chooseBusiness(business: Business):void {

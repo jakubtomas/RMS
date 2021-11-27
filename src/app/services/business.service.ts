@@ -1,27 +1,20 @@
-import {Injectable, Query} from '@angular/core';
-import {AngularFireDatabase, AngularFireList, AngularFireObject} from '@angular/fire/compat/database';
+import {Injectable} from '@angular/core';
 import {Business} from "../interfaces/business";
-import {FormGroup} from "@angular/forms";
-
 //import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
 import {BehaviorSubject, Observable, Subject, Subscriber} from "rxjs";
 import {map} from 'rxjs/operators';
 import {
-
-    Action,
     AngularFirestore,
     AngularFirestoreCollection,
     AngularFirestoreDocument,
     DocumentChangeAction,
-    DocumentSnapshot
 } from '@angular/fire/compat/firestore';
 import firebase from "firebase/compat";
 import DocumentReference = firebase.firestore.DocumentReference;
 import {AngularFireAuth} from "@angular/fire/compat/auth";
-import {doc} from "@angular/fire/firestore";
 import {BusinessPermission} from "../interfaces/businessPermission";
 import {SearchBusiness} from "../interfaces/searchBusiness";
-import {user} from "@angular/fire/auth";
+
 
 interface Item {
     id?: string;
@@ -48,7 +41,7 @@ export class BusinessService {
 
     private orderBy: string = 'nameOrganization';
 
-    private oneUserBusinesses;
+    public oneUserBusinesses = [];
 
     typesOfOrganization = [
         {name: "Health Care"},
@@ -165,73 +158,54 @@ export class BusinessService {
         return this.businessCollection2.doc(documentId).valueChanges();
       //  return this.businessCollection2.doc(documentId);
     }
-    getBusinessPermission(): Observable<BusinessPermission[]> {
+
+
+    getBusinessPermissions(): Observable<BusinessPermission[]> {
         return this.businessPermissionCollection.valueChanges();
     }
 
-    getOneBusinessDemo(documentId: string)/*: Observable<Business>*/ {
+     subject = new Subject();
+    getOneBusinessDemo()/*: Observable<Business>*/ {
 
         const userId = localStorage.getItem('idUser');
 
-        this.getBusinessPermission().subscribe(permissions => {
+         console.log("my id is " + userId);
+        // this.subject.next(456);
+        // this.subject.subscribe(value => console.log(value));
+        // this.subject.next(789);
+
+        this.getBusinessPermissions().subscribe(permissions => {
 
             //filter only my businesses
-            const myBusinesses = permissions.filter(permission => permission.idUser == userId);
+            let myBusinesses = permissions.filter(permission => permission.idUser == userId);
 
+            console.log("after filter ");
             console.log(myBusinesses);
 
             // for every id myBusiness I am calling function which return my Document with detail Information
             myBusinesses.forEach(one => {
-
+                    console.log(one.idOrganization);
+                    
                 let resultDocument = this.businessCollection2.doc(one.idOrganization).valueChanges();
 
                 resultDocument.subscribe(document => {
-                    console.log("result ");
+
                     if (document !== undefined) {
-                        console.log(document);
+                        console.log("------------------");
+                         console.log(document);
+                        this.oneUserBusinesses.push(document);
+                        // create BehaviourSubject or subject for this
+                        console.log("lenght of array   " + this.oneUserBusinesses.length);
+                        //this.subject.next(document);
                     }
                 })
             });
-            const result =  this.businessCollection2.doc(myBusinesses[0].idOrganization).valueChanges();
 
-            // result.subscribe(document => {
-            //     console.log("dostanem hodnotu");
-            //
-            //     console.log(document);
-            //
-            // });
-            // add error
+        });
 
-        }); // add error
-
-
-        //const arrayBusinesses = ["tH5C1FCYzAMlGttUOQNG", "3Sr8RHAx3dLGfKsxw5eg"];
-        const arrayBusinesses = ["tH5C1FCYzAMlGttUOQNG", "3Sr8RHAx3dLGfKsxw5eg","TXYWmaBy0gxMFJuJhaXj"];
-        //const arrayBusinesses = ["3x9djdyxErliKZ2V1MCA", "tH5C1FCYzAMlGttUOQNG"];
-
-        // const result =  this.businessCollection2.doc(arrayBusinesses[0]).valueChanges();
-        //
-        // result.subscribe(document => {
-        //     console.log("preco neides");
-        //
-        //     console.log(document);
-        //
-        // });
-        // what happen when document does not exist
-
-        // arrayBusinesses.forEach(one => {
-        //     console.log("one is " + one);
-        //
-        //     let result = this.businessCollection2.doc(one).valueChanges();
-        //
-        //     result.subscribe(value => {
-        //         console.log("vysledok ");
-        //         console.log(value);
-        //
-        //     })
-        // });
-
-        console.log("result one business");
+        //todo problem stale je subscribnute a pocuva na zmeni aj ked som na inej stranke
+        // todo niekedy tam mam viac hodnot pretoze ostava s prechadajucej
+        
     }
 
     addBusiness(businessData: Business): Promise<DocumentReference<BusinessPermission>> {
@@ -268,7 +242,7 @@ export class BusinessService {
     getAllOwnerBusinesses():void {
         /*const userId = localStorage.getItem('idUser');
 
-        this.getBusinessPermission().subscribe(permissions => {
+        this.getBusinessPermissions().subscribe(permissions => {
 
            // console.log(permissions);
             const myBusinesses = permissions.filter(permission => permission.idUser == userId);
