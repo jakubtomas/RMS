@@ -14,7 +14,7 @@ import {AuthService} from "../../services/auth.service";
 })
 export class LoginPage implements OnInit {
 
-    userForm: FormGroup;re
+    userForm: FormGroup;
     firebaseErrorMessage: string;
 
     error_msg = {

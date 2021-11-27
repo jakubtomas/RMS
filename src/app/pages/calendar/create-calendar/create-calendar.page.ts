@@ -26,34 +26,33 @@ export class CreateCalendarPage implements OnInit {
     ionTitle: string;
     ionButton: string;
 
+    contactForm = new FormGroup(
+        {
+            MondayOpening: new FormControl("",),
+            MondayClosing: new FormControl("",),
 
-    daysOfWeek: Day[];
-    //
-    // options: Day[] = [
-    //     {day: "Monday", openingHours: "empty", closingHours: "empty"},
-    //     {day: "Tuesday", openingHours: "empty", closingHours: "empty"},
-    //     {day: "Wednesday", openingHours: "empty", closingHours: "empty"},
-    //     {day: "Thursday", openingHours: "empty", closingHours: "empty"},
-    //     {day: "Friday", openingHours: "empty", closingHours: "empty"},
-    //     {day: "Saturday", openingHours: "empty", closingHours: "empty"},
-    //     {day: "Sunday", openingHours: "empty", closingHours: "empty"},
-    // ];
+            TuesdayOpening: new FormControl("",),
+            TuesdayClosing: new FormControl("",),
 
-    get calendarName(): FormControl {
-        return this.contactForm.get('calendarName') as FormControl;
-    }
+            WednesdayOpening: new FormControl("",),
+            WednesdayClosing: new FormControl("",),
 
-    get openingHours(): FormControl {
-        return this.contactForm.get('openingHours') as FormControl;
-    }
+            ThursdayOpening: new FormControl("",),
+            ThursdayClosing: new FormControl("",),
 
-    get closingHours(): FormControl {
-        return this.contactForm.get('closingHours') as FormControl;
-    }
+            FridayOpening: new FormControl("",),
+            FridayClosing: new FormControl("",),
 
-    get ordersFormArray() {
-        return this.contactForm.controls.options as FormArray;
-    }
+            SaturdayOpening: new FormControl("",),
+            SaturdayClosing: new FormControl("",),
+
+            SundayOpening: new FormControl("",),
+            SundayClosing: new FormControl("",),
+
+            // todo validators form , kontrolovat obidva hodnoty requere
+            // univerzalny , input moze byt string
+        });
+
 
     constructor(private route: ActivatedRoute,
         private calendarService: CalendarService,
@@ -100,31 +99,6 @@ export class CreateCalendarPage implements OnInit {
         }
     }
 
-    contactForm = new FormGroup(
-        {
-            MondayOpening: new FormControl("",),
-            MondayClosing: new FormControl("",),
-
-            TuesdayOpening: new FormControl("",),
-            TuesdayClosing: new FormControl("",),
-
-            WednesdayOpening: new FormControl("",),
-            WednesdayClosing: new FormControl("",),
-
-            ThursdayOpening: new FormControl("",),
-            ThursdayClosing: new FormControl("",),
-
-            FridayOpening: new FormControl("",),
-            FridayClosing: new FormControl("",),
-
-            SaturdayOpening: new FormControl("",),
-            SaturdayClosing: new FormControl("",),
-
-            SundayOpening: new FormControl("",),
-            SundayClosing: new FormControl("",),
-
-
-        });
 
     dessertOptions: string[] = ["Monday", "Tuesday", "Wednesday",
                                 "Thursday", "Friday", "Saturday", "Sunday"];
@@ -150,7 +124,6 @@ export class CreateCalendarPage implements OnInit {
         console.log(this.contactForm.value.MondayOpening);
         console.log(this.contactForm.value.ClosingOpening);
 
-        this.setOpeningClosingHours();
 
         //todo logaritmus  count all opening , closing Hours
         // porovnanie can not be empty opening and also closing if yes show error message
@@ -159,7 +132,7 @@ export class CreateCalendarPage implements OnInit {
         let calendar: Calendar = {
             idBusiness: this.selectedBusinessId,
 
-            week: this.daysOfWeek,
+            week: this.mapOpeningClosingHours(),
             break: 'hello',
         };//todo prestavky niesu nastavene
         //todo typovanie v interface
@@ -179,16 +152,16 @@ export class CreateCalendarPage implements OnInit {
         });
     }
 
-    private setOpeningClosingHours() {
-        const FormData = this.contactForm.value;
-        this.daysOfWeek = [
-            {day: "Monday", openingHours: FormData.MondayOpening, closingHours: FormData.MondayClosing},
-            {day: "Tuesday", openingHours: FormData.TuesdayOpening, closingHours: FormData.TuesdayClosing},
-            {day: "Wednesday", openingHours: FormData.WednesdayOpening, closingHours: FormData.WednesdayClosing},
-            {day: "Thursday", openingHours: FormData.ThursdayOpening, closingHours: FormData.ThursdayClosing},
-            {day: "Friday", openingHours: FormData.FridayOpening, closingHours: FormData.FridayClosing},
-            {day: "Saturday", openingHours: FormData.SaturdayOpening, closingHours: FormData.SaturdayClosing},
-            {day: "Sunday", openingHours: FormData.SundayOpening, closingHours: FormData.SundayClosing},
+    private mapOpeningClosingHours(): Day[] {
+        const formData = this.contactForm.value;
+        return  [
+            {day: "Monday", openingHours: formData.MondayOpening, closingHours: formData.MondayClosing},
+            {day: "Tuesday", openingHours: formData.TuesdayOpening, closingHours: formData.TuesdayClosing},
+            {day: "Wednesday", openingHours: formData.WednesdayOpening, closingHours: formData.WednesdayClosing},
+            {day: "Thursday", openingHours: formData.ThursdayOpening, closingHours: formData.ThursdayClosing},
+            {day: "Friday", openingHours: formData.FridayOpening, closingHours: formData.FridayClosing},
+            {day: "Saturday", openingHours: formData.SaturdayOpening, closingHours: formData.SaturdayClosing},
+            {day: "Sunday", openingHours: formData.SundayOpening, closingHours: formData.SundayClosing},
 
         ];
     }
@@ -199,39 +172,35 @@ export class CreateCalendarPage implements OnInit {
             console.log(calendar$);
 
             this.calendar = calendar$;
-            if (calendar$.week.length > 5) {
-                this.contactForm.setValue({
-                    MondayOpening: calendar$.week[0].openingHours,
-                    MondayClosing: calendar$.week[0].closingHours,
-                    TuesdayOpening: calendar$.week[1].openingHours,
-                    TuesdayClosing: calendar$.week[1].closingHours,
-                    WednesdayOpening: calendar$.week[2].openingHours,
-                    WednesdayClosing: calendar$.week[2].closingHours,
-                    ThursdayOpening: calendar$.week[3].openingHours,
-                    ThursdayClosing: calendar$.week[3].closingHours,
-                    FridayOpening: calendar$.week[4].openingHours,
-                    FridayClosing: calendar$.week[4].closingHours,
-                    SaturdayOpening: calendar$.week[5].openingHours,
-                    SaturdayClosing: calendar$.week[5].closingHours,
-                    SundayOpening: calendar$.week[6].openingHours,
-                    SundayClosing: calendar$.week[6].closingHours
-                });
-            }
+            this.contactForm.setValue({
+                MondayOpening: calendar$.week[0]?.openingHours,
+                MondayClosing: calendar$.week[0]?.closingHours,
+                TuesdayOpening: calendar$.week[1]?.openingHours,
+                TuesdayClosing: calendar$.week[1]?.closingHours,
+                WednesdayOpening: calendar$.week[2]?.openingHours,
+                WednesdayClosing: calendar$.week[2]?.closingHours,
+                ThursdayOpening: calendar$.week[3]?.openingHours,
+                ThursdayClosing: calendar$.week[3]?.closingHours,
+                FridayOpening: calendar$.week[4]?.openingHours,
+                FridayClosing: calendar$.week[4]?.closingHours,
+                SaturdayOpening: calendar$.week[5]?.openingHours,
+                SaturdayClosing: calendar$.week[5]?.closingHours,
+                SundayOpening: calendar$.week[6]?.openingHours,
+                SundayClosing: calendar$.week[6]?.closingHours
+            });
+
         }, error => {
             console.log("you got error ");
             console.log(error);
         })
     }
 
-    //todo prerobit
     updateCalendars() {
 
-
-        this.setOpeningClosingHours();
         let updateCalendar: Calendar = {
             idBusiness: this.calendar.idBusiness,
 
-            week: this.daysOfWeek,
+            week: this.mapOpeningClosingHours(),
             break: 'hello',
         };
         // create data according the creat calendar ts

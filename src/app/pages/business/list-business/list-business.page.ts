@@ -20,8 +20,9 @@ export class ListBusinessPage implements OnInit {
     items: Item[];
     businesses: Business[];
     messageFirebase: string;
-    orderBy: string = 'nameOrganization';
-
+    private orderBy: string = 'nameOrganization';
+    private businessPermission;
+    myBusinesses: [] = [];
 
     constructor(private route: ActivatedRoute,
         private businessService: BusinessService,
@@ -30,7 +31,6 @@ export class ListBusinessPage implements OnInit {
 
     ngOnInit() {
         this.getAllBusinesses();
-
         //when we go again this page ionic maybe have function
         // vyriesit problem tu je ze tato funkcia sa nezavola vzdy ked sa prekliknem na tuto page
         //pretoze si uklada info b stranke
@@ -56,46 +56,99 @@ export class ListBusinessPage implements OnInit {
     //todo is essential thing set messagefirebase to null in another function which we call
 
 
-    getItems() {
+    getItems():void {
         this.businessService.getItems().subscribe(value => {
             console.log(value);
             this.items = value;
         })
     }
 
-    orderByName() {
+    orderByName():void {
         if (this.orderBy === 'nameOrganization') {
             this.businesses.reverse();
         } else {
             this.orderBy = 'nameOrganization';
-            this.getAllBusinesses();
+           // this.getAllBusinesses();
         }
     }
 
-    orderByAddress() {
+    orderByAddress():void{
         if (this.orderBy === 'city') {
             this.businesses.reverse();
         } else {
             this.orderBy = 'city';
-            this.getAllBusinesses();
+         //   this.getAllBusinesses();
         }
     }
 
 
-    getAllBusinesses() {
 
-            // send default value
-        this.businessService.getAllBusinesses(this.orderBy).subscribe(value => {
-            console.log(value);
-            this.businesses = value;
+    // get all ID business which are my /
+    private getAllBusinessesPermission():void{
+        this.businessService.getBusinessPermission()
+            .subscribe(permission => {
+            console.log(permission);
 
+            // take id local storage or else
+            const userId = localStorage.getItem('idUser');
+            console.log(userId);
+/*
+            const array = permission.filter(value => value.idUser == userId);
+            console.log(array);*/
+            this.businessPermission = permission.filter(value => value.idUser == userId);
+
+           // this.getAllMyBusinesses();
         }, error => {
             console.log("error");
             console.log(error);
         })
     }
 
-    chooseBusiness(business: Business) {
+    /*private getAllMyBusinesses() {
+        this.businessPermission.forEach(value => {
+            this.businessService.getOneBusiness(value.idOrganization).subscribe(oneBusiness => {
+                this.myBusinesses.push(oneBusiness);
+                console.log("priradeny zazname");
+
+            }, error => {
+                console.log("error");
+                console.log(error);
+            })
+        });
+        console.log('all my businesses ');
+
+        console.log(this.myBusinesses);
+
+    }*/
+
+    /// write condition if my list business filter according to my id
+    getAllBusinesses():void {
+        console.log(" get All businesses");
+        
+        this.businessService.getOneBusinessDemo('TXYWmaBy0gxMFJuJhaXj');
+
+       // this.businessService.getAllOwnerBusinesses();
+       // this.getAllBusinessesPermission();
+            // send default value
+        this.businessService.getAllBusinesses(this.orderBy)
+            .subscribe(business => {
+            console.log(business);
+            this.businesses = business;
+
+
+
+          // todo potrebne zobrazit tam kde mam iba svoje id
+          // todo take all value from business Persmission
+          // kde mam id zobrat tie data
+          //
+
+        }, error => {
+            console.log("error");
+            console.log(error);
+        })
+
+}
+    chooseBusiness(business: Business):void {
         console.log("call the function");
         console.log(business.id);
 

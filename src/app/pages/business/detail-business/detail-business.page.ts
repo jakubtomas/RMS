@@ -75,6 +75,9 @@ export class DetailBusinessPage implements OnInit {
                 console.log(error);
             }
         );
+
+        ///const value = this.businessService.getOneBusiness(documentID);
+
     }
 
     editBusiness(): void {
