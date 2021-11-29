@@ -35,7 +35,6 @@ export class DetailBusinessPage implements OnInit {
 
 
     ngOnInit() {
-        console.log(this.route.snapshot.paramMap.get('businessId'));
 
         this.route.queryParams.subscribe((params: Params) => {
 
@@ -45,7 +44,7 @@ export class DetailBusinessPage implements OnInit {
                 // this.getCalendar();
                 this.getCalendars();
 
-                // check am I owner this business?? for update,delete
+                // todo check am I owner this business?? for update,delete
 
             }
             if (params["updateDone"]) {
@@ -75,9 +74,6 @@ export class DetailBusinessPage implements OnInit {
                 console.log(error);
             }
         );
-
-        ///const value = this.businessService.getOneBusiness(documentID);
-
     }
 
     editBusiness(): void {

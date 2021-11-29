@@ -21,6 +21,7 @@ export class CreateCalendarPage implements OnInit {
     calendar: Calendar;
     isUpdateCalendar: boolean = false;
     docIdCalendar: string;
+    errorsFromHours: string[] = [];
 
     //data for component
     ionTitle: string;
@@ -70,9 +71,6 @@ export class CreateCalendarPage implements OnInit {
             if (params['businessId'] != undefined) {
                 this.selectedBusinessId = params['businessId'];
             }
-            console.log(params['docCalendarId'] + " docCalendar");
-            console.log(params['UpdateCalendar'] + "is Update Calendar");
-
             if (params['docCalendarId'] != undefined) {
                 this.docIdCalendar = params['docCalendarId'];
 
@@ -98,11 +96,6 @@ export class CreateCalendarPage implements OnInit {
 
         }
     }
-
-
-    dessertOptions: string[] = ["Monday", "Tuesday", "Wednesday",
-                                "Thursday", "Friday", "Saturday", "Sunday"];
-
 
     async showToast(msg: string) {
         let toast = await this.toastCtrl.create({
@@ -140,21 +133,23 @@ export class CreateCalendarPage implements OnInit {
         console.log("save datat");
         console.log(JSON.stringify(calendar));
 
-        this.calendarService.addCalendar(calendar).then(value => {
-            this.showToast("Calendar successfully created");
-            //  this.router.navigate(['/detail-business', {businessId: this.selectedBusinessId}])
-            this.router.navigate(['/detail-business'], {queryParams: {businessId: this.selectedBusinessId}})
+        if (this.errorsFromHours.length === 0) {// when we do not have errors
+            this.calendarService.addCalendar(calendar).then(value => {
+                this.showToast("Calendar successfully created");
+                //  this.router.navigate(['/detail-business', {businessId: this.selectedBusinessId}])
+                this.router.navigate(['/detail-business'], {queryParams: {businessId: this.selectedBusinessId}})
 
-        }).catch((error) => {
-            console.log('error');
-            console.log(error);
-            this.showToast("Something is wrong")
-        });
+            }).catch((error) => {
+                console.log('error');
+                console.log(error);
+                this.showToast("Something is wrong")
+            });
+        }
     }
 
     private mapOpeningClosingHours(): Day[] {
         const formData = this.contactForm.value;
-        return  [
+        const hours = [
             {day: "Monday", openingHours: formData.MondayOpening, closingHours: formData.MondayClosing},
             {day: "Tuesday", openingHours: formData.TuesdayOpening, closingHours: formData.TuesdayClosing},
             {day: "Wednesday", openingHours: formData.WednesdayOpening, closingHours: formData.WednesdayClosing},
@@ -164,6 +159,22 @@ export class CreateCalendarPage implements OnInit {
             {day: "Sunday", openingHours: formData.SundayOpening, closingHours: formData.SundayClosing},
 
         ];
+
+        this.errorsFromHours = [];
+        // check hours 
+        hours.forEach((value, index) => {
+            console.log('-----------------------');
+            if (value.openingHours == '' && value.closingHours != '') {
+
+                console.log(value.day + '  Opening hours is empty but, we got closing ' + index);
+                this.errorsFromHours.push(value.day + ' Opening hours is empty we got closing');
+            } else if (value.openingHours != '' && value.closingHours == '') {
+                this.errorsFromHours.push(value.day + '  Closing hours is empty but we got Opening ');
+                console.log(value.day + '  Closing hours is empty but we got Opening ' + index);
+            }
+        });
+
+        return hours;
     }
 
 
@@ -197,23 +208,30 @@ export class CreateCalendarPage implements OnInit {
 
     updateCalendars() {
 
+        console.log('call update functio n');
+
+
         let updateCalendar: Calendar = {
             idBusiness: this.calendar.idBusiness,
 
             week: this.mapOpeningClosingHours(),
-            break: 'hello',
+            break: 'no break',
         };
-        // create data according the creat calendar ts
-        this.calendarService.updateCalendar(this.docIdCalendar, updateCalendar).then(() => {
-            console.log("uspesny update ");
-            this.router.navigate(['/detail-business'], {queryParams: {businessId: updateCalendar.idBusiness}});
-            this.showToast("The Update Is Done Successfully")
+        //create data according the creat calendar ts
 
-        }).catch((error) => {
-            console.log("error you got error ");
-            console.log(error);
-            // this.messageFirebase = "Something is wrong";
-        });
+
+        if (this.errorsFromHours.length === 0) {
+            this.calendarService.updateCalendar(this.docIdCalendar, updateCalendar).then(() => {
+                console.log("uspesny update ");
+                this.router.navigate(['/detail-business'], {queryParams: {businessId: updateCalendar.idBusiness}});
+                this.showToast("The Update Is Done Successfully")
+
+            }).catch((error) => {
+                console.log("error you got error ");
+                console.log(error);
+                // this.messageFirebase = "Something is wrong";
+            });
+        }
 
     }
 }

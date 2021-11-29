@@ -113,6 +113,8 @@ export class RegistrationPage implements OnInit {
         const password = model.get('password');
         const password2 = model.get('password2');
         
+        console.log("validator working");
+        
 //        console.log("passsword one is dirtz"+ password.dirty);
          
 

@@ -138,6 +138,18 @@
         </form>
 
 
+        <!--<div *ngFor="let error of errorsFromHours; let i = index">-->
+           <!--{{i}} <em>{{error}}</em>-->
+        <!--</div>-->
+
+        <ion-card *ngIf="errorsFromHours.length >0 ">
+            <h2>Warning</h2>
+            <ion-item color="warning" *ngFor="let error of errorsFromHours; let i = index">
+                <label class="ion-text-center">{{error}} </label>
+            </ion-item>
+        </ion-card>
+
+
         <ion-card *ngIf="firebaseErrorMessage">
             <ion-item color="warning">
                 <label class="ion-text-center">{{firebaseErrorMessage}}</label>

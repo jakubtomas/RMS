@@ -49,7 +49,7 @@ export class BusinessService {
         {name: "Transport"},
         {name: "Financial Services"},
         {name: "Wellness & Personal Grooming"},
-        {name: "Sports & Fitness"},
+        {name: "Sportss & Fitness"},
     ];
 
 
@@ -118,7 +118,7 @@ export class BusinessService {
                 if (searchValues.nameOrganization) {
                     query = query.where('nameOrganization', '==', searchValues.nameOrganization)
                 }
-                if (searchValues.city) {
+                if (searchValues.city) { //todo >= start with
                     query = query.where('city', '==', searchValues.city)
                 }
 
@@ -134,7 +134,14 @@ export class BusinessService {
                 return query;
             });
 
-        return this.businessCollection.valueChanges();
+        return this.businessCollection.snapshotChanges().pipe(
+            map(changes => {
+                return changes.map(a => {
+                    const data = a.payload.doc.data() as Business;
+                    data.id = a.payload.doc.id;
+                    return data;
+                });
+            }));
     }
 
 

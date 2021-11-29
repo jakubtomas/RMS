@@ -115,7 +115,6 @@ export class RegisterBusinessPage implements OnInit {
         } else {
             this.ionTitle = 'Registration business';
             this.ionButton = 'Register';
-
         }
     }
 
