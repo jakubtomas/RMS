@@ -156,6 +156,10 @@
             </ion-item>
         </ion-card>
 
+        <ion-button  color="warning" *ngIf="true" type="submit" expand="block" (click)="resetForm()"
+                    >Reset Form
+        </ion-button>
+
         <ion-button *ngIf="!isUpdateCalendar else updateButton " type="submit" expand="block" (click)="saveData()"
                     [disabled]="!contactForm">Save calendar data
         </ion-button>

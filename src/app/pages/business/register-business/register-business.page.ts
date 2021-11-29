@@ -122,7 +122,7 @@ export class RegisterBusinessPage implements OnInit {
 
         // fetch data
         let businessData: Business = {
-
+            idOwner: localStorage.getItem('idUser'),
             nameOrganization: this.nameOrganization.value,
             phoneNumber: this.phoneNumber.value,
             zipCode: this.zipCode.value,

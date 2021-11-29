@@ -124,21 +124,12 @@ export class ListBusinessPage implements OnInit {
     /// write condition if my list business filter according to my id
     getAllBusinesses():void {
         console.log(" get All businesses");
-        
-        this.businessService.getOneBusinessDemo();
-        this.businessService.subject.subscribe(value => {
-          //  this.myBusinesses = value;
-            
-            console.log("vypisanie hodnot ");
-            console.log(value);
-            //this.myBusinesses.push(value);
-            
-        })
+
        // this.businessService.getAllOwnerBusinesses();
        // this.getAllBusinessesPermission();
             // send default value
 
-        /*this.businessService.getAllBusinesses(this.orderBy)
+        this.businessService.getAllMyBusinesses(this.orderBy)
             .subscribe(business => {
             console.log(business);
             this.businesses = business;
@@ -146,7 +137,7 @@ export class ListBusinessPage implements OnInit {
         }, error => {
             console.log("error");
             console.log(error);
-        })*/
+        })
 
 }
     chooseBusiness(business: Business):void {

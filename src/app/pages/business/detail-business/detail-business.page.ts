@@ -21,8 +21,7 @@ export class DetailBusinessPage implements OnInit {
     selectedBusinessId: string;
     calendar: Calendar;
     calendars: Calendar[];
-    daysOfWeek: any;
-    pole: any;
+    myId: string  ;
 
     constructor(private route: ActivatedRoute,
         private businessService: BusinessService,
@@ -182,6 +181,14 @@ export class DetailBusinessPage implements OnInit {
     createCalendar(): void {
     //    this.router.navigate(['/create-calendar', {businessId: this.selectedBusinessId}]);
         this.router.navigate(['/create-calendar'], { queryParams: { businessId: this.selectedBusinessId}})
+
+    }
+
+    createMeeting(): void {
+        //    this.router.navigate(['/create-calendar', {businessId: this.selectedBusinessId}]);
+        console.log("go to another page ");
+        
+        //this.router.navigate(['/create-calendar'], { queryParams: { businessId: this.selectedBusinessId}})
 
     }
 

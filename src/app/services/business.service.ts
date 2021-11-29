@@ -148,7 +148,13 @@ export class BusinessService {
     /// 1 create function set value , parameter
     //todo reminder change orderBY ? because search page , set parameter
 
-    getAllBusinesses(orderBy: string): Observable<Business[]> {
+    getAllMyBusinesses(orderBy: string): Observable<Business[]> {
+        const idOwner = localStorage.getItem('idUser');
+        this.businessCollection = this.afs.collection('business',
+            ref => ref.where('idOwner', '==', idOwner)
+        );
+
+
         return this.businessCollection.snapshotChanges().pipe(
             map(changes => {
                 return changes.map(a => {
@@ -247,7 +253,7 @@ export class BusinessService {
 
 
     getAllOwnerBusinesses():void {
-        /*const userId = localStorage.getItem('idUser');
+       /* const userId = localStorage.getItem('idUser');
 
         this.getBusinessPermissions().subscribe(permissions => {
 

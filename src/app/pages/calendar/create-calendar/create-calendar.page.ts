@@ -177,6 +177,25 @@ export class CreateCalendarPage implements OnInit {
         return hours;
     }
 
+    resetForm() {
+        this.contactForm.setValue({
+            MondayOpening: '',
+            MondayClosing: '',
+            TuesdayOpening: '',
+            TuesdayClosing: '',
+            WednesdayOpening: '',
+            WednesdayClosing: '',
+            ThursdayOpening: '',
+            ThursdayClosing: '',
+            FridayOpening: '',
+            FridayClosing: '',
+            SaturdayOpening: '',
+            SaturdayClosing: '',
+            SundayOpening: '',
+            SundayClosing: ''
+        });
+    }
+
 
     getOneCalendar(docCalendarId: string) {
         this.calendarService.getOneCalendar(docCalendarId).subscribe(calendar$ => {
@@ -213,7 +232,6 @@ export class CreateCalendarPage implements OnInit {
 
         let updateCalendar: Calendar = {
             idBusiness: this.calendar.idBusiness,
-
             week: this.mapOpeningClosingHours(),
             break: 'no break',
         };

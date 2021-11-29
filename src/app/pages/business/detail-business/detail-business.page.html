@@ -42,46 +42,58 @@
                     Wisconsin Territory in 1836.
                 </ion-card-content>
         -->
-
-        <section>
-            <header>Possibility with business</header>
-            <ion-button color="warning" (click)="editBusiness()">Edit</ion-button>
-            <ion-button color="danger" (click)="showAlertForDelete('business')">Delete</ion-button>
-        </section>
-
-        <br>
-
-        <div *ngIf="calendar else activeButton">
-            <h5 class="calendarName"> Opening and Closing Hours </h5>
-            <div *ngFor="let item of calendar.week" class="schedule ">
-                <ion-row>
-                    <ion-col>
-                        <div>{{item.day}}</div>
-                    </ion-col>
-                    <ion-col>
-                        <div>{{item.openingHours}}</div>
-                    </ion-col>
-                    <ion-col>
-                        <div>{{item.closingHours}}</div>
-                    </ion-col>
-                </ion-row>
-            </div>
-
+        <div *ngIf="business.idOwner !== myId">
             <section>
-                <ion-button color="warning" (click)="editCalendar()">Edit Calendar</ion-button>
-                <ion-button color="danger" (click)="showAlertForDelete('')">Delete Calendar</ion-button>
+                <header>Create Meeting</header>
+                <ion-button expand="block" (click)="createMeeting()">Create Meeting</ion-button>
             </section>
-
         </div>
 
 
-        <!--todo condition ked mam kalendar button disabled for new calendar-->
-        <ng-template #activeButton>
-            <section>
-                <header>Calendar</header>
-                <ion-button expand="block" (click)="createCalendar()">Create calendar</ion-button>
+        <div *ngIf="business.idOwner === myId">
+
+
+            <section><!-- take idUser and compare with localStorage -->
+                <header>Possibility with business</header>
+                <ion-button color="warning" (click)="editBusiness()">Edit</ion-button>
+                <ion-button color="danger" (click)="showAlertForDelete('business')">Delete</ion-button>
             </section>
-        </ng-template>
+
+            <br>
+
+            <div *ngIf="calendar else activeButton">
+                <h5 class="calendarName"> Opening and Closing Hours </h5>
+                <div *ngFor="let item of calendar.week" class="schedule ">
+                    <ion-row>
+                        <ion-col>
+                            <div>{{item.day}}</div>
+                        </ion-col>
+                        <ion-col>
+                            <div>{{item.openingHours}}</div>
+                        </ion-col>
+                        <ion-col>
+                            <div>{{item.closingHours}}</div>
+                        </ion-col>
+                    </ion-row>
+                </div>
+
+                <section>
+                    <ion-button color="warning" (click)="editCalendar()">Edit Calendar</ion-button>
+                    <ion-button color="danger" (click)="showAlertForDelete('')">Delete Calendar</ion-button>
+                </section>
+
+            </div>
+
+
+            <!--todo condition ked mam kalendar button disabled for new calendar-->
+            <ng-template #activeButton>
+                <section>
+                    <header>Calendar</header>
+                    <ion-button expand="block" (click)="createCalendar()">Create calendar</ion-button>
+                </section>
+            </ng-template>
+
+        </div>
     </ion-card>
 
 
