@@ -180,7 +180,27 @@ export class BusinessService {
      }));
      }*/
 
-    getIdsOfMyBusinesses() {
+    /*getIdsOfMyBusinesses() {
+        const userId = localStorage.getItem('idUser');
+        console.log('show my my ide ' + userId);
+
+        let myBusinesses: BusinessPermission[];
+        let idMyBusinesses: string[] = [];
+
+        // BUSINESS PERMISSIONS
+        this.getBusinessPermissions().subscribe(permissions => {
+
+            myBusinesses = permissions.filter(permission => permission.idUser == userId);
+            myBusinesses.forEach((value) => {
+                idMyBusinesses.push(value.idOrganization);
+            });
+            
+        });
+
+        return idMyBusinesses;
+    }*/
+
+    getIdsOfMyBusinesses():Observable<string[]> {
         const userId = localStorage.getItem('idUser');
         console.log('show my my ide ' + userId);
 
@@ -195,32 +215,34 @@ export class BusinessService {
                 idMyBusinesses.push(value.idOrganization);
             });
 
-
         });
 
-        return idMyBusinesses;
+        return of(idMyBusinesses);
     }
 
     getAllMyBusinesses(orderBy: string): Observable<Business[]> {
-        let idsMyBusinesses = [];
-        idsMyBusinesses = this.getIdsOfMyBusinesses();
-        console.log(idsMyBusinesses);
+        //let idsMyBusinesses = [];
 
-        if (idsMyBusinesses.length > 0) {
-            this.businessCollection = this.afs.collection('business',
+
+        this.getIdsOfMyBusinesses().subscribe(idsMyBusinesses => {
+                console.log(idsMyBusinesses);
+
+
+            /*this.businessCollection = this.afs.collection('business',
                 ref => ref.where(firebase.firestore.FieldPath.documentId(), 'in', idsMyBusinesses));
 
-            return this.businessCollection.snapshotChanges().pipe(
+            return   this.businessCollection.snapshotChanges().pipe(
                 map(changes => {
                     return changes.map(a => {
                         const data = a.payload.doc.data() as Business;
                         data.id = a.payload.doc.id;
                         return data;
                     });
-                }));
+                }));*/
+        });
 
-        }
-        return this.businessCollection.snapshotChanges().pipe(
+
+        return   this.businessCollection.snapshotChanges().pipe(
             map(changes => {
                 return changes.map(a => {
                     const data = a.payload.doc.data() as Business;
@@ -228,6 +250,18 @@ export class BusinessService {
                     return data;
                 });
             }));
+        
+
+
+        
+        /*return this.businessCollection.snapshotChanges().pipe(
+            map(changes => {
+                return changes.map(a => {
+                    const data = a.payload.doc.data() as Business;
+                    data.id = a.payload.doc.id;
+                    return data;
+                });
+            }));*/
     }
 
     getOneBusiness(documentId: string): Observable<Business | undefined> {
