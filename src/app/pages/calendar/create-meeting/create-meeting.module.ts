@@ -7,13 +7,15 @@ import { IonicModule } from '@ionic/angular';
 import { CreateMeetingPageRoutingModule } from './create-meeting-routing.module';
 
 import { CreateMeetingPage } from './create-meeting.page';
+import { NgCalendarModule  } from 'ionic2-calendar';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    CreateMeetingPageRoutingModule
+    CreateMeetingPageRoutingModule,
+    NgCalendarModule
   ],
   declarations: [CreateMeetingPage]
 })

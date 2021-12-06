@@ -3,6 +3,7 @@ import {ActivatedRoute, Params, Router} from "@angular/router";
 import {BusinessService} from "../../../services/business.service";
 import {AlertController, ToastController} from "@ionic/angular";
 import {CalendarService} from "../../../services/calendar.service";
+import {CalendarMode, Step} from "ionic2-calendar/calendar";
 
 @Component({
   selector: 'app-create-meeting',
@@ -10,8 +11,17 @@ import {CalendarService} from "../../../services/calendar.service";
   styleUrls: ['./create-meeting.page.scss'],
 })
 export class CreateMeetingPage implements OnInit {
-  selectedBusinessId: string;
 
+  selectedDay ;
+  eventSource = [];
+  isToday:boolean;
+  calendar = {
+    mode: 'month' as CalendarMode,
+    step: 30 as Step,
+    currentDate: new Date(),
+  };
+
+  selectedBusinessId: string;
   constructor(private route: ActivatedRoute,
       private businessService: BusinessService,
       private router: Router,
@@ -28,6 +38,17 @@ export class CreateMeetingPage implements OnInit {
         
       }
     })
+  }
+
+  onCurrentDateChanged(event:Date) {
+    console.log('click');
+    console.log(event);
+
+    this.selectedDay = 'hello';
+    // var today = new Date();
+    // today.setHours(0, 0, 0, 0);
+    // event.setHours(0, 0, 0, 0);
+    // this.isToday = today.getTime() === event.getTime();
   }
 
   // add calendar plugin

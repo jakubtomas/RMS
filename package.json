@@ -27,6 +27,8 @@
     "@capacitor/status-bar": "1.0.3",
     "@ionic/angular": "^5.5.2",
     "firebase": "^9.1.0",
+    "install": "^0.13.0",
+    "ionic2-calendar": "^0.6.9",
     "rxjs": "~6.6.0",
     "tslib": "^2.2.0",
     "zone.js": "~0.11.4"
