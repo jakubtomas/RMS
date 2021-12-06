@@ -189,11 +189,11 @@ export class RegisterBusinessPage implements OnInit {
     getOneBusinessForUpdate(businessId: string):void {
 
         this.businessId = businessId; // todo change before commit
-        // this.businessService.getOneBusiness(businessId).subscribe((business) => {
-        //     this.business = business;
-        //     this.setRegisterFormValues();
-        //
-        // });
+         this.businessService.getOneBusiness(businessId).subscribe((business) => {
+             this.business = business;
+             this.setRegisterFormValues();
+
+         });
     }
 
     setRegisterFormValues(): void {

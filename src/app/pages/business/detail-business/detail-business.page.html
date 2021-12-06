@@ -42,7 +42,7 @@
                     Wisconsin Territory in 1836.
                 </ion-card-content>
         -->
-        <div *ngIf="business.idOwner !== myId">
+        <div *ngIf="!isThisMyBusiness">
             <section>
                 <header>Create Meeting</header>
                 <ion-button expand="block" (click)="createMeeting()">Create Meeting</ion-button>
@@ -50,7 +50,7 @@
         </div>
 
 
-        <div *ngIf="business.idOwner === myId">
+        <div *ngIf="isThisMyBusiness">
 
 
             <section><!-- take idUser and compare with localStorage -->

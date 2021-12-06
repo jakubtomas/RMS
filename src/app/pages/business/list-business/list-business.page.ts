@@ -38,7 +38,7 @@ export class ListBusinessPage implements OnInit {
 
 
         this.route.queryParams.subscribe((params: Params) => {
-            console.log('Parameter  ' + JSON.stringify(params));
+
             if (params['deletedBusiness']) {
                 this.messageFirebase = 'Business successfully deleted'
             }
@@ -52,7 +52,7 @@ export class ListBusinessPage implements OnInit {
         });
 
     }
-
+s
     //todo is essential thing set messagefirebase to null in another function which we call
 
 
@@ -121,13 +121,8 @@ export class ListBusinessPage implements OnInit {
 
     }*/
 
-    /// write condition if my list business filter according to my id
+    /// write condition if my list business filter according to my idlist
     getAllBusinesses():void {
-        console.log(" get All businesses");
-
-       // this.businessService.getAllOwnerBusinesses();
-       // this.getAllBusinessesPermission();
-            // send default value
 
         this.businessService.getAllMyBusinesses(this.orderBy)
             .subscribe(business => {
@@ -141,7 +136,7 @@ export class ListBusinessPage implements OnInit {
 
 }
     chooseBusiness(business: Business):void {
-        console.log("call the function");
+        console.log("call ssearthe function");
         console.log(business.id);
 
         console.log('business is  ' + business.nameOrganization);

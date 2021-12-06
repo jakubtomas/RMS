@@ -21,7 +21,8 @@ export class DetailBusinessPage implements OnInit {
     selectedBusinessId: string;
     calendar: Calendar;
     calendars: Calendar[];
-    myId: string  ;
+    myId: string;
+    isThisMyBusiness: boolean = false;
 
     constructor(private route: ActivatedRoute,
         private businessService: BusinessService,
@@ -39,6 +40,8 @@ export class DetailBusinessPage implements OnInit {
 
             if (params['businessId'] != undefined) {
                 this.selectedBusinessId = params['businessId'];
+
+                this.controlBusinessPermission(params['businessId']);
                 this.getOneBusiness(params['businessId']);
                 // this.getCalendar();
                 this.getCalendars();
@@ -65,7 +68,7 @@ export class DetailBusinessPage implements OnInit {
     }
 
 
-    getOneBusiness(documentID: string) {
+    getOneBusiness(documentID: string): void {
 
         this.businessService.getOneBusiness(documentID).subscribe((business) => {
                 this.business = business;
@@ -75,15 +78,32 @@ export class DetailBusinessPage implements OnInit {
         );
     }
 
+    controlBusinessPermission(documentID: string) {
+
+        this.businessService.getBusinessPermission(documentID).subscribe((permissions) => {
+                
+                const myId = localStorage.getItem('idUser');
+                if (permissions[0].idUser === myId) {
+                    console.log('yes this is your business');
+                    
+                    this.isThisMyBusiness = true;
+                }
+
+            }, error => {
+                console.log(error);
+            }
+        );
+    }
+
     editBusiness(): void {
         //this.router.navigate(['/register-business', {businessId: this.selectedBusinessId}]);
-        this.router.navigate(['/register-business'], { queryParams: {businessId: this.selectedBusinessId}})
+        this.router.navigate(['/register-business'], {queryParams: {businessId: this.selectedBusinessId}})
 
     }
 
     deleteBusiness(): void {
         this.businessService.deleteBusiness(this.selectedBusinessId).then(() => {
-         //   this.router.navigate(['/list-business', {deletedBusiness: true}]);
+            //   this.router.navigate(['/list-business', {deletedBusiness: true}]);
             this.router.navigate(['/list-business'], {queryParams: {deletedBusiness: true}});
 
             this.business = null;
@@ -96,8 +116,8 @@ export class DetailBusinessPage implements OnInit {
         });
     }
 
-    async showAlertForDelete(input:string): Promise<any> {
-        console.log("show alert");
+    async showAlertForDelete(input: string): Promise<any> {
+
         let deleteBusiness: boolean = null;
 
         if (input === "business") {
@@ -171,24 +191,24 @@ export class DetailBusinessPage implements OnInit {
         console.log("click edit calendar");
 
         //  this.router.navigate(['/register-business', {businessId: this.selectedBusinessId}])
-      //  this.router.navigate(['/create-calendar', {docCalendarId: this.calendar.id, updateCalendar: true}]);
-        this.router.navigate(['/create-calendar'], { queryParams: { docCalendarId: this.calendar.id}})
+        //  this.router.navigate(['/create-calendar', {docCalendarId: this.calendar.id, updateCalendar: true}]);
+        this.router.navigate(['/create-calendar'], {queryParams: {docCalendarId: this.calendar.id}})
 
 
     }
 
 
     createCalendar(): void {
-    //    this.router.navigate(['/create-calendar', {businessId: this.selectedBusinessId}]);
-        this.router.navigate(['/create-calendar'], { queryParams: { businessId: this.selectedBusinessId}})
+        //    this.router.navigate(['/create-calendar', {businessId: this.selectedBusinessId}]);
+        this.router.navigate(['/create-calendar'], {queryParams: {businessId: this.selectedBusinessId}})
 
     }
 
     createMeeting(): void {
         //    this.router.navigate(['/create-calendar', {businessId: this.selectedBusinessId}]);
         console.log("go to another page ");
-        
-        //this.router.navigate(['/create-calendar'], { queryParams: { businessId: this.selectedBusinessId}})
+
+        this.router.navigate(['/create-meeting'], { queryParams: { businessId: this.selectedBusinessId}})
 
     }
 

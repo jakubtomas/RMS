@@ -166,18 +166,17 @@ export class CreateCalendarPage implements OnInit {
             console.log('-----------------------');
             if (value.openingHours == '' && value.closingHours != '') {
 
-                console.log(value.day + '  Opening hours is empty but, we got closing ' + index);
                 this.errorsFromHours.push(value.day + ' Opening hours is empty we got closing');
             } else if (value.openingHours != '' && value.closingHours == '') {
                 this.errorsFromHours.push(value.day + '  Closing hours is empty but we got Opening ');
-                console.log(value.day + '  Closing hours is empty but we got Opening ' + index);
+
             }
         });
 
         return hours;
     }
 
-    resetForm() {
+    resetForm():void {
         this.contactForm.setValue({
             MondayOpening: '',
             MondayClosing: '',
@@ -197,26 +196,25 @@ export class CreateCalendarPage implements OnInit {
     }
 
 
-    getOneCalendar(docCalendarId: string) {
-        this.calendarService.getOneCalendar(docCalendarId).subscribe(calendar$ => {
-            console.log(calendar$);
+    getOneCalendar(docCalendarId: string):void {
+        this.calendarService.getOneCalendar(docCalendarId).subscribe(calendar => {
 
-            this.calendar = calendar$;
+            this.calendar = calendar;
             this.contactForm.setValue({
-                MondayOpening: calendar$.week[0]?.openingHours,
-                MondayClosing: calendar$.week[0]?.closingHours,
-                TuesdayOpening: calendar$.week[1]?.openingHours,
-                TuesdayClosing: calendar$.week[1]?.closingHours,
-                WednesdayOpening: calendar$.week[2]?.openingHours,
-                WednesdayClosing: calendar$.week[2]?.closingHours,
-                ThursdayOpening: calendar$.week[3]?.openingHours,
-                ThursdayClosing: calendar$.week[3]?.closingHours,
-                FridayOpening: calendar$.week[4]?.openingHours,
-                FridayClosing: calendar$.week[4]?.closingHours,
-                SaturdayOpening: calendar$.week[5]?.openingHours,
-                SaturdayClosing: calendar$.week[5]?.closingHours,
-                SundayOpening: calendar$.week[6]?.openingHours,
-                SundayClosing: calendar$.week[6]?.closingHours
+                MondayOpening: calendar.week[0]?.openingHours,
+                MondayClosing: calendar.week[0]?.closingHours,
+                TuesdayOpening: calendar.week[1]?.openingHours,
+                TuesdayClosing: calendar.week[1]?.closingHours,
+                WednesdayOpening: calendar.week[2]?.openingHours,
+                WednesdayClosing: calendar.week[2]?.closingHours,
+                ThursdayOpening: calendar.week[3]?.openingHours,
+                ThursdayClosing: calendar.week[3]?.closingHours,
+                FridayOpening: calendar.week[4]?.openingHours,
+                FridayClosing: calendar.week[4]?.closingHours,
+                SaturdayOpening: calendar.week[5]?.openingHours,
+                SaturdayClosing: calendar.week[5]?.closingHours,
+                SundayOpening: calendar.week[6]?.openingHours,
+                SundayClosing: calendar.week[6]?.closingHours
             });
 
         }, error => {
@@ -225,18 +223,13 @@ export class CreateCalendarPage implements OnInit {
         })
     }
 
-    updateCalendars() {
-
-        console.log('call update functio n');
-
+    updateCalendars():void {
 
         let updateCalendar: Calendar = {
             idBusiness: this.calendar.idBusiness,
             week: this.mapOpeningClosingHours(),
             break: 'no break',
         };
-        //create data according the creat calendar ts
-
 
         if (this.errorsFromHours.length === 0) {
             this.calendarService.updateCalendar(this.docIdCalendar, updateCalendar).then(() => {
@@ -251,5 +244,31 @@ export class CreateCalendarPage implements OnInit {
             });
         }
 
+    }
+
+    resetHours(event,item) {
+
+        let week = this.mapOpeningClosingHours();
+
+        week[item].openingHours = '';
+        week[item].closingHours= '';
+
+        this.contactForm.setValue({
+            MondayOpening: week[0]?.openingHours,
+            MondayClosing: week[0]?.closingHours,
+            TuesdayOpening: week[1]?.openingHours,
+            TuesdayClosing: week[1]?.closingHours,
+            WednesdayOpening: week[2]?.openingHours,
+            WednesdayClosing: week[2]?.closingHours,
+            ThursdayOpening: week[3]?.openingHours,
+            ThursdayClosing: week[3]?.closingHours,
+            FridayOpening: week[4]?.openingHours,
+            FridayClosing: week[4]?.closingHours,
+            SaturdayOpening: week[5]?.openingHours,
+            SaturdayClosing: week[5]?.closingHours,
+            SundayOpening: week[6]?.openingHours,
+            SundayClosing: week[6]?.closingHours
+        });
+        
     }
 }

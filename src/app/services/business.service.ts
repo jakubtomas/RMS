@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Business} from "../interfaces/business";
 //import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
-import {BehaviorSubject, Observable, Subject, Subscriber} from "rxjs";
+import {BehaviorSubject, Observable, of, Subject, Subscriber} from "rxjs";
 import {map} from 'rxjs/operators';
 import {
     AngularFirestore,
@@ -9,11 +9,12 @@ import {
     AngularFirestoreDocument,
     DocumentChangeAction,
 } from '@angular/fire/compat/firestore';
-import firebase from "firebase/compat";
+import firebase from "firebase/compat/app";
 import DocumentReference = firebase.firestore.DocumentReference;
 import {AngularFireAuth} from "@angular/fire/compat/auth";
 import {BusinessPermission} from "../interfaces/businessPermission";
 import {SearchBusiness} from "../interfaces/searchBusiness";
+import {getIdTokenResult} from "@angular/fire/auth";
 
 
 interface Item {
@@ -43,6 +44,8 @@ export class BusinessService {
 
     public oneUserBusinesses = [];
 
+    subject$ = new Subject();
+
     typesOfOrganization = [
         {name: "Health Care"},
         {name: "Food/Restaurant"},
@@ -65,9 +68,7 @@ export class BusinessService {
 
         //citiesRef.where('population', '>', 2500000).orderBy('population');
 
-        this.businessCollection = this.afs.collection('business',
-            ref => ref.where('typeOfOrganization', '==', 'Transport')
-        );
+        this.businessCollection = this.afs.collection('business');
 
 
         this.businessCollection2 = this.afs.collection('business');
@@ -110,6 +111,20 @@ export class BusinessService {
 
     }
 
+    getBusinessPermission(idBusiness: string): Observable<BusinessPermission[]> {
+        this.businessPermissionCollection = this.afs.collection('businessPermission',
+            ref => {
+                let query: firebase.firestore.CollectionReference | firebase.firestore.Query = ref;
+                if (idBusiness) {
+                    query = query.where('idOrganization', '==', idBusiness)
+                }
+
+                return query;
+            });
+
+        return this.businessPermissionCollection.valueChanges();
+    }
+
     getSearchedBusinesses(searchValues: SearchBusiness): Observable<Business[]> {
 
         this.businessCollection = this.afs.collection('business',
@@ -148,13 +163,63 @@ export class BusinessService {
     /// 1 create function set value , parameter
     //todo reminder change orderBY ? because search page , set parameter
 
+    /* getAllMyBusinesses(orderBy: string): Observable<Business[]> {
+     const idOwner = localStorage.getItem('idUser');
+     this.businessCollection = this.afs.collection('business',
+     ref => ref.where('idOwner', '==', idOwner)
+     );
+
+
+     return this.businessCollection.snapshotChanges().pipe(
+     map(changes => {
+     return changes.map(a => {
+     const data = a.payload.doc.data() as Business;
+     data.id = a.payload.doc.id;
+     return data;
+     });
+     }));
+     }*/
+
+    getIdsOfMyBusinesses() {
+        const userId = localStorage.getItem('idUser');
+        console.log('show my my ide ' + userId);
+
+        let myBusinesses: BusinessPermission[];
+        let idMyBusinesses: string[] = [];
+
+        // BUSINESS PERMISSIONS
+        this.getBusinessPermissions().subscribe(permissions => {
+
+            myBusinesses = permissions.filter(permission => permission.idUser == userId);
+            myBusinesses.forEach((value) => {
+                idMyBusinesses.push(value.idOrganization);
+            });
+
+
+        });
+
+        return idMyBusinesses;
+    }
+
     getAllMyBusinesses(orderBy: string): Observable<Business[]> {
-        const idOwner = localStorage.getItem('idUser');
-        this.businessCollection = this.afs.collection('business',
-            ref => ref.where('idOwner', '==', idOwner)
-        );
+        let idsMyBusinesses = [];
+        idsMyBusinesses = this.getIdsOfMyBusinesses();
+        console.log(idsMyBusinesses);
 
+        if (idsMyBusinesses.length > 0) {
+            this.businessCollection = this.afs.collection('business',
+                ref => ref.where(firebase.firestore.FieldPath.documentId(), 'in', idsMyBusinesses));
 
+            return this.businessCollection.snapshotChanges().pipe(
+                map(changes => {
+                    return changes.map(a => {
+                        const data = a.payload.doc.data() as Business;
+                        data.id = a.payload.doc.id;
+                        return data;
+                    });
+                }));
+
+        }
         return this.businessCollection.snapshotChanges().pipe(
             map(changes => {
                 return changes.map(a => {
@@ -169,23 +234,22 @@ export class BusinessService {
         console.log(documentId);
 
         return this.businessCollection2.doc(documentId).valueChanges();
-      //  return this.businessCollection2.doc(documentId);
+        //  return this.businessCollection2.doc(documentId);
     }
 
+
+    // create collection for permission businesse write condition where businesses is
+    // create function and
 
     getBusinessPermissions(): Observable<BusinessPermission[]> {
         return this.businessPermissionCollection.valueChanges();
     }
 
-     subject = new Subject();
     getOneBusinessDemo()/*: Observable<Business>*/ {
 
         const userId = localStorage.getItem('idUser');
 
-         console.log("my id is " + userId);
-        // this.subject.next(456);
-        // this.subject.subscribe(value => console.log(value));
-        // this.subject.next(789);
+        console.log("my id is " + userId);
 
         this.getBusinessPermissions().subscribe(permissions => {
 
@@ -196,29 +260,31 @@ export class BusinessService {
             console.log(myBusinesses);
 
             // for every id myBusiness I am calling function which return my Document with detail Information
-            myBusinesses.forEach(one => {
-                    console.log(one.idOrganization);
-                    
-                let resultDocument = this.businessCollection2.doc(one.idOrganization).valueChanges();
 
-                resultDocument.subscribe(document => {
 
-                    if (document !== undefined) {
-                        console.log("------------------");
-                         console.log(document);
-                        this.oneUserBusinesses.push(document);
-                        // create BehaviourSubject or subject for this
-                        console.log("lenght of array   " + this.oneUserBusinesses.length);
-                        //this.subject.next(document);
-                    }
-                })
-            });
+            /*myBusinesses.forEach(one => {
+             console.log(one.idOrganization);
+
+             let resultDocument = this.businessCollection2.doc(one.idOrganization).valueChanges();
+
+             resultDocument.subscribe(document => {
+
+             if (document !== undefined) {
+             console.log("------------------");
+             console.log(document);
+             this.oneUserBusinesses.push(document);
+             // create BehaviourSubject or subject for this
+             console.log("lenght of array   " + this.oneUserBusinesses.length);
+             //this.subject.next(document);
+             }
+             })
+             });*/
 
         });
 
         //todo problem stale je subscribnute a pocuva na zmeni aj ked som na inej stranke
         // todo niekedy tam mam viac hodnot pretoze ostava s prechadajucej
-        
+
     }
 
     addBusiness(businessData: Business): Promise<DocumentReference<BusinessPermission>> {
@@ -247,26 +313,26 @@ export class BusinessService {
         //todo important delete also in another table in firestroe do not forget this
     }
 
+
     addBusinessPermission(businessPermissionObject: BusinessPermission): Promise<DocumentReference<BusinessPermission>> {
         return this.businessPermissionCollection.add(businessPermissionObject);
     }
 
+    getAllOwnerBusinesses(): void {
+        /* const userId = localStorage.getItem('idUser');
 
-    getAllOwnerBusinesses():void {
-       /* const userId = localStorage.getItem('idUser');
+         this.getBusinessPermissions().subscribe(permissions => {
 
-        this.getBusinessPermissions().subscribe(permissions => {
+         // console.log(permissions);
+         const myBusinesses = permissions.filter(permission => permission.idUser == userId);
+         console.log(' permissions');
 
-           // console.log(permissions);
-            const myBusinesses = permissions.filter(permission => permission.idUser == userId);
-            console.log(' permissions');
+         console.log(myBusinesses);
 
-            console.log(myBusinesses);
-            
-            this.oneUserBusinesses = myBusinesses;
-           // console.log(myBusinesses);
+         this.oneUserBusinesses = myBusinesses;
+         // console.log(myBusinesses);
 
-        });*/
+         });*/
     }
 
     getBusinessList(): Observable<DocumentChangeAction<unknown>[]> {

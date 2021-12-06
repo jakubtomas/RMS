@@ -40,6 +40,7 @@
                                   formControlName="MondayClosing"
                                   class="dateTime1"
                                   value="1990-02-19T07:43Z"></ion-datetime>
+                    <ion-icon name="backspace" (click)="resetHours($event, 0)"></ion-icon>
                 </ion-item>
 
                 <ion-item class="item">
@@ -54,6 +55,7 @@
                                   formControlName="TuesdayClosing"
                                   class="dateTime1"
                                   value="1990-02-19T07:43Z"></ion-datetime>
+                    <ion-icon name="backspace" (click)="resetHours($event, 1)"></ion-icon>
                 </ion-item>
 
 
@@ -69,6 +71,7 @@
                                   formControlName="WednesdayClosing"
                                   class="dateTime1"
                                   value="1990-02-19T07:43Z"></ion-datetime>
+                     <ion-icon name="backspace" (click)="resetHours($event, 2)"></ion-icon>
                 </ion-item>
 
 
@@ -84,6 +87,7 @@
                                   formControlName="ThursdayClosing"
                                   class="dateTime1"
                                   value="1990-02-19T07:43Z"></ion-datetime>
+                     <ion-icon name="backspace" (click)="resetHours($event, 3)"></ion-icon>
                 </ion-item>
 
                 <ion-item class="item">
@@ -98,6 +102,7 @@
                                   formControlName="FridayClosing"
                                   class="dateTime1"
                                   value="1990-02-19T07:43Z"></ion-datetime>
+                     <ion-icon name="backspace" (click)="resetHours($event, 4)"></ion-icon>
                 </ion-item>
 
                 <ion-item class="item">
@@ -112,6 +117,7 @@
                                   formControlName="SaturdayClosing"
                                   class="dateTime1"
                                   value="1990-02-19T07:43Z"></ion-datetime>
+                     <ion-icon name="backspace" (click)="resetHours($event, 5)"></ion-icon>
                 </ion-item>
 
                 <ion-item class="item">
@@ -126,6 +132,7 @@
                                   formControlName="SundayClosing"
                                   class="dateTime1"
                                   value="1990-02-19T07:43Z"></ion-datetime>
+                     <ion-icon name="backspace" (click)="resetHours($event, 6)"></ion-icon>
                 </ion-item>
 
             </div>
@@ -144,7 +151,7 @@
 
         <ion-card *ngIf="errorsFromHours.length >0 ">
             <h2>Warning</h2>
-            <ion-item color="warning" *ngFor="let error of errorsFromHours; let i = index">
+            <ion-item color="danger" *ngFor="let error of errorsFromHours; let i = index">
                 <label class="ion-text-center">{{error}} </label>
             </ion-item>
         </ion-card>

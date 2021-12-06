@@ -67,7 +67,7 @@ export class SearchBusinessPage implements OnInit {
         });
 
         console.log(this.registerForm);
-    }
+    }d
 
     onSubmit() {
 
@@ -121,48 +121,6 @@ export class SearchBusinessPage implements OnInit {
         })
     }
 
-    getAllBusinesses() {
-
-        // send default value
-        //todo create new function ,parameter data from Form
-        // todo create function in service where create queary according the input data
-        //
-
-        // this.businessService.getAllBusinesses(this.orderBy).subscribe(value => {
-        //     console.log(value);
-        //     this.businesses = value;
-        //
-        //     // create filter
-        //     console.log(this.businesses);
-        //
-        //     this.businesses = value.filter(oneBusiness => oneBusiness.typeOfOrganization === this.typeOrganization.value);
-        //     console.log("after filter");
-        //     console.log(this.businesses);
-        //
-        //     if (this.nameOrganization.value !== null) {
-        //         this.businesses = this.businesses.filter(oneBusiness => oneBusiness.nameOrganization.includes(this.nameOrganization.value));
-        //
-        //     }
-        //
-        //     if (this.city.value !== null) {
-        //         this.businesses = this.businesses.filter(oneBusiness => oneBusiness.city.includes(this.city.value));
-        //     }
-        //
-        //     if (this.zipCode.value !== null) {
-        //         this.businesses = this.businesses.filter(oneBusiness => oneBusiness.zipCode.includes(this.zipCode.value));
-        //     }
-        //
-        //     if (this.businesses.length === 0) {
-        //         this.noResultMessage = true;
-        //     } else {
-        //         this.noResultMessage = false;
-        //     }
-        //
-        // }, error => {
-        //     console.log("error");
-        //     console.log(error);
-        // })
-    }
 
     chooseBusiness(business: Business) {
         console.log("call the function");

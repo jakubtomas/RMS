@@ -56,6 +56,10 @@ const routes: Routes = [
     path: 'search-business',
     loadChildren: () => import('./pages/business/search-business/search-business.module').then( m => m.SearchBusinessPageModule)
   },
+  {
+    path: 'create-meeting',
+    loadChildren: () => import('./pages/calendar/create-meeting/create-meeting.module').then( m => m.CreateMeetingPageModule)
+  },
 
 
 
