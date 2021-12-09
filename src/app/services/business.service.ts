@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Business} from "../interfaces/business";
 //import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
-import {BehaviorSubject, Observable, of, Subject, Subscriber} from "rxjs";
-import {map} from 'rxjs/operators';
+import {BehaviorSubject, forkJoin, Observable, of, Subject, Subscriber} from "rxjs";
+import {filter, map, mergeMap, switchMap, tap, toArray} from 'rxjs/operators';
 import {
     AngularFirestore,
     AngularFirestoreCollection,
@@ -181,94 +181,129 @@ export class BusinessService {
      }*/
 
     /*getIdsOfMyBusinesses() {
+     const userId = localStorage.getItem('idUser');
+     console.log('show my my ide ' + userId);
+
+     let myBusinesses: BusinessPermission[];
+     let idMyBusinesses: string[] = [];
+
+     // BUSINESS PERMISSIONS
+     this.getBusinessPermissions().subscribe(permissions => {
+
+     myBusinesses = permissions.filter(permission => permission.idUser == userId);
+     myBusinesses.forEach((value) => {
+     idMyBusinesses.push(value.idOrganization);
+     });
+
+     });
+
+     return idMyBusinesses;
+     }*/
+
+    getIdsOfMyBusinesses(): Observable<string[]> {
         const userId = localStorage.getItem('idUser');
-        console.log('show my my ide ' + userId);
 
-        let myBusinesses: BusinessPermission[];
-        let idMyBusinesses: string[] = [];
+        return this.getBusinessPermissions().pipe(
+            map((array: BusinessPermission[]) => array.filter(permission => permission.idUser == userId)),
+            map((value: BusinessPermission[]) => value.map((item: BusinessPermission) => item.idOrganization))
+        )
+            // BUSINESS PERMISSIONS
+            /*        this.getBusinessPermissions().subscribe(permissions => {
 
-        // BUSINESS PERMISSIONS
-        this.getBusinessPermissions().subscribe(permissions => {
+             myBusinesses = permissions.filter(permission => permission.idUser == userId);
+             myBusinesses.forEach((value) => {
+             idMyBusinesses.push(value.idOrganization);
+             });
 
-            myBusinesses = permissions.filter(permission => permission.idUser == userId);
-            myBusinesses.forEach((value) => {
-                idMyBusinesses.push(value.idOrganization);
-            });
-            
-        });
+             })*/;
 
-        return idMyBusinesses;
-    }*/
-
-    getIdsOfMyBusinesses():Observable<string[]> {
-        const userId = localStorage.getItem('idUser');
-        console.log('show my my ide ' + userId);
-
-        let myBusinesses: BusinessPermission[];
-        let idMyBusinesses: string[] = [];
-
-        // BUSINESS PERMISSIONS
-        this.getBusinessPermissions().subscribe(permissions => {
-
-            myBusinesses = permissions.filter(permission => permission.idUser == userId);
-            myBusinesses.forEach((value) => {
-                idMyBusinesses.push(value.idOrganization);
-            });
-
-        });
-
-        return of(idMyBusinesses);
+        //return of(idMyBusinesses);
     }
 
     getAllMyBusinesses(orderBy: string): Observable<Business[]> {
         //let idsMyBusinesses = [];
 
-
-        this.getIdsOfMyBusinesses().subscribe(idsMyBusinesses => {
-                console.log(idsMyBusinesses);
+        // getOneBusiness
 
 
-            /*this.businessCollection = this.afs.collection('business',
-                ref => ref.where(firebase.firestore.FieldPath.documentId(), 'in', idsMyBusinesses));
+        // return this.getIdsOfMyBusinesses().pipe(
+        //     mergeMap(value => this.getOneBusiness(value)),
+        //         toArray()
+        //
+        // );
+        console.log('call function ');
 
-            return   this.businessCollection.snapshotChanges().pipe(
-                map(changes => {
-                    return changes.map(a => {
-                        const data = a.payload.doc.data() as Business;
-                        data.id = a.payload.doc.id;
-                        return data;
-                    });
-                }));*/
-        });
+        return this.getIdsOfMyBusinesses().pipe(
+            switchMap(idsBusinesses => forkJoin(idsBusinesses.map(id => this.getOneBusiness(id)))),
+            tap((response) =>
+
+                console.log('////////////////// ', response))
+        );
+
+        /*
+         return this.getIdsOfMyBusinesses().pipe(
+
+         switchMap(value =>
+         this.afs.collection('business',
+         ref => ref.where(firebase.firestore.FieldPath.documentId(), 'in', value)).snapshotChanges()),
+         map(changes => {
+         return changes.map(a => {
+         const data = a.payload.doc.data() as Business;
+         data.id = a.payload.doc.id;
+         return data;
+         });
+         })
 
 
-        return   this.businessCollection.snapshotChanges().pipe(
-            map(changes => {
-                return changes.map(a => {
-                    const data = a.payload.doc.data() as Business;
-                    data.id = a.payload.doc.id;
-                    return data;
-                });
-            }));
-        
+         );
+         */
 
 
-        
+        /*this.businessCollection = this.afs.collection('business',
+         ref => ref.where(firebase.firestore.FieldPath.documentId(), 'in', idsMyBusinesses));
+
+         return   this.businessCollection.snapshotChanges().pipe(
+         map(changes => {
+         return changes.map(a => {
+         const data = a.payload.doc.data() as Business;
+         data.id = a.payload.doc.id;
+         return data;
+         });
+         }));*/
+
+
+        // return this.businessCollection.snapshotChanges().pipe(
+        //     map(changes => {
+        //         return changes.map(a => {
+        //             const data = a.payload.doc.data() as Business;
+        //             data.id = a.payload.doc.id;
+        //             return data;
+        //         });
+        //     }));
+
+
         /*return this.businessCollection.snapshotChanges().pipe(
-            map(changes => {
-                return changes.map(a => {
-                    const data = a.payload.doc.data() as Business;
-                    data.id = a.payload.doc.id;
-                    return data;
-                });
-            }));*/
+         map(changes => {
+         return changes.map(a => {
+         const data = a.payload.doc.data() as Business;
+         data.id = a.payload.doc.id;
+         return data;
+         });
+         }));*/
     }
 
     getOneBusiness(documentId: string): Observable<Business | undefined> {
         console.log(documentId);
 
-        return this.businessCollection2.doc(documentId).valueChanges();
-        //  return this.businessCollection2.doc(documentId);
+        return this.businessCollection2.doc(documentId).get().pipe(
+            map(changes => {
+
+                const data = changes.data();
+                data.id = documentId;
+                return data;
+
+            }));
+
     }
 
 

@@ -3,6 +3,7 @@ import {ActivatedRoute, Params, Router} from "@angular/router";
 import {AuthService} from "../../../services/auth.service";
 import {BusinessService} from "../../../services/business.service";
 import {Business} from "../../../interfaces/business";
+import {Observable} from "rxjs";
 
 interface Item {
     id?: string;
@@ -22,7 +23,9 @@ export class ListBusinessPage implements OnInit {
     messageFirebase: string;
     private orderBy: string = 'nameOrganization';
     private businessPermission;
-    myBusinesses = [];
+   // Businesses$: Observable = [];
+    businesses$: Observable<Business[]> =
+        this.businessService.getAllMyBusinesses("mock");
 
     constructor(private route: ActivatedRoute,
         private businessService: BusinessService,
@@ -30,7 +33,7 @@ export class ListBusinessPage implements OnInit {
     }
 
     ngOnInit() {
-        this.getAllBusinesses();
+        //this.getAllBusinesses();
         //when we go again this page ionic maybe have function
         // vyriesit problem tu je ze tato funkcia sa nezavola vzdy ked sa prekliknem na tuto page
         //pretoze si uklada info b stranke
@@ -52,7 +55,7 @@ export class ListBusinessPage implements OnInit {
         });
 
     }
-s
+
     //todo is essential thing set messagefirebase to null in another function which we call
 
 
@@ -122,19 +125,18 @@ s
     }*/
 
     /// write condition if my list business filter according to my idlist
-    getAllBusinesses():void {
-
-        this.businessService.getAllMyBusinesses(this.orderBy)
-            .subscribe(business => {
-            console.log(business);
-            this.businesses = business;
-
-        }, error => {
-            console.log("error");
-            console.log(error);
-        })
-
-}
+//     getAllBusinesses():void {
+//
+//         this.businessService.getAllMyBusinesses(this.orderBy).subscribe(business => {
+//             console.log(business);
+//             this.businesses = business;
+//
+//         }, error => {
+//             console.log("error");
+//             console.log(error);
+//         })
+//
+// }
     chooseBusiness(business: Business):void {
         console.log("call ssearthe function");
         console.log(business.id);
