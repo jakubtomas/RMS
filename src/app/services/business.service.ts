@@ -32,6 +32,7 @@ export class BusinessService {
     itemsCollection: AngularFirestoreCollection<Item>;
     businessCollection: AngularFirestoreCollection<Business>;
     businessCollection2: AngularFirestoreCollection<Business>;
+    businessCollection3: AngularFirestoreCollection<Business>;
     businessPermissionCollection: AngularFirestoreCollection<BusinessPermission>;
 
     itemDoc: AngularFirestoreDocument<Item>;
@@ -69,7 +70,6 @@ export class BusinessService {
         //citiesRef.where('population', '>', 2500000).orderBy('population');
 
         this.businessCollection = this.afs.collection('business');
-
 
         this.businessCollection2 = this.afs.collection('business');
         //this.businessPermissionCollection= this.afs.collection('businessPermission', ref => ref.orderBy('idUser','asc'));
@@ -111,8 +111,8 @@ export class BusinessService {
 
     }
 
-    getBusinessPermission(idBusiness: string): Observable<BusinessPermission[]> {
-        this.businessPermissionCollection = this.afs.collection('businessPermission',
+    getBusinessPermission(idBusiness: string): Observable<BusinessPermission> {
+        const businessPermissionCollection:AngularFirestoreCollection<BusinessPermission>  = this.afs.collection('businessPermission',
             ref => {
                 let query: firebase.firestore.CollectionReference | firebase.firestore.Query = ref;
                 if (idBusiness) {
@@ -122,14 +122,14 @@ export class BusinessService {
                 return query;
             });
 
-        return this.businessPermissionCollection.valueChanges();
+        return businessPermissionCollection.valueChanges().pipe(map((array) =>  array?.length === 1 ? array[0] : null ));
     }
 
     getSearchedBusinesses(searchValues: SearchBusiness): Observable<Business[]> {
 
         this.businessCollection = this.afs.collection('business',
             ref => {
-                let query: firebase.firestore.CollectionReference | firebase.firestore.Query = ref;
+                let query: firebase.firestore.CollectionReference | firebase.firestore.Query = ref.orderBy('nameOrganization', 'asc');
                 if (searchValues.nameOrganization) {
                     query = query.where('nameOrganization', '==', searchValues.nameOrganization)
                 }
@@ -157,6 +157,7 @@ export class BusinessService {
                     return data;
                 });
             }));
+
     }
 
 
@@ -232,6 +233,7 @@ export class BusinessService {
         //
         // );
         console.log('call function ');
+        this.businessCollection = this.afs.collection('business');
 
         return this.getIdsOfMyBusinesses().pipe(
             switchMap(idsBusinesses => forkJoin(idsBusinesses.map(id => this.getOneBusiness(id)))),

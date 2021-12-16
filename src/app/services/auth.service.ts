@@ -3,6 +3,7 @@ import {AngularFireAuth} from "@angular/fire/compat/auth";
 import {Router} from "@angular/router";
 import firebase from "firebase/compat";
 import UserCredential = firebase.auth.UserCredential;
+import { getAuth, updateProfile } from "firebase/auth";
 import {Observable} from "rxjs";
 
 //import {auth} from "firebase/compat";
@@ -20,7 +21,8 @@ export class AuthService {
     ) {//todo maybe is better use localStorage
         console.log(this.afAuth.authState);
         console.log('chekc this ');
-        
+       // this.afAuth.user.
+        //
         
         this.afAuth.authState.subscribe(user => {
             if (user) {
@@ -42,6 +44,7 @@ export class AuthService {
 
     // string , validacia
     createUser(email:string, password:string): Promise<null | {code: string,message: string} > {
+
 
         return this.afAuth.createUserWithEmailAndPassword(email, password)
             .then((result: UserCredential ) => {

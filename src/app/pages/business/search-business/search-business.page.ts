@@ -67,7 +67,7 @@ export class SearchBusinessPage implements OnInit {
         });
 
         console.log(this.registerForm);
-    }d
+    }
 
     onSubmit() {
 

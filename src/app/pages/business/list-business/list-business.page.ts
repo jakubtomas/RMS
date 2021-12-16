@@ -19,11 +19,10 @@ interface Item {
 export class ListBusinessPage implements OnInit {
 
     items: Item[];
-    businesses: Business[];
     messageFirebase: string;
     private orderBy: string = 'nameOrganization';
     private businessPermission;
-   // Businesses$: Observable = [];
+    directionOrderBy: string = 'asc';
     businesses$: Observable<Business[]> =
         this.businessService.getAllMyBusinesses("mock");
 
@@ -59,70 +58,87 @@ export class ListBusinessPage implements OnInit {
     //todo is essential thing set messagefirebase to null in another function which we call
 
 
-    getItems():void {
+    getItems(): void {
         this.businessService.getItems().subscribe(value => {
             console.log(value);
             this.items = value;
         })
     }
 
-    orderByName():void {
+    orderByName(): void {
         if (this.orderBy === 'nameOrganization') {
-            this.businesses.reverse();
+
+            if (this.directionOrderBy === 'desc') {
+                this.directionOrderBy = 'asc';
+            } else {
+                this.directionOrderBy = 'desc';
+            }
+
         } else {
             this.orderBy = 'nameOrganization';
-           // this.getAllBusinesses();
+            this.directionOrderBy = 'asc';
+            // this.getAllBusinesses();
         }
+
+        console.log('click order by name');
+
     }
 
-    orderByAddress():void{
+    orderByAddress(): void {
         if (this.orderBy === 'city') {
-            this.businesses.reverse();
+
+            if (this.directionOrderBy === 'desc') {
+                this.directionOrderBy = 'asc';
+            } else {
+                this.directionOrderBy = 'desc';
+            }
         } else {
             this.orderBy = 'city';
-         //   this.getAllBusinesses();
+            this.directionOrderBy = 'asc';
+            //   this.getAllBusinesses();
         }
-    }
+        console.log('click order by address');
 
+    }
 
 
     // get all ID business which are my /
-    private getAllBusinessesPermission():void{
+    private getAllBusinessesPermission(): void {
         this.businessService.getBusinessPermissions()
             .subscribe(permission => {
-            console.log(permission);
+                console.log(permission);
 
-            // take id local storage or else
-            const userId = localStorage.getItem('idUser');
-            console.log(userId);
-/*
-            const array = permission.filter(value => value.idUser == userId);
-            console.log(array);*/
-            this.businessPermission = permission.filter(value => value.idUser == userId);
+                // take id local storage or else
+                const userId = localStorage.getItem('idUser');
+                console.log(userId);
+                /*
+                 const array = permission.filter(value => value.idUser == userId);
+                 console.log(array);*/
+                this.businessPermission = permission.filter(value => value.idUser == userId);
 
-           // this.getAllMyBusinesses();
-        }, error => {
-            console.log("error");
-            console.log(error);
-        })
-    }
-
-    /*private getAllMyBusinesses() {
-        this.businessPermission.forEach(value => {
-            this.businessService.getOneBusiness(value.idOrganization).subscribe(oneBusiness => {
-                this.myBusinesses.push(oneBusiness);
-                console.log("priradeny zazname");
-
+                // this.getAllMyBusinesses();
             }, error => {
                 console.log("error");
                 console.log(error);
             })
-        });
-        console.log('all my businesses ');
+    }
 
-        console.log(this.myBusinesses);
+    /*private getAllMyBusinesses() {
+     this.businessPermission.forEach(value => {
+     this.businessService.getOneBusiness(value.idOrganization).subscribe(oneBusiness => {
+     this.myBusinesses.push(oneBusiness);
+     console.log("priradeny zazname");
 
-    }*/
+     }, error => {
+     console.log("error");
+     console.log(error);
+     })
+     });
+     console.log('all my businesses ');
+
+     console.log(this.myBusinesses);
+
+     }*/
 
     /// write condition if my list business filter according to my idlist
 //     getAllBusinesses():void {
@@ -137,7 +153,7 @@ export class ListBusinessPage implements OnInit {
 //         })
 //
 // }
-    chooseBusiness(business: Business):void {
+    chooseBusiness(business: Business): void {
         console.log("call ssearthe function");
         console.log(business.id);
 

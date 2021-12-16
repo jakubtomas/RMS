@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {catchError} from 'rxjs/operators';
 import {BusinessService} from "../../../services/business.service";
@@ -15,7 +15,7 @@ import {object} from "@angular/fire/database";
     templateUrl: './detail-business.page.html',
     styleUrls: ['./detail-business.page.scss'],
 })
-export class DetailBusinessPage implements OnInit {
+export class DetailBusinessPage implements OnInit , OnDestroy{
     messageFirebase: string;
     business: Business;
     selectedBusinessId: string;
@@ -23,6 +23,7 @@ export class DetailBusinessPage implements OnInit {
     calendars: Calendar[];
     myId: string;
     isThisMyBusiness: boolean = false;
+    subscription;
 
     constructor(private route: ActivatedRoute,
         private businessService: BusinessService,
@@ -54,6 +55,13 @@ export class DetailBusinessPage implements OnInit {
             }
         });
 
+        /*
+        * this.donorStore.getDonor(donorId).pipe(
+         filter(donor => !!donor),
+         take(1),
+         switchMap(() => this.donorStore.updateDonorLang(lang))
+         )*/
+
     }
 
     async showToast(msg: string) {
@@ -70,7 +78,7 @@ export class DetailBusinessPage implements OnInit {
 
     getOneBusiness(documentID: string): void {
 
-        this.businessService.getOneBusiness(documentID).subscribe((business) => {
+        this.subscription = this.businessService.getOneBusiness(documentID).subscribe((business) => {
                 this.business = business;
             }, error => {
                 console.log(error);
@@ -78,14 +86,13 @@ export class DetailBusinessPage implements OnInit {
         );
     }
 
-    controlBusinessPermission(documentID: string) {
+    controlBusinessPermission(documentID: string): void {
 
         this.businessService.getBusinessPermission(documentID).subscribe((permissions) => {
                 
                 const myId = localStorage.getItem('idUser');
-                if (permissions[0].idUser === myId) {
-                    console.log('yes this is your business');
-                    
+                if (permissions.idUser === myId) {
+
                     this.isThisMyBusiness = true;
                 }
 
@@ -100,6 +107,8 @@ export class DetailBusinessPage implements OnInit {
         this.router.navigate(['/register-business'], {queryParams: {businessId: this.selectedBusinessId}})
 
     }
+
+
 
     deleteBusiness(): void {
         this.businessService.deleteBusiness(this.selectedBusinessId).then(() => {
@@ -116,7 +125,7 @@ export class DetailBusinessPage implements OnInit {
         });
     }
 
-    async showAlertForDelete(input: string): Promise<any> {
+    async showAlertForDelete(input: string): Promise<any>  {
 
         let deleteBusiness: boolean = null;
 
@@ -210,6 +219,10 @@ export class DetailBusinessPage implements OnInit {
 
         this.router.navigate(['/create-meeting'], { queryParams: { businessId: this.selectedBusinessId}})
 
+    }
+
+    ngOnDestroy() {
+        this.subscription.unsubscribe()
     }
 
 

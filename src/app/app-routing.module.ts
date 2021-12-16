@@ -1,6 +1,7 @@
 import {NgModule} from '@angular/core';
 import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 import {AuthGuard} from "./guards/auth.guard";
+import {OwnerBusinessGuard} from "./guards/owner-business.guard";
 //import {canActivate} from "@angular/fire/compat/auth-guard";
 
 const routes: Routes = [
@@ -42,7 +43,8 @@ const routes: Routes = [
     {
         path: 'register-business',
         loadChildren: () => import('./pages/business/register-business/register-business.module').then(m => m.RegisterBusinessPageModule),
-        canActivate: [AuthGuard]
+       // canActivate: [AuthGuard]
+        canActivate: [OwnerBusinessGuard]
     },
     {
         path: 'detail-business',
@@ -52,7 +54,8 @@ const routes: Routes = [
   {
     path: 'create-calendar',
     loadChildren: () => import('./pages/calendar/create-calendar/create-calendar.module').then( m => m.CreateCalendarPageModule)
-  },  {
+  },
+  {
     path: 'search-business',
     loadChildren: () => import('./pages/business/search-business/search-business.module').then( m => m.SearchBusinessPageModule)
   },
