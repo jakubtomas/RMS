@@ -9,13 +9,15 @@ import {errorObject} from "rxjs/internal-compatibility";
 import {CalendarService} from "../../../services/calendar.service";
 import {Calendar} from "../../../interfaces/calendar";
 import {object} from "@angular/fire/database";
+// import * as moment from "../../calendar/create-calendar/create-calendar.page";
+import * as moment from 'moment';
 
 @Component({
     selector: 'app-detail-business',
     templateUrl: './detail-business.page.html',
     styleUrls: ['./detail-business.page.scss'],
 })
-export class DetailBusinessPage implements OnInit , OnDestroy{
+export class DetailBusinessPage implements OnInit, OnDestroy {
     messageFirebase: string;
     business: Business;
     selectedBusinessId: string;
@@ -56,7 +58,7 @@ export class DetailBusinessPage implements OnInit , OnDestroy{
         });
 
         /*
-        * this.donorStore.getDonor(donorId).pipe(
+         * this.donorStore.getDonor(donorId).pipe(
          filter(donor => !!donor),
          take(1),
          switchMap(() => this.donorStore.updateDonorLang(lang))
@@ -89,7 +91,7 @@ export class DetailBusinessPage implements OnInit , OnDestroy{
     controlBusinessPermission(documentID: string): void {
 
         this.businessService.getBusinessPermission(documentID).subscribe((permissions) => {
-                
+
                 const myId = localStorage.getItem('idUser');
                 if (permissions.idUser === myId) {
 
@@ -109,7 +111,6 @@ export class DetailBusinessPage implements OnInit , OnDestroy{
     }
 
 
-
     deleteBusiness(): void {
         this.businessService.deleteBusiness(this.selectedBusinessId).then(() => {
             //   this.router.navigate(['/list-business', {deletedBusiness: true}]);
@@ -125,7 +126,7 @@ export class DetailBusinessPage implements OnInit , OnDestroy{
         });
     }
 
-    async showAlertForDelete(input: string): Promise<any>  {
+    async showAlertForDelete(input: string): Promise<any> {
 
         let deleteBusiness: boolean = null;
 
@@ -177,16 +178,66 @@ export class DetailBusinessPage implements OnInit , OnDestroy{
         });
     }
 
+    changeDateFormat(): void {
+
+        // create mock Date and set value
+        const newWeek = this.calendar.week.map((item, index) => {
+            if (index == 1) {
+
+
+                const basicTime = '10:25 AM';
+                const date = moment();
+
+                console.log(' what is date ');
+                console.log(date);
+
+
+                const newTime = moment('Mon 03-Jul-2017, 11:00 AM', 'ddd DD-MMM-YYYY, hh:mm A');
+                console.log('newtime  ' + newTime);
+
+
+                // const stringForFun = 'Mon 03-Jul-2017, ' + basicTime;
+                const newTime2 = moment('Mon 03-Jul-2017, ' + basicTime, 'ddd DD-MMM-YYYY, hh:mm A');
+
+                console.log('newtime 2  ' + newTime2);
+
+
+
+                return {
+                    day: item.day,
+                    openingHours: newTime2,
+                    closingHours: (moment(item.closingHours).format('LT') == 'Invalid date') ? '---' : moment(item.closingHours).format('LT')
+                };
+            } else {
+                return {
+                    day: item.day,
+                    openingHours: (moment(item.openingHours).format('LT') == 'Invalid date') ? '---' : moment(item.openingHours).format('LT'),
+                    closingHours: (moment(item.closingHours).format('LT') == 'Invalid date') ? '---' : moment(item.closingHours).format('LT')
+                };
+            }
+
+        });
+
+        this.calendar = {
+            id: this.calendar.id,
+            idBusiness: this.calendar.idBusiness,
+            week: newWeek,
+            break: 'no break',
+        };
+
+    }
+
     getCalendars(): void {
         this.calendarService.getCalendars().subscribe(calendars => {
-            console.log("details busines calendar");
-            console.log(calendars);
 
             this.calendars = calendars;
             if (this.calendars.length > 0) {
                 this.calendars.forEach(calendar => {
                     if (calendar.idBusiness === this.selectedBusinessId) {
+                        // set calendar
                         this.calendar = calendar;
+                        //call function fore format date
+                        this.changeDateFormat();
                     }
                 });
             }
@@ -217,7 +268,7 @@ export class DetailBusinessPage implements OnInit , OnDestroy{
         //    this.router.navigate(['/create-calendar', {businessId: this.selectedBusinessId}]);
         console.log("go to another page ");
 
-        this.router.navigate(['/create-meeting'], { queryParams: { businessId: this.selectedBusinessId}})
+        this.router.navigate(['/create-meeting'], {queryParams: {businessId: this.selectedBusinessId}})
 
     }
 

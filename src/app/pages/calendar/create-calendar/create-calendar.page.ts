@@ -8,6 +8,9 @@ import {ToastController} from "@ionic/angular";
 
 
 import {Day} from "../../../interfaces/day";
+import * as moment from 'moment';
+
+// import * as moment from 'moment';
 
 @Component({
     selector: 'app-create-calendar',
@@ -148,8 +151,33 @@ export class CreateCalendarPage implements OnInit {
         }
     }
 
+
+
     private mapOpeningClosingHours(): Day[] {
         const formData = this.contactForm.value;
+
+        const sundayO = formData.SundayOpening;
+        const sundayC = formData.SundayClosing;
+
+        console.log(sundayO + ' -- '  + sundayC);
+        console.log('we are here ');
+        
+       // let duration =
+
+        // let hodina = moment
+        //     .duration(moment(sundayC, 'YYYY/MM/DD HH:mm')
+        //         .diff(moment(sundayO, 'YYYY/MM/DD HH:mm'))
+        //     ).asMinutes();
+        // console.log(hodina);
+        // console.log('Hodina');
+        //
+
+
+        // use this function for saving data intp firestore
+        const value = moment(formData.SundayOpening).format('LT');
+        console.log(value);console.log('vyipsaniae hodn oae ro');
+
+
         const hours = [
             {day: "Monday", openingHours: formData.MondayOpening, closingHours: formData.MondayClosing},
             {day: "Tuesday", openingHours: formData.TuesdayOpening, closingHours: formData.TuesdayClosing},
@@ -200,9 +228,22 @@ export class CreateCalendarPage implements OnInit {
     getOneCalendar(docCalendarId: string):void {
         this.calendarService.getOneCalendar(docCalendarId).subscribe(calendar => {
 
+
+            const basicTime = '10:25 AM';
+            const newTime2 = moment('Mon 03-Jul-2017, ' + basicTime, 'ddd DD-MMM-YYYY, hh:mm A');
+
             this.calendar = calendar;
+
+            console.log(' show me this album ');
+            
+            console.log(calendar.week[6]?.openingHours);
+            console.log(calendar.week[6]?.closingHours);
+
+
+            // 2021-12-20T23:12:56.702+01:00
+
             this.contactForm.setValue({
-                MondayOpening: calendar.week[0]?.openingHours,
+                MondayOpening: newTime2,
                 MondayClosing: calendar.week[0]?.closingHours,
                 TuesdayOpening: calendar.week[1]?.openingHours,
                 TuesdayClosing: calendar.week[1]?.closingHours,
@@ -270,6 +311,6 @@ export class CreateCalendarPage implements OnInit {
             SundayOpening: week[6]?.openingHours,
             SundayClosing: week[6]?.closingHours
         });
-        
+
     }
 }

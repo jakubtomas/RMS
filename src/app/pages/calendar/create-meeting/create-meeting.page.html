@@ -18,11 +18,25 @@
               >
     </calendar>
 
-   <!-- <div class="grid">
-        <div class="grid-item">
+    <ion-card>
+        <ion-list>
+            <ion-item>
+                <ion-label class="orderBy" style="cursor:pointer"
+                           (click)="orderByName()"> <!--todo hover color and mouse type change-->
+                    Name business   &#x25B2; &#x25BC;</ion-label>
 
-            <ion-datetime value="2012-12-15T13:47:20.789"></ion-datetime>
-        </div>
-    </div>-->
+                <ion-label class="orderBy" style="cursor:pointer"
+                           (click)="orderByAddress()"> <!--todo hover color and mouse type change-->
+                    Address &#x25B2; &#x25BC; </ion-label>
 
+            </ion-item>
+            <ion-item-sliding *ngFor="let item of businesses$ ">
+                <ion-item (click)="chooseBusiness(item)" class="item">
+                    <ion-label style="cursor:pointer">{{item.nameOrganization}} </ion-label>
+                    <ion-label style="cursor:pointer">{{item.city + " " + item.nameStreetWithNumber}}</ion-label>
+                </ion-item>
+            </ion-item-sliding>
+
+        </ion-list>
+    </ion-card>
 </ion-content>
