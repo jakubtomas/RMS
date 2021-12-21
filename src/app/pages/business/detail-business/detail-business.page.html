@@ -69,13 +69,15 @@
                             <div>{{item.day}}</div>
                         </ion-col>
                         <ion-col>
-                            <div>{{item.openingHours}}</div>
+                            <div>{{item.openingHours.toString()}}</div>
                         </ion-col>
                         <ion-col>
                             <div>{{item.closingHours}}</div>
                         </ion-col>
                     </ion-row>
                 </div>
+
+                <h1 > pocet otvorenych minut {{hodina}}</h1>
 
                 <section>
                     <ion-button color="warning" (click)="editCalendar()">Edit Calendar</ion-button>

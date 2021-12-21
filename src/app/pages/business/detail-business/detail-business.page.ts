@@ -26,6 +26,8 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
     myId: string;
     isThisMyBusiness: boolean = false;
     subscription;
+    hodina;
+
 
     constructor(private route: ActivatedRoute,
         private businessService: BusinessService,
@@ -182,7 +184,7 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
 
         // create mock Date and set value
         const newWeek = this.calendar.week.map((item, index) => {
-            if (index == 1) {
+            if (index == 6) {
 
 
                 const basicTime = '10:25 AM';
@@ -202,11 +204,18 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
                 console.log('newtime 2  ' + newTime2);
 
 
+                this.hodina = moment
+                    .duration(moment(item.closingHours, 'HH:mm')
+                        .diff(moment(item.openingHours, 'HH:mm'))
+                    ).asMinutes();
+                console.log(this.hodina);
+                console.log('show me your time ');
+
 
                 return {
                     day: item.day,
-                    openingHours: newTime2,
-                    closingHours: (moment(item.closingHours).format('LT') == 'Invalid date') ? '---' : moment(item.closingHours).format('LT')
+                    openingHours: item.openingHours,
+                    closingHours: item.closingHours
                 };
             } else {
                 return {
@@ -235,6 +244,13 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
                 this.calendars.forEach(calendar => {
                     if (calendar.idBusiness === this.selectedBusinessId) {
                         // set calendar
+
+                        console.log('-----------------');
+                        console.log('your calendar data are ');
+                        console.log(calendar);
+                        console.log('-----------------');
+
+
                         this.calendar = calendar;
                         //call function fore format date
                         this.changeDateFormat();

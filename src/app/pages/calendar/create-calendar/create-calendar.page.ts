@@ -128,7 +128,7 @@ export class CreateCalendarPage implements OnInit {
 
         let calendar: Calendar = {
             idBusiness: this.selectedBusinessId,
-
+// save
             week: this.mapOpeningClosingHours(),
             break: 'hello',
         };//todo prestavky niesu nastavene
@@ -152,17 +152,16 @@ export class CreateCalendarPage implements OnInit {
     }
 
 
-
     private mapOpeningClosingHours(): Day[] {
         const formData = this.contactForm.value;
 
         const sundayO = formData.SundayOpening;
         const sundayC = formData.SundayClosing;
 
-        console.log(sundayO + ' -- '  + sundayC);
+        console.log(sundayO + ' -- ' + sundayC);
         console.log('we are here ');
-        
-       // let duration =
+
+        // let duration =
 
         // let hodina = moment
         //     .duration(moment(sundayC, 'YYYY/MM/DD HH:mm')
@@ -174,10 +173,22 @@ export class CreateCalendarPage implements OnInit {
 
 
         // use this function for saving data intp firestore
-        const value = moment(formData.SundayOpening).format('LT');
-        console.log(value);console.log('vyipsaniae hodn oae ro');
+
+        const withoutFormatDate = formData.SundayOpening;
+
+        console.log(withoutFormatDate);
+
+        const value = moment(formData.SundayOpening).format('HH:mm');
+        console.log(value);
+        console.log('vyipsaniae hodn oae ro');
 
 
+        // save data into databas pomocou moment(formData.SundayOpening).format('HH:mm');
+
+        //fetch data from database and and set opening and closing hours in create calendar page and detail page
+
+
+        // ternarny operator                     closingHours: (moment(item.closingHours).format('LT') == 'Invalid date') ? '---' : moment(item.closingHours).format('LT')
         const hours = [
             {day: "Monday", openingHours: formData.MondayOpening, closingHours: formData.MondayClosing},
             {day: "Tuesday", openingHours: formData.TuesdayOpening, closingHours: formData.TuesdayClosing},
@@ -185,12 +196,24 @@ export class CreateCalendarPage implements OnInit {
             {day: "Thursday", openingHours: formData.ThursdayOpening, closingHours: formData.ThursdayClosing},
             {day: "Friday", openingHours: formData.FridayOpening, closingHours: formData.FridayClosing},
             {day: "Saturday", openingHours: formData.SaturdayOpening, closingHours: formData.SaturdayClosing},
-            {day: "Sunday", openingHours: formData.SundayOpening, closingHours: formData.SundayClosing},
+            {day: "Sunday", openingHours: moment(formData.SundayOpening).format('HH:mm'), closingHours: moment(formData.SundayClosing).format('HH:mm')},
 
         ];
 
+        // const hours = [
+        //     {day: "Monday", openingHours: moment(formData.MondayOpening).format('HH:mm'), closingHours: moment(formData.MondayClosing).format(('HH:mm'))},
+        //     {day: "Tuesday", openingHours: moment(formData.TuesdayOpening).format('HH:mm'), closingHours: moment(formData.TuesdayClosing).format(('HH:mm'))},
+        //     {day: "Wednesday", openingHours: moment(formData.WednesdayOpening).format('HH:mm'), closingHours: moment(formData.WednesdayClosing).format(('HH:mm'))},
+        //     {day: "Thursday", openingHours: moment(formData.ThursdayOpening).format('HH:mm'), closingHours: moment(formData.ThursdayClosing).format(('HH:mm'))},
+        //     {day: "Friday", openingHours: moment(formData.FridayOpening).format('HH:mm'), closingHours: moment(formData.FridayClosing).format(('HH:mm'))},
+        //     {day: "Saturday", openingHours: moment(formData.SaturdayOpening).format('HH:mm'), closingHours: moment(formData.SaturdayClosing).format(('HH:mm'))},
+        //     {day: "Sunday", openingHours: moment(formData.SundayOpening).format('HH:mm'), closingHours: moment(formData.SundayClosing).format('HH:mm')},
+        //
+        // ];
+
+
         this.errorsFromHours = [];
-        // check hours 
+        // check hours
         hours.forEach((value, index) => {
             console.log('-----------------------');
             if (value.openingHours == '' && value.closingHours != '') {
@@ -229,21 +252,22 @@ export class CreateCalendarPage implements OnInit {
         this.calendarService.getOneCalendar(docCalendarId).subscribe(calendar => {
 
 
-            const basicTime = '10:25 AM';
-            const newTime2 = moment('Mon 03-Jul-2017, ' + basicTime, 'ddd DD-MMM-YYYY, hh:mm A');
+            const basicTime = '10:25';
+           // const newTime2 = moment('Mon 03-Jul-2017, ' + basicTime, 'ddd DD-MMM-YYYY, hh:mm ');
 
+           // const attemptValue =
             this.calendar = calendar;
 
             console.log(' show me this album ');
             
-            console.log(calendar.week[6]?.openingHours);
+            console.log(calendar.week[5]?.openingHours);
             console.log(calendar.week[6]?.closingHours);
 
 
-            // 2021-12-20T23:12:56.702+01:00
+            const time = "2021-12-20T" + basicTime + ':56.702+01:00';
 
             this.contactForm.setValue({
-                MondayOpening: newTime2,
+                MondayOpening: time,
                 MondayClosing: calendar.week[0]?.closingHours,
                 TuesdayOpening: calendar.week[1]?.openingHours,
                 TuesdayClosing: calendar.week[1]?.closingHours,
@@ -255,8 +279,15 @@ export class CreateCalendarPage implements OnInit {
                 FridayClosing: calendar.week[4]?.closingHours,
                 SaturdayOpening: calendar.week[5]?.openingHours,
                 SaturdayClosing: calendar.week[5]?.closingHours,
-                SundayOpening: calendar.week[6]?.openingHours,
-                SundayClosing: calendar.week[6]?.closingHours
+
+                // show data for update
+
+                // todo ukladanie casu do UTC , cas prekonvertovat do UTC , skonvertuje cas do toho pouzivatela
+                SundayOpening: "2021-12-20T" + calendar.week[6]?.openingHours + ':00.000+00:00',
+                //SundayOpening: calendar.week[6]?.openingHours,
+                SundayClosing: "2021-12-20T" + calendar.week[6]?.closingHours + ':00.000+00:00',
+                //SundayClosing: calendar.week[6]?.closingHours
+
             });
 
         }, error => {
