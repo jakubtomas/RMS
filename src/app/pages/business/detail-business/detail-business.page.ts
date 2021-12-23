@@ -214,14 +214,14 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
 
                 return {
                     day: item.day,
-                    openingHours: item.openingHours,
+                    openingHours: item.openingHours ,
                     closingHours: item.closingHours
                 };
             } else {
                 return {
                     day: item.day,
-                    openingHours: (moment(item.openingHours).format('LT') == 'Invalid date') ? '---' : moment(item.openingHours).format('LT'),
-                    closingHours: (moment(item.closingHours).format('LT') == 'Invalid date') ? '---' : moment(item.closingHours).format('LT')
+                    openingHours: item.openingHours ,
+                    closingHours: item.closingHours
                 };
             }
 

@@ -131,9 +131,12 @@ export class CreateCalendarPage implements OnInit {
 // save
             week: this.mapOpeningClosingHours(),
             break: 'hello',
-        };//todo prestavky niesu nastavene
-        //todo typovanie v interface
+        };
 
+
+        //todo prestavky niesu nastavene
+        //todo typovanie v interface
+// todo add Timezone , and change interface
         console.log("save datat");
         console.log(JSON.stringify(calendar));
 
@@ -174,11 +177,12 @@ export class CreateCalendarPage implements OnInit {
 
         // use this function for saving data intp firestore
 
-        const withoutFormatDate = formData.SundayOpening;
-
+        const withoutFormatDate = formData.MondayOpening;
+         console.log('pred upravou');
         console.log(withoutFormatDate);
 
-        const value = moment(formData.SundayOpening).format('HH:mm');
+        console.log('po uprave ');
+        const value = moment(formData.MondayOpening).format('HH:mm');
         console.log(value);
         console.log('vyipsaniae hodn oae ro');
 
@@ -190,13 +194,42 @@ export class CreateCalendarPage implements OnInit {
 
         // ternarny operator                     closingHours: (moment(item.closingHours).format('LT') == 'Invalid date') ? '---' : moment(item.closingHours).format('LT')
         const hours = [
-            {day: "Monday", openingHours: formData.MondayOpening, closingHours: formData.MondayClosing},
-            {day: "Tuesday", openingHours: formData.TuesdayOpening, closingHours: formData.TuesdayClosing},
-            {day: "Wednesday", openingHours: formData.WednesdayOpening, closingHours: formData.WednesdayClosing},
-            {day: "Thursday", openingHours: formData.ThursdayOpening, closingHours: formData.ThursdayClosing},
-            {day: "Friday", openingHours: formData.FridayOpening, closingHours: formData.FridayClosing},
-            {day: "Saturday", openingHours: formData.SaturdayOpening, closingHours: formData.SaturdayClosing},
-            {day: "Sunday", openingHours: moment(formData.SundayOpening).format('HH:mm'), closingHours: moment(formData.SundayClosing).format('HH:mm')},
+            {
+                day: "Monday", // todo create ternar operater if formData.MondayOpening is empty string use '' else use
+                //todo moment(formData.MondayOpening).format('HH:mm')
+                openingHours: moment(formData.MondayOpening).format('HH:mm'),
+                closingHours: moment(formData.MondayClosing).format('HH:mm')
+            },
+            {
+                day: "Tuesday",
+                openingHours: moment(formData.TuesdayOpening).format('HH:mm'),
+                closingHours: moment(formData.TuesdayClosing).format('HH:mm')
+            },
+            {
+                day: "Wednesday",
+                openingHours: moment(formData.WednesdayOpening).format('HH:mm'),
+                closingHours: moment(formData.WednesdayClosing).format('HH:mm')
+            },
+            {
+                day: "Thursday",
+                openingHours: moment(formData.ThursdayOpening).format('HH:mm'),
+                closingHours: moment(formData.ThursdayClosing).format('HH:mm')
+            },
+            {
+                day: "Friday",
+                openingHours: moment(formData.FridayOpening).format('HH:mm'),
+                closingHours: moment(formData.FridayClosing).format('HH:mm')
+            },
+            {
+                day: "Saturday",
+                openingHours: moment(formData.SaturdayOpening).format('HH:mm'),
+                closingHours: moment(formData.SaturdayClosing).format('HH:mm')
+            },
+            {
+                day: "Sunday",
+                openingHours: moment(formData.SundayOpening).format('HH:mm'),
+                closingHours: moment(formData.SundayClosing).format('HH:mm')
+            },
 
         ];
 
@@ -228,7 +261,7 @@ export class CreateCalendarPage implements OnInit {
         return hours;
     }
 
-    resetForm():void {
+    resetForm(): void {
         this.contactForm.setValue({
             MondayOpening: '',
             MondayClosing: '',
@@ -248,44 +281,50 @@ export class CreateCalendarPage implements OnInit {
     }
 
 
-    getOneCalendar(docCalendarId: string):void {
+    getOneCalendar(docCalendarId: string): void {
         this.calendarService.getOneCalendar(docCalendarId).subscribe(calendar => {
 
 
             const basicTime = '10:25';
-           // const newTime2 = moment('Mon 03-Jul-2017, ' + basicTime, 'ddd DD-MMM-YYYY, hh:mm ');
+            // const newTime2 = moment('Mon 03-Jul-2017, ' + basicTime, 'ddd DD-MMM-YYYY, hh:mm ');
 
-           // const attemptValue =
+            // const attemptValue =
             this.calendar = calendar;
 
+            console.log(calendar);
             console.log(' show me this album ');
-            
+
+            console.log(calendar.week[0]?.openingHours);
+            console.log(calendar.week[1]?.openingHours);
             console.log(calendar.week[5]?.openingHours);
             console.log(calendar.week[6]?.closingHours);
 
 
+            // todo I am saving time zone in last value of string
+
             const time = "2021-12-20T" + basicTime + ':56.702+01:00';
 
-            this.contactForm.setValue({
-                MondayOpening: time,
-                MondayClosing: calendar.week[0]?.closingHours,
-                TuesdayOpening: calendar.week[1]?.openingHours,
-                TuesdayClosing: calendar.week[1]?.closingHours,
-                WednesdayOpening: calendar.week[2]?.openingHours,
-                WednesdayClosing: calendar.week[2]?.closingHours,
-                ThursdayOpening: calendar.week[3]?.openingHours,
-                ThursdayClosing: calendar.week[3]?.closingHours,
-                FridayOpening: calendar.week[4]?.openingHours,
-                FridayClosing: calendar.week[4]?.closingHours,
-                SaturdayOpening: calendar.week[5]?.openingHours,
-                SaturdayClosing: calendar.week[5]?.closingHours,
-
+            this.contactForm.setValue({ // todo create function and refactoring
+                MondayOpening: calendar.week[0]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[0]?.openingHours + ':56.702+01:00',
+                MondayClosing: calendar.week[0]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[0]?.closingHours + ':56.702+01:00',
+                TuesdayOpening: calendar.week[0]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[0]?.openingHours + ':56.702+01:00',
+                TuesdayClosing: calendar.week[1]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[1]?.closingHours+ ':56.702+01:00',
+                WednesdayOpening: calendar.week[2]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[2]?.openingHours+ ':56.702+01:00',
+                WednesdayClosing: calendar.week[2]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[2]?.closingHours+ ':56.702+01:00',
+                ThursdayOpening: calendar.week[3]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[3]?.openingHours+ ':56.702+01:00',
+                ThursdayClosing: calendar.week[3]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[3]?.closingHours+ ':56.702+01:00',
+                FridayOpening: calendar.week[4]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[4]?.openingHours+ ':56.702+01:00',
+                FridayClosing: calendar.week[4]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[4]?.closingHours+ ':56.702+01:00',
+                SaturdayOpening: calendar.week[5]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[5]?.openingHours+ ':56.702+01:00',
+                SaturdayClosing: calendar.week[5]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[5]?.closingHours+ ':56.702+01:00',
+                SundayOpening: calendar.week[6]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[6]?.openingHours + ':56.702+01:00',
+                SundayClosing: calendar.week[6]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[6]?.closingHours + ':56.702+01:00'
                 // show data for update
 
                 // todo ukladanie casu do UTC , cas prekonvertovat do UTC , skonvertuje cas do toho pouzivatela
-                SundayOpening: "2021-12-20T" + calendar.week[6]?.openingHours + ':00.000+00:00',
+
                 //SundayOpening: calendar.week[6]?.openingHours,
-                SundayClosing: "2021-12-20T" + calendar.week[6]?.closingHours + ':00.000+00:00',
+
                 //SundayClosing: calendar.week[6]?.closingHours
 
             });
@@ -296,7 +335,7 @@ export class CreateCalendarPage implements OnInit {
         })
     }
 
-    updateCalendars():void {
+    updateCalendars(): void {
 
         let updateCalendar: Calendar = {
             idBusiness: this.calendar.idBusiness,
@@ -319,12 +358,12 @@ export class CreateCalendarPage implements OnInit {
 
     }
 
-    resetHours(event,item) {
+    resetHours(event, item) {
 
         let week = this.mapOpeningClosingHours();
 
         week[item].openingHours = '';
-        week[item].closingHours= '';
+        week[item].closingHours = '';
 
         this.contactForm.setValue({
             MondayOpening: week[0]?.openingHours,
