@@ -9,6 +9,7 @@ import {ToastController} from "@ionic/angular";
 
 import {Day} from "../../../interfaces/day";
 import * as moment from 'moment';
+import {Meeting} from "../../../interfaces/meeting";
 
 // import * as moment from 'moment';
 
@@ -26,6 +27,10 @@ export class CreateCalendarPage implements OnInit {
     isUpdateCalendar: boolean = false;
     docIdCalendar: string;
     errorsFromHours: string[] = [];
+    timeZone: string = moment().format().toString().substring(19, 22);
+    timeZoneFirestore: string;
+    timeMeeting: Meeting[] = [];
+
 
     //data for component
     ionTitle: string;
@@ -115,6 +120,7 @@ export class CreateCalendarPage implements OnInit {
 
     saveData() {
         console.log("save data ");
+        console.log(moment().format());
 
         console.log(" calendar");
         console.log(this.contactForm.value);
@@ -131,19 +137,20 @@ export class CreateCalendarPage implements OnInit {
 // save
             week: this.mapOpeningClosingHours(),
             break: 'hello',
+            timeZone: this.timeZone
+
         };
 
 
         //todo prestavky niesu nastavene
         //todo typovanie v interface
-// todo add Timezone , and change interface
+        // todo add Timezone , and change interface
         console.log("save datat");
         console.log(JSON.stringify(calendar));
 
         if (this.errorsFromHours.length === 0) {// when we do not have errors
             this.calendarService.addCalendar(calendar).then(value => {
                 this.showToast("Calendar successfully created");
-                //  this.router.navigate(['/detail-business', {businessId: this.selectedBusinessId}])
                 this.router.navigate(['/detail-business'], {queryParams: {businessId: this.selectedBusinessId}})
 
             }).catch((error) => {
@@ -178,7 +185,7 @@ export class CreateCalendarPage implements OnInit {
         // use this function for saving data intp firestore
 
         const withoutFormatDate = formData.MondayOpening;
-         console.log('pred upravou');
+        console.log('pred upravou');
         console.log(withoutFormatDate);
 
         console.log('po uprave ');
@@ -197,41 +204,47 @@ export class CreateCalendarPage implements OnInit {
             {
                 day: "Monday", // todo create ternar operater if formData.MondayOpening is empty string use '' else use
                 //todo moment(formData.MondayOpening).format('HH:mm')
-                openingHours: moment(formData.MondayOpening).format('HH:mm'),
-                closingHours: moment(formData.MondayClosing).format('HH:mm')
+                openingHours: formData.MondayOpening == '' ? '' : moment(formData.MondayOpening).format('HH:mm'),
+                closingHours: formData.MondayClosing == '' ? '' : moment(formData.MondayClosing).format('HH:mm')
             },
             {
                 day: "Tuesday",
-                openingHours: moment(formData.TuesdayOpening).format('HH:mm'),
-                closingHours: moment(formData.TuesdayClosing).format('HH:mm')
+                openingHours: formData.TuesdayOpening == '' ? '' : moment(formData.TuesdayOpening).format('HH:mm'),
+                closingHours: formData.TuesdayClosing == '' ? '' : moment(formData.TuesdayClosing).format('HH:mm')
             },
             {
                 day: "Wednesday",
-                openingHours: moment(formData.WednesdayOpening).format('HH:mm'),
-                closingHours: moment(formData.WednesdayClosing).format('HH:mm')
+                openingHours: formData.WednesdayOpening == '' ? '' : moment(formData.WednesdayOpening).format('HH:mm'),
+                closingHours: formData.WednesdayClosing == '' ? '' : moment(formData.WednesdayClosing).format('HH:mm')
             },
             {
                 day: "Thursday",
-                openingHours: moment(formData.ThursdayOpening).format('HH:mm'),
-                closingHours: moment(formData.ThursdayClosing).format('HH:mm')
+                openingHours: formData.ThursdayOpening == '' ? '' : moment(formData.ThursdayOpening).format('HH:mm'),
+                closingHours: formData.ThursdayClosing == '' ? '' : moment(formData.ThursdayClosing).format('HH:mm')
             },
             {
                 day: "Friday",
-                openingHours: moment(formData.FridayOpening).format('HH:mm'),
-                closingHours: moment(formData.FridayClosing).format('HH:mm')
+                openingHours: formData.FridayOpening == '' ? '' : moment(formData.FridayOpening).format('HH:mm'),
+                closingHours: formData.FridayClosing == '' ? '' : moment(formData.FridayClosing).format('HH:mm')
             },
             {
                 day: "Saturday",
-                openingHours: moment(formData.SaturdayOpening).format('HH:mm'),
-                closingHours: moment(formData.SaturdayClosing).format('HH:mm')
+                openingHours: formData.SaturdayOpening == '' ? '' : moment(formData.SaturdayOpening).format('HH:mm'),
+                closingHours: formData.SaturdayClosing == '' ? '' : moment(formData.SaturdayClosing).format('HH:mm')
             },
             {
                 day: "Sunday",
-                openingHours: moment(formData.SundayOpening).format('HH:mm'),
-                closingHours: moment(formData.SundayClosing).format('HH:mm')
+                openingHours: formData.SundayOpening == '' ? '' : moment(formData.SundayOpening).format('HH:mm'),
+                closingHours: formData.SundayClosing == '' ? '' : moment(formData.SundayClosing).format('HH:mm')
             },
 
         ];
+        // todo function which control result of opening and closing and check that is minus value ,
+        // otvaranie nieje skor ako zatvaranie a nieje to nahodou malo casu
+        console.log("///////////////////////////////////////");
+        console.log(hours[0].openingHours);
+        console.log(hours[0].closingHours);
+
 
         // const hours = [
         //     {day: "Monday", openingHours: moment(formData.MondayOpening).format('HH:mm'), closingHours: moment(formData.MondayClosing).format(('HH:mm'))},
@@ -291,40 +304,117 @@ export class CreateCalendarPage implements OnInit {
             // const attemptValue =
             this.calendar = calendar;
 
+
             console.log(calendar);
             console.log(' show me this album ');
 
             console.log(calendar.week[0]?.openingHours);
             console.log(calendar.week[1]?.openingHours);
-            console.log(calendar.week[5]?.openingHours);
-            console.log(calendar.week[6]?.closingHours);
+
+            const defaultInterval = '15';
+
+            const open = calendar.week[0]?.openingHours;
+            const close = calendar.week[0]?.closingHours;
+
+            const openTime = moment(open, 'HH:mm');
+            console.log('default openTime ' + openTime.format('HH:mm'));
+            openTime.add('10', "minutes");
+            console.log('after change  ' + openTime.format('HH:mm'));
+
+
+            // create logaritmus
+            const realEnd = moment(close, 'HH:mm');
+
+            let isCalculate = true;
+            let starts = moment(open, 'HH:mm');
+            let ends = moment(open, 'HH:mm');
+            let neverChangeEnds = moment(close, 'HH:mm');
+            let helpValueTime = true;
+            let pomocnyEnd = moment(open, 'HH:mm');
+            this.timeMeeting = [];
+            let helpTime = moment(close, 'HH:mm');
+
+
+            console.log('end pred upravou  ' + ends);
+            console.log('========');
+            
+            while (isCalculate) {
+
+                console.log('zaciatok  start end ' + starts.format('HH:mm') + '   ' + ends.format('HH:mm') );
+                
+                if (helpValueTime) {
+                    ends = ends.add('15', "minutes");
+                    console.log('end po uprave ' + ends.format('HH:mm'));
+
+                } else {
+                    console.log('helpTime ' + helpTime.format('HH:mm'));
+
+                    ends = pomocnyEnd.add('15', "minutes");
+                    console.log('end po uprave wiht pomocny ' + ends.format('HH:mm'));
+                    //starts.subtract('15', "minutes");
+                    console.log('helpTime ' + helpTime.format('HH:mm'));
+
+                    starts = helpTime;
+                }
+                console.log('po prvej uprave start end ' + starts.format('HH:mm') + '   ' + ends.format('HH:mm') );
+
+
+                console.log(' ends ' + ends + ' real end ' + realEnd);
+
+                if (ends <= realEnd) {
+                    //ends this
+                    console.log(' vlozene data' + starts.format('HH:mm') + '//////////////  ' + ends.format('HH:mm'));
+
+
+                    this.timeMeeting.push(
+                        {start: starts.format('HH:mm'), end: ends.format('HH:mm')}
+                    );
+                    // push
+                    // isCalculate = false;
+                    helpValueTime = false;
+                    pomocnyEnd = ends;
+                    helpTime = moment(ends);
+
+                    console.log('data po vlozeni  start and pomocnz end, helpTime ' + starts.format('HH:mm') + '  -- ' +  pomocnyEnd.format('HH:mm')+ '-- ' + helpTime.format('HH:mm') );
+                    
+                } else {
+                    isCalculate = false;
+
+                }
+
+
+                console.log(starts + ' / ' + ends);
+                console.log('------------------------');
+
+            }
+            console.log(' really ');
+
+            console.log(this.timeMeeting);
 
 
             // todo I am saving time zone in last value of string
-
-            const time = "2021-12-20T" + basicTime + ':56.702+01:00';
+            // const time = "2021-12-20T" + basicTime + ':56.702+01:00';
 
             this.contactForm.setValue({ // todo create function and refactoring
-                MondayOpening: calendar.week[0]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[0]?.openingHours + ':56.702+01:00',
-                MondayClosing: calendar.week[0]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[0]?.closingHours + ':56.702+01:00',
-                TuesdayOpening: calendar.week[0]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[0]?.openingHours + ':56.702+01:00',
-                TuesdayClosing: calendar.week[1]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[1]?.closingHours+ ':56.702+01:00',
-                WednesdayOpening: calendar.week[2]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[2]?.openingHours+ ':56.702+01:00',
-                WednesdayClosing: calendar.week[2]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[2]?.closingHours+ ':56.702+01:00',
-                ThursdayOpening: calendar.week[3]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[3]?.openingHours+ ':56.702+01:00',
-                ThursdayClosing: calendar.week[3]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[3]?.closingHours+ ':56.702+01:00',
-                FridayOpening: calendar.week[4]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[4]?.openingHours+ ':56.702+01:00',
-                FridayClosing: calendar.week[4]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[4]?.closingHours+ ':56.702+01:00',
-                SaturdayOpening: calendar.week[5]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[5]?.openingHours+ ':56.702+01:00',
-                SaturdayClosing: calendar.week[5]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[5]?.closingHours+ ':56.702+01:00',
-                SundayOpening: calendar.week[6]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[6]?.openingHours + ':56.702+01:00',
-                SundayClosing: calendar.week[6]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[6]?.closingHours + ':56.702+01:00'
+                MondayOpening: calendar.week[0]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[0]?.openingHours + ':00.000' + this.calendar.timeZone + ':00',
+                MondayClosing: calendar.week[0]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[0]?.closingHours + ':00.000' + this.calendar.timeZone + ':00',
+                TuesdayOpening: calendar.week[0]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[0]?.openingHours + ':00.000' + this.calendar.timeZone + ':00',
+                TuesdayClosing: calendar.week[1]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[1]?.closingHours + ':00.000' + this.calendar.timeZone + ':00',
+                WednesdayOpening: calendar.week[2]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[2]?.openingHours + ':00.000' + this.calendar.timeZone + ':00',
+                WednesdayClosing: calendar.week[2]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[2]?.closingHours + ':00.000' + this.calendar.timeZone + ':00',
+                ThursdayOpening: calendar.week[3]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[3]?.openingHours + ':00.000' + this.calendar.timeZone + ':00',
+                ThursdayClosing: calendar.week[3]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[3]?.closingHours + ':00.000' + this.calendar.timeZone + ':00',
+                FridayOpening: calendar.week[4]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[4]?.openingHours + ':00.000' + this.calendar.timeZone + ':00',
+                FridayClosing: calendar.week[4]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[4]?.closingHours + ':00.000' + this.calendar.timeZone + ':00',
+                SaturdayOpening: calendar.week[5]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[5]?.openingHours + ':00.000' + this.calendar.timeZone + ':00',
+                SaturdayClosing: calendar.week[5]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[5]?.closingHours + ':00.000' + this.calendar.timeZone + ':00',
+                SundayOpening: calendar.week[6]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[6]?.openingHours + ':00.000' + this.calendar.timeZone + ':00',
+                SundayClosing: calendar.week[6]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[6]?.closingHours + ':00.000' + this.calendar.timeZone + ':00'
                 // show data for update
 
                 // todo ukladanie casu do UTC , cas prekonvertovat do UTC , skonvertuje cas do toho pouzivatela
 
                 //SundayOpening: calendar.week[6]?.openingHours,
-
                 //SundayClosing: calendar.week[6]?.closingHours
 
             });
@@ -337,10 +427,16 @@ export class CreateCalendarPage implements OnInit {
 
     updateCalendars(): void {
 
+        console.log("click update calendars ");
+        console.log(moment().format());
+
+
         let updateCalendar: Calendar = {
             idBusiness: this.calendar.idBusiness,
             week: this.mapOpeningClosingHours(),
             break: 'no break',
+            timeZone: this.timeZone
+
         };
 
         if (this.errorsFromHours.length === 0) {
@@ -366,21 +462,38 @@ export class CreateCalendarPage implements OnInit {
         week[item].closingHours = '';
 
         this.contactForm.setValue({
-            MondayOpening: week[0]?.openingHours,
-            MondayClosing: week[0]?.closingHours,
-            TuesdayOpening: week[1]?.openingHours,
-            TuesdayClosing: week[1]?.closingHours,
-            WednesdayOpening: week[2]?.openingHours,
-            WednesdayClosing: week[2]?.closingHours,
-            ThursdayOpening: week[3]?.openingHours,
-            ThursdayClosing: week[3]?.closingHours,
-            FridayOpening: week[4]?.openingHours,
-            FridayClosing: week[4]?.closingHours,
-            SaturdayOpening: week[5]?.openingHours,
-            SaturdayClosing: week[5]?.closingHours,
-            SundayOpening: week[6]?.openingHours,
-            SundayClosing: week[6]?.closingHours
+            MondayOpening: '',
+            MondayClosing: '',
+            TuesdayOpening: '',
+            TuesdayClosing: '',
+            WednesdayOpening: '',
+            WednesdayClosing: '',
+            ThursdayOpening: '',
+            ThursdayClosing: '',
+            FridayOpening: '',
+            FridayClosing: '',
+            SaturdayOpening: '',
+            SaturdayClosing: '',
+            SundayOpening: '',
+            SundayClosing: ''
         });
+
+        /*this.contactForm.setValue({
+         MondayOpening: week[0]?.openingHours,
+         MondayClosing: week[0]?.closingHours,
+         TuesdayOpening: week[1]?.openingHours,
+         TuesdayClosing: week[1]?.closingHours,
+         WednesdayOpening: week[2]?.openingHours,
+         WednesdayClosing: week[2]?.closingHours,
+         ThursdayOpening: week[3]?.openingHours,
+         ThursdayClosing: week[3]?.closingHours,
+         FridayOpening: week[4]?.openingHours,
+         FridayClosing: week[4]?.closingHours,
+         SaturdayOpening: week[5]?.openingHours,
+         SaturdayClosing: week[5]?.closingHours,
+         SundayOpening: week[6]?.openingHours,
+         SundayClosing: week[6]?.closingHours
+         });*/
 
     }
 }

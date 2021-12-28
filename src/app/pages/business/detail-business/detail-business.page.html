@@ -61,8 +61,10 @@
 
             <br>
 
+
             <div *ngIf="calendar else activeButton">
-                <h5 class="calendarName"> Opening and Closing Hours </h5>
+                <h4 class="calendarName"> Opening and Closing Hours </h4>
+                <h3 class="calendarName">Time Zone {{calendar.timeZone}}</h3>
                 <div *ngFor="let item of calendar.week" class="schedule ">
                     <ion-row>
                         <ion-col>

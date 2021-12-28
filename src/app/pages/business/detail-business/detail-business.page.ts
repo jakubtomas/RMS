@@ -27,6 +27,7 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
     isThisMyBusiness: boolean = false;
     subscription;
     hodina;
+    timeZone = moment().format().toString().substring(19, 22);
 
 
     constructor(private route: ActivatedRoute,
@@ -193,6 +194,9 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
                 console.log(' what is date ');
                 console.log(date);
 
+                console.log(' what is date ');
+                console.log('hello' + moment().format() + '    ' + this.timeZone);
+
 
                 const newTime = moment('Mon 03-Jul-2017, 11:00 AM', 'ddd DD-MMM-YYYY, hh:mm A');
                 console.log('newtime  ' + newTime);
@@ -205,7 +209,7 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
 
 
                 this.hodina = moment
-                    .duration(moment(item.closingHours, 'HH:mm')
+                    .duration(moment(item.closingHours, 'HH:mm').add("70","minutes")
                         .diff(moment(item.openingHours, 'HH:mm'))
                     ).asMinutes();
                 console.log(this.hodina);
@@ -232,6 +236,7 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
             idBusiness: this.calendar.idBusiness,
             week: newWeek,
             break: 'no break',
+            timeZone: this.timeZone
         };
 
     }

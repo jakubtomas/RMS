@@ -6,4 +6,5 @@ export interface Calendar {
 
     week: Day[];
     break: any;
+    timeZone: string;
 }
