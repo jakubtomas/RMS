@@ -1,5 +1,6 @@
-export interface Meeting {
-    start: string;
-    end: string;
-
+import {TimeMeeting} from "./timeMeeting";
+export interface Meeting{
+    time : TimeMeeting,
+    idBusiness : string,
+    idUser:string,
 }

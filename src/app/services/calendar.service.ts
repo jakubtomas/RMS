@@ -49,6 +49,15 @@ export class CalendarService {
             }));
     }*/
 
+    //getOneCalendar According to id Business
+    getOneCalendarByIdBusiness(idBusiness: string) {
+        this.calendarCollection = this.afs.collection('calendar',
+                ref => ref.where('idBusiness','==' , idBusiness));
+
+        return this.calendarCollection.valueChanges();
+    }
+
+    //getOne Calendar according to doc id Calendar
     getOneCalendar(documentId: string): Observable<Calendar> {
         return this.calendarCollection.doc(documentId).valueChanges();
     }

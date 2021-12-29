@@ -9,7 +9,8 @@ import {ToastController} from "@ionic/angular";
 
 import {Day} from "../../../interfaces/day";
 import * as moment from 'moment';
-import {Meeting} from "../../../interfaces/meeting";
+import {TimeMeeting} from "../../../interfaces/timeMeeting";
+import {MeetingService} from "../../../services/meeting.service";
 
 // import * as moment from 'moment';
 
@@ -29,7 +30,7 @@ export class CreateCalendarPage implements OnInit {
     errorsFromHours: string[] = [];
     timeZone: string = moment().format().toString().substring(19, 22);
     timeZoneFirestore: string;
-    timeMeeting: Meeting[] = [];
+    timeMeeting: TimeMeeting[] = [];
 
 
     //data for component
@@ -66,6 +67,7 @@ export class CreateCalendarPage implements OnInit {
 
     constructor(private route: ActivatedRoute,
         private calendarService: CalendarService,
+        private meetingService: MeetingService,
         private toastCtrl: ToastController,
         private router: Router) {
 
@@ -142,8 +144,8 @@ export class CreateCalendarPage implements OnInit {
         };
 
 
-        //todo prestavky niesu nastavene
-        //todo typovanie v interface
+        // todo prestavky niesu nastavene
+        // todo typovanie v interface
         // todo add Timezone , and change interface
         console.log("save datat");
         console.log(JSON.stringify(calendar));
@@ -328,66 +330,24 @@ export class CreateCalendarPage implements OnInit {
             let isCalculate = true;
             let starts = moment(open, 'HH:mm');
             let ends = moment(open, 'HH:mm');
-            let neverChangeEnds = moment(close, 'HH:mm');
-            let helpValueTime = true;
-            let pomocnyEnd = moment(open, 'HH:mm');
             this.timeMeeting = [];
-            let helpTime = moment(close, 'HH:mm');
 
-
-            console.log('end pred upravou  ' + ends);
-            console.log('========');
-            
             while (isCalculate) {
 
-                console.log('zaciatok  start end ' + starts.format('HH:mm') + '   ' + ends.format('HH:mm') );
-                
-                if (helpValueTime) {
-                    ends = ends.add('15', "minutes");
-                    console.log('end po uprave ' + ends.format('HH:mm'));
-
-                } else {
-                    console.log('helpTime ' + helpTime.format('HH:mm'));
-
-                    ends = pomocnyEnd.add('15', "minutes");
-                    console.log('end po uprave wiht pomocny ' + ends.format('HH:mm'));
-                    //starts.subtract('15', "minutes");
-                    console.log('helpTime ' + helpTime.format('HH:mm'));
-
-                    starts = helpTime;
-                }
-                console.log('po prvej uprave start end ' + starts.format('HH:mm') + '   ' + ends.format('HH:mm') );
-
-
-                console.log(' ends ' + ends + ' real end ' + realEnd);
+                ends.add('15', "minutes");
 
                 if (ends <= realEnd) {
-                    //ends this
-                    console.log(' vlozene data' + starts.format('HH:mm') + '//////////////  ' + ends.format('HH:mm'));
-
 
                     this.timeMeeting.push(
                         {start: starts.format('HH:mm'), end: ends.format('HH:mm')}
                     );
-                    // push
-                    // isCalculate = false;
-                    helpValueTime = false;
-                    pomocnyEnd = ends;
-                    helpTime = moment(ends);
-
-                    console.log('data po vlozeni  start and pomocnz end, helpTime ' + starts.format('HH:mm') + '  -- ' +  pomocnyEnd.format('HH:mm')+ '-- ' + helpTime.format('HH:mm') );
-                    
+                    starts = moment(ends);
                 } else {
                     isCalculate = false;
-
                 }
 
-
-                console.log(starts + ' / ' + ends);
-                console.log('------------------------');
-
             }
-            console.log(' really ');
+            console.log(' result ');
 
             console.log(this.timeMeeting);
 
@@ -496,4 +456,6 @@ export class CreateCalendarPage implements OnInit {
          });*/
 
     }
+
+
 }

@@ -181,4 +181,28 @@
         </ng-template>
 
     </div>
+
+   <!-- <div *ngFor="let item of calendar.week" class="schedule ">
+        <ion-row>
+            <ion-col>
+                <div>{{item.day}}</div>
+            </ion-col>
+            <ion-col>
+                <div>{{item.openingHours.toString()}}</div>
+            </ion-col>
+            <ion-col>
+                <div>{{item.closingHours}}</div>
+            </ion-col>
+        </ion-row>
+    </div>
+-->
+    <ion-list>
+       <div *ngFor="let meeting of timeMeeting">
+           <ion-item>
+               <ion-label>{{meeting.start}} --- {{meeting.end}}</ion-label>
+           </ion-item>
+       </div>
+
+    </ion-list>
+
 </ion-content>
