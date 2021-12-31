@@ -108,7 +108,7 @@ export class CreateCalendarPage implements OnInit {
         }
     }
 
-    async showToast(msg: string) {
+   private async showToast(msg: string) {
         let toast = await this.toastCtrl.create({
             message: msg,
             duration: 3000,
@@ -182,8 +182,6 @@ export class CreateCalendarPage implements OnInit {
         // console.log(hodina);
         // console.log('Hodina');
         //
-
-
         // use this function for saving data intp firestore
 
         const withoutFormatDate = formData.MondayOpening;

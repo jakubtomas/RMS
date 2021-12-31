@@ -37,7 +37,7 @@
               [currentDate]="calendar.currentDate"
               (onCurrentDateChanged)="onCurrentDateChanged($event)"
               (onTitleChanged)="onViewTittleChanged($event)"
-              >
+    >
     </calendar>
 
     <ion-card>
@@ -48,14 +48,28 @@
             <ion-item>
                 <ion-label class="orderBy" style="cursor:pointer"
                            (click)="reverseTimeList()"> <!--todo hover color and mouse type change-->
-                    Time    &#x25B2; &#x25BC;</ion-label>
+                    Time &#x25B2; &#x25BC;
+                </ion-label>
 
 
             </ion-item>
             <ion-item-sliding *ngFor="let item of timeMeeting ">
-                <ion-item (click)="selectTime(item)" class="item">
+                <ion-item *ngIf="item.isAvailable; else isNotAvailable" (click)="selectTime(item)" class="item">
+
                     <ion-label style="cursor:pointer">{{item.start}} {{item.end}} </ion-label>
+
+                    <!--
+                                        <ng-template #isNotAvailable>
+                                            <ion-label class="isNotAvailable">{{item.start}} {{item.end}} </ion-label>
+                                        </ng-template>  -->
                 </ion-item>
+                <ng-template #isNotAvailable >
+                    <ion-item class="isNotAvailable">
+                        <ion-label class="isNotAvailable">{{item.start}} {{item.end}} </ion-label>
+                    </ion-item>
+                </ng-template>
+
+
             </ion-item-sliding>
 
         </ion-list>

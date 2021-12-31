@@ -3,7 +3,7 @@ import {ActivatedRoute, Params, Router} from "@angular/router";
 import {BusinessService} from "../../../services/business.service";
 import {AlertController, ToastController} from "@ionic/angular";
 import {CalendarService} from "../../../services/calendar.service";
-import { CalendarMode, Step} from "ionic2-calendar/calendar";
+import {CalendarMode, Step} from "ionic2-calendar/calendar";
 import {Observable} from "rxjs";
 import {Business} from "../../../interfaces/business";
 //import * as moment from "../create-calendar/create-calendar.page";
@@ -12,6 +12,9 @@ import {TimeMeeting} from "../../../interfaces/timeMeeting";
 import {Calendar} from "../../../interfaces/calendar";
 
 import {CalendarComponent} from "ionic2-calendar";
+import {MeetingService} from "../../../services/meeting.service";
+import {Meeting} from "../../../interfaces/meeting";
+import {user} from "@angular/fire/auth";
 
 @Component({
     selector: 'app-create-meeting',
@@ -22,9 +25,12 @@ export class CreateMeetingPage implements OnInit {
 
     selectedDay;
     timeMeeting: TimeMeeting[] = [];
-    calendarDB: Calendar;
     selectedDayByCalendar: string;
     selectedDateByCalendar: Date;
+    meetingsByDateBusiness: Meeting[] = [];
+    defaultOpeningHours: TimeMeeting[] = [];
+
+    //todo set correct date month number
     //todo nastavenie kalendar kolko dni vpred sa moze registrovat
     // kazda pobocka si to moze  urcit sama
 
@@ -47,6 +53,7 @@ export class CreateMeetingPage implements OnInit {
         private router: Router,
         private toastCtrl: ToastController,
         public alertController: AlertController,
+        public meetingService: MeetingService,
         private calendarService: CalendarService) {
     }
 
@@ -61,6 +68,17 @@ export class CreateMeetingPage implements OnInit {
         })
     }
 
+    private async showToast(msg: string) {
+        let toast = await this.toastCtrl.create({
+            message: msg,
+            duration: 3000,
+            position: 'middle'
+        });
+
+        toast.onDidDismiss();
+        await toast.present();
+    }
+
     next() {
         this.myCal.slideNext();
     }
@@ -72,7 +90,7 @@ export class CreateMeetingPage implements OnInit {
 
     onViewTittleChanged(title) {
         console.log(title + ' this is tittle');
-        
+
         this.viewTitle = title;
     }
 
@@ -86,20 +104,12 @@ export class CreateMeetingPage implements OnInit {
         this.selectedDayByCalendar = event.toString().substring(0, 3);
         this.selectedDay = 'hello';
 
-        this.getOneCalendar(this.selectedBusinessId);
+        this.getOpeningHoursByIdBusiness(this.selectedBusinessId);
 
     }
 
-    getOneCalendar(docCalendarId: string): void { // ifflfzGx1qHnIlRkNPQH
-        this.calendarService.getOneCalendarByIdBusiness(docCalendarId).subscribe(calendar => {
-
-
-            const basicTime = '10:25';
-            // const newTime2 = moment('Mon 03-Jul-2017, ' + basicTime, 'ddd DD-MMM-YYYY, hh:mm ');
-
-            // const attemptValue =
-            // this.calendarDB = calendar;
-
+    private getOpeningHoursByIdBusiness(idBusiness: string): void {
+        this.calendarService.getOpeningHoursByIdBusiness(idBusiness).subscribe(calendar => {
 
             let open;
             let close;
@@ -153,35 +163,53 @@ export class CreateMeetingPage implements OnInit {
             let isCalculate = true;
             let starts = moment(open, 'HH:mm');
             let ends = moment(open, 'HH:mm');
-            this.timeMeeting = [];
 
+            this.defaultOpeningHours = [];
             while (isCalculate) {
 
                 ends.add('15', "minutes");
 
                 if (ends <= realEnd) {
-
-                    this.timeMeeting.push(
+                    this.defaultOpeningHours.push(
                         {start: starts.format('HH:mm'), end: ends.format('HH:mm')}
                     );
                     starts = moment(ends);
                 } else {
                     isCalculate = false;
                 }
-
             }
-            console.log(this.timeMeeting);
+
+
+            this.timeMeeting = [];
+
+
+            if (this.defaultOpeningHours.length > 0) {
+                const dateForFirestore = this.selectedDateByCalendar.getDate()
+                    + '.' + this.selectedDateByCalendar.getMonth()
+                    + '.' + this.selectedDateByCalendar.getFullYear();
+
+                this.getMeetingsByIdBusinessByDate(idBusiness, dateForFirestore);
+            }
+            // when I have data in help Array I will call function for data
+            // for meeting in this day , this Business
+            // And just do filter according to conditions
+
+
+            //// after push we have to filter which opening are okey and no
+            //// take data from firestore collection meetings according to idBusiness
+            //// this.timeMeeting = helpArray;
 
         }, error => {
+            // todo set ErrorMessage Something is wrong
             console.log("you got error ");
             console.log(error);
         })
     }
 
-    selectTime(time){
-        console.log('your time is ' + time.toString() +'   '  + JSON.stringify(time) );
+    selectTime(time) {
+        console.log('your time is ' + time.toString() + '   ' + JSON.stringify(time));
 
-
+        this.timeMeeting = [];
         console.log('I know ' + this.selectedDateByCalendar);
 
         if (this.selectedDateByCalendar && time) {
@@ -192,10 +220,10 @@ export class CreateMeetingPage implements OnInit {
         // id user from localStorage
     }
 
-    async showAlertForConfirmMeeting(date :Date , time): Promise<any> {
-        console.log(date.getDate() + ' ' + date.getDay() + '  ' + date.getFullYear());
+    private async showAlertForConfirmMeeting(date: Date, time): Promise<any> {
+        console.log(date.getDate() + ' ' + date.getMonth() + '  ' + date.getFullYear());
 
-        const confirmDay = date.getDate() + '.' + date.getDay() + '.' + date.getFullYear();
+        const confirmDay = date.getDate() + '.' + date.getMonth() + '.' + date.getFullYear();
 
         const alert = await this.alertController.create({
             cssClass: 'my-custom-class',
@@ -203,7 +231,7 @@ export class CreateMeetingPage implements OnInit {
             animated: true,
             backdropDismiss: true,
             message: 'Are you sure you want to create appointment?' +
-                '\n' + '' +  confirmDay +  ' ' + JSON.stringify(time) + ' ' + time.valueOf('start').toString(),
+                '\n' + '' + confirmDay + ' ' + JSON.stringify(time) + ' ' + time.valueOf('start').toString(),
             buttons: [
                 {
                     text: 'Cancel',
@@ -211,15 +239,16 @@ export class CreateMeetingPage implements OnInit {
                     cssClass: 'secondary',
                     handler: () => {
                         console.log('no');
-                        
+                        //todo when click no List of meeting is invisible
                     }
                 }, {
                     text: 'Yes',
                     handler: () => {
                         // todo show message you created succ appointment
                         // function which save data into Firestore 
-                            console.log('continue');
-                            
+                        console.log('continue');
+                        this.saveMeeting(time);
+
                     }
                 }]
         });
@@ -228,13 +257,116 @@ export class CreateMeetingPage implements OnInit {
     }
 
 
-    saveMeeting(){
+    saveMeeting(time): void {
         const userId = localStorage.getItem('idUser');
 
+        const meetingData: Meeting = {
+            date: this.selectedDateByCalendar.getDate() + '.' + this.selectedDateByCalendar.getMonth() + '.' + this.selectedDateByCalendar.getFullYear(),
+            time: time,
+            idBusiness: this.selectedBusinessId,
+            idUser: userId
+        };
+        this.meetingService.addMeeting(meetingData).then(value => {
+            //this.showToast("Calendar successfully created");
+            //// this.router.navigate(['/detail-business'], {queryParams: {businessId: this.selectedBusinessId}})
+            this.showToast('Meeting have been successfully created')
+            // todo sett SuccesMessage you created new meeting
+
+        }).catch((error) => {
+            console.log('error');
+            console.log(error);
+
+            // todo set ErrorMessage we did not add Meeting
+            //this.showToast("Something is wrong")
+        });
+    }
+
+    private getMeetingsByIdBusinessByDate(idBusiness: string, date: string): void {
+        this.meetingService.getMeetingsByIdBusinessByDate(idBusiness, date).subscribe(meetings => {
+
+
+            this.timeMeeting = [];
+            console.log('your meetings for this day ');
+            console.log(meetings);
+            this.meetingsByDateBusiness = meetings;
+
+
+            this.filterReservedHours(this.defaultOpeningHours, meetings)
+            /*
+             this.defaultOpeningHours.forEach(time => {
+             let permissionForSave = true;
+             meetings.forEach(timeDB => {
+
+             if (time.start === timeDB.time.start && time.end === timeDB.time.end) {
+             permissionForSave = false;
+             }
+             });
+
+             if (permissionForSave) {
+             this.timeMeeting.push(time)
+             }
+             });
+             */
+
+            /*
+             this.timeMeeting = [];
+             this.defaultOpeningHours.forEach(time => {
+             let permissionForSave = true;
+             meetings.forEach(timeDB => {
+
+             if (time.start === timeDB.time.start && time.end === timeDB.time.end) {
+             permissionForSave = false;
+             }
+             });
+
+             if (permissionForSave) {
+             this.timeMeeting.push(time)
+             }
+             });
+             */
+
+
+            // this.filterReservedHours(this.defaultOpeningHours, meetings)
+
+        }, error => {
+            // todo set ErrorMessage Something is wrong
+            console.log("you got error ");
+            console.log(error);
+        })
 
     }
 
-    reverseTimeList():void {
+
+    private filterReservedHours(openingHour: TimeMeeting[], reservedHours: Meeting[]): void {
+
+        this.timeMeeting = [];
+        openingHour.forEach(time => {
+            let permissionForSave = true;
+            reservedHours.forEach(timeDB => {
+
+                if (time.start === timeDB.time.start && time.end === timeDB.time.end) {
+                    permissionForSave = false;
+                }
+            });
+
+            if (permissionForSave) {
+                this.timeMeeting.push({
+                    start: time.start,
+                    end: time.end,
+                    isAvailable: true
+                });
+            } else {
+                this.timeMeeting.push({
+                    start: time.start,
+                    end: time.end,
+                    isAvailable: false
+                })
+            }
+        });
+
+    }
+
+    reverseTimeList(): void {
         this.timeMeeting.reverse();
     }
 

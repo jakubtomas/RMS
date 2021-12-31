@@ -15,8 +15,8 @@ export class CalendarService {
 
     constructor(public afs: AngularFirestore) {
         this.calendarCollection = this.afs.collection('calendar',
-                ref => ref.orderBy('idBusiness', 'asc'));
-        this.calendarCollection2 = this.afs.collection('calendar' );
+            ref => ref.orderBy('idBusiness', 'asc'));
+        this.calendarCollection2 = this.afs.collection('calendar');
 
     }
 
@@ -26,7 +26,7 @@ export class CalendarService {
         return this.calendarCollection.add(calendarData);
     }
 
-    getCalendars(): Observable<Calendar[] > {
+    getCalendars(): Observable<Calendar[]> {
         return this.calendarCollection.snapshotChanges().pipe(
             map(changes => {
                 return changes.map(a => {
@@ -38,21 +38,21 @@ export class CalendarService {
     }
 
     /*getAllBusinesses(): Observable<Business[]> {
-        return this.businessCollection2.snapshotChanges().pipe(
-            map(changes => {
-                return changes.map(a => {
-                    const data = a.payload.doc.data() as Business;
-                    data.id = a.payload.doc.id;
-                    // this.businessesData.push(data);
-                    return data;
-                });
-            }));
-    }*/
+     return this.businessCollection2.snapshotChanges().pipe(
+     map(changes => {
+     return changes.map(a => {
+     const data = a.payload.doc.data() as Business;
+     data.id = a.payload.doc.id;
+     // this.businessesData.push(data);
+     return data;
+     });
+     }));
+     }*/
 
     //getOneCalendar According to id Business
-    getOneCalendarByIdBusiness(idBusiness: string) {
+    getOpeningHoursByIdBusiness(idBusiness: string) {
         this.calendarCollection = this.afs.collection('calendar',
-                ref => ref.where('idBusiness','==' , idBusiness));
+            ref => ref.where('idBusiness', '==', idBusiness));
 
         return this.calendarCollection.valueChanges();
     }
@@ -62,7 +62,7 @@ export class CalendarService {
         return this.calendarCollection.doc(documentId).valueChanges();
     }
 
-    updateCalendar(docCalendarId:string, calendarData: Calendar): Promise<void> {
+    updateCalendar(docCalendarId: string, calendarData: Calendar): Promise<void> {
         console.log("docCalendarId:string" + docCalendarId);
         console.log(" calendar data " + calendarData);
         return this.calendarCollection2.doc(docCalendarId).update(calendarData);
@@ -70,7 +70,7 @@ export class CalendarService {
 
     deleteCalendar(docIdCalendar: string): Promise<void> {
         return this.calendarCollection2.doc(docIdCalendar).delete();
-}
+    }
 }
 
 

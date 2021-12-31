@@ -66,7 +66,6 @@ export class BusinessService {
         this.itemsCollection = this.afs.collection('items',
             ref => ref.orderBy('name', 'asc'));
         // this.businessCollection = this.afs.collection('business', ref => ref.orderBy('name','asc'));
-
         //citiesRef.where('population', '>', 2500000).orderBy('population');
 
         this.businessCollection = this.afs.collection('business');
@@ -107,8 +106,6 @@ export class BusinessService {
                 ref => ref.orderBy('city', "asc"));
 
         }
-
-
     }
 
     getBusinessPermission(idBusiness: string): Observable<BusinessPermission> {

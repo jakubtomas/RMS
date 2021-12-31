@@ -3,21 +3,24 @@
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   grid-gap: 0 10px;
 }
-:host ::ng-deep{
-  .event-detail-container{
+
+:host ::ng-deep {
+  .event-detail-container {
     display: none;
   }
 
-  .monthview-container{
-  display: contents;
+  .monthview-container {
+    display: contents;
+  }
+
 }
 
-
+.isNotAvailable {
+  background-color: #CFD3E0;
 }
 
 
 .event-detail-container[_ngcontent-meq-c141] {
-  border-top: 2px
-  darkgrey solid;
+  border-top: 2px darkgrey solid;
   visibility: hidden;
 }
