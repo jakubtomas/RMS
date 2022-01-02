@@ -23,7 +23,7 @@ export class ListBusinessPage implements OnInit {
     private orderBy: string = 'nameOrganization';
     private businessPermission;
     directionOrderBy: string = 'asc';
-    businesses$: Observable<Business[]> =
+    businesses$: Observable<Business[]> = // todo change function getAllMyBusinesss delete paramter
         this.businessService.getAllMyBusinesses("mock");
 
     constructor(private route: ActivatedRoute,

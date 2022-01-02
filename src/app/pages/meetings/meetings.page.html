@@ -20,8 +20,13 @@
 
 
             </ion-item>
-            <ion-item-sliding *ngFor="let item of timeMeeting ">
-                <ion-item  (click)="selectTime(item)" class="item">
+            <ion-item-sliding *ngFor="let item of timeMeeting$ | async">
+                <ion-item  (click)="selectMeeting(item)" class="item">
+                    <ion-card-header>
+                        <ion-card-subtitle>
+                        {{item.date + ' ' + item.idBusiness + ' ' + item.idUser+' ' + item.time.start}}
+                        </ion-card-subtitle>
+                    </ion-card-header>
                     <ion-label style="cursor:pointer">{{item.start}} {{item.end}} </ion-label>
                 </ion-item>
 
@@ -29,5 +34,25 @@
             </ion-item-sliding>
 
         </ion-list>
+
+        <!--<ion-list>
+            <ion-item>
+                <ion-label class="orderBy" style="cursor:pointer"
+                           (click)="orderByName()"> &lt;!&ndash;todo hover color and mouse type change&ndash;&gt;
+                    Name business   &#x25B2; &#x25BC;</ion-label>
+
+                <ion-label class="orderBy" style="cursor:pointer"
+                           (click)="orderByAddress()"> &lt;!&ndash;todo hover color and mouse type change&ndash;&gt;
+                    Address &#x25B2; &#x25BC; </ion-label>
+
+            </ion-item>
+            <ion-item-sliding *ngFor="let item of businesses$ | async  | orderBusinesses:[orderBy,directionOrderBy]">
+                <ion-item (click)="chooseBusiness(item)" class="item">
+                    <ion-label style="cursor:pointer">{{item.nameOrganization}} </ion-label>
+                    <ion-label style="cursor:pointer">{{item.city + " " + item.nameStreetWithNumber}}</ion-label>
+                </ion-item>
+            </ion-item-sliding>
+
+        </ion-list>-->
     </ion-card>
 </ion-content>

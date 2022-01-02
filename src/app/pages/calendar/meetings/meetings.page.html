@@ -1,0 +1,40 @@
+<ion-header>
+    <ion-toolbar color="">
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+
+        <ion-title>List of meetings</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+
+<ion-content class="ion-padding">
+
+    <ion-card>
+        <ion-list>
+            <ion-item>
+                <ion-label class="orderBy" style="cursor:pointer"
+                           (click)="reverseTimeList()"> <!--todo hover color and mouse type change-->
+                    Date &#x25B2; &#x25BC;
+                </ion-label>
+
+            </ion-item>
+            <ion-item-sliding *ngFor="let item of timeMeeting$ | async">
+                <ion-item (click)="selectMeeting(item)" class="item">
+                    <ion-card-header>
+                        <ion-card-subtitle>{{item.date }}</ion-card-subtitle>
+                        <ion-card-subtitle>{{item.idBusiness }}</ion-card-subtitle>
+                        <ion-card-subtitle>{{item.idUser }}</ion-card-subtitle>
+                        <ion-card-subtitle>{{item.time.start + '  ' + item.time.end}}</ion-card-subtitle>
+
+                    </ion-card-header>
+
+                    <ion-button fill="outline" slot="end">Details</ion-button>
+                    <ion-label style="cursor:pointer">{{item.start}} {{item.end}} </ion-label>
+                </ion-item>
+            </ion-item-sliding>
+
+        </ion-list>
+    </ion-card>
+</ion-content>

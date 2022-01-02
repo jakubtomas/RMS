@@ -62,10 +62,19 @@ const routes: Routes = [
   {
     path: 'create-meeting',
     loadChildren: () => import('./pages/calendar/create-meeting/create-meeting.module').then( m => m.CreateMeetingPageModule)
-  },  {
+  },
+  /*{
     path: 'meetings',
     loadChildren: () => import('./pages/meetings/meetings.module').then( m => m.MeetingsPageModule)
+  },*/
+  {
+    path: 'meetings',
+    loadChildren: () => import('./pages/calendar/meetings/meetings.module').then( m => m.MeetingsPageModule)
+  },  {
+    path: 'detail-meeting',
+    loadChildren: () => import('./pages/calendar/detail-meeting/detail-meeting.module').then( m => m.DetailMeetingPageModule)
   },
+
 
 
 

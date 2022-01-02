@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {TimeMeeting} from "../../interfaces/timeMeeting";
 import {MeetingService} from "../../services/meeting.service";
+import {Observable} from "rxjs";
+import {Meeting} from 'src/app/interfaces/meeting';
 
 @Component({
   selector: 'app-meetings',
@@ -9,24 +11,11 @@ import {MeetingService} from "../../services/meeting.service";
 })
 export class MeetingsPage implements OnInit {
 
-  timeMeeting: TimeMeeting[] = [];
-  private userId = localStorage.getItem('idUser');
-
-
-  //todo show with date in list of meetings
   constructor(public meetingService: MeetingService) { }
 
   ngOnInit() {
-    this.getMeetingsByIdUser();
   }
 
-  private getMeetingsByIdUser(){
-    this.meetingService.getMeetingsByIdUser(this.userId).subscribe(value=>{
 
-      console.log('only your meeting are ');
-      console.log(value);
-
-    });
-  }
 
 }

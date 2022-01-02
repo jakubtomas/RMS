@@ -1,4 +1,5 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {catchError} from 'rxjs/operators';
 import {BusinessService} from "../../../services/business.service";
@@ -29,8 +30,8 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
     hodina;
     timeZone = moment().format().toString().substring(19, 22);
 
-
-    constructor(private route: ActivatedRoute,
+    constructor(
+        private route: ActivatedRoute,
         private businessService: BusinessService,
         private router: Router,
         private toastCtrl: ToastController,

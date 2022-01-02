@@ -37,6 +37,8 @@ export class MeetingService {
         return this.meetingCollection.add(meetingData);
     }
 
+    // add meeting with new date 2000-12-25
+
     /*getMeetingsByIdBusinessByDate(idBusiness: string, date: string): Observable<any> {
         // date id Business
         // reminder how to work with stream of data
@@ -92,12 +94,34 @@ export class MeetingService {
     getMeetingsByIdUser(idUser:string):Observable<Meeting[]>{
         this.meetingCollection3 = this.afs.collection('meetings',
             ref => ref.where('idUser', '==', idUser)
+                .where('date','<', '2022-2-30')
+                .where('date','>', '2022-1-14')
+              //  .orderBy('date')
+
+        );
+
+        return this.meetingCollection3.snapshotChanges().pipe(
+            map(changes => {
+                return changes.map(a => {
+                    const data = a.payload.doc.data() as Meeting;
+                    data.id = a.payload.doc.id;
+                    return data;
+                });
+            }));
+    }
+
+    getMeetingsByIdBusiness(idBusiness:string):Observable<Meeting[]>{
+        this.meetingCollection3 = this.afs.collection('meetings',
+            ref => ref.where('idBusiness', '==', idBusiness)
         );
 
         return this.meetingCollection3.valueChanges();
     }
 
+    deleteMeeting(docIdMeeting: string): Promise<void> {
+        return this.meetingCollection3.doc(docIdMeeting).delete();
+    }
 
-
-
+// ' ' + item.idBusiness + ' ' + item.idUser + ' ' + item.time.start
+// todo meeting po uplinuti datumu by sa mali vymazat a uz neukazovat premysliet tox
 }

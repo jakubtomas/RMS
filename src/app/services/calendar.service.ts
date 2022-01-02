@@ -9,7 +9,7 @@ import {Business} from "../interfaces/business";
     providedIn: 'root'
 })
 export class CalendarService {
-
+//https://ionicframework.com/docs/
     calendarCollection: AngularFirestoreCollection<Calendar>;
     calendarCollection2: AngularFirestoreCollection<Calendar>;
 

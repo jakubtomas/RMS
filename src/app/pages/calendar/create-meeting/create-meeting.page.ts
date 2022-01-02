@@ -30,6 +30,7 @@ export class CreateMeetingPage implements OnInit {
     meetingsByDateBusiness: Meeting[] = [];
     defaultOpeningHours: TimeMeeting[] = [];
 
+
     //todo set correct date month number
     //todo nastavenie kalendar kolko dni vpred sa moze registrovat
     // kazda pobocka si to moze  urcit sama
@@ -40,8 +41,7 @@ export class CreateMeetingPage implements OnInit {
     calendar = {
         mode: 'month' as CalendarMode,
         step: 30 as Step,
-        currentDate: new Date(),
-
+        currentDate: new Date()
     };
 
     selectedBusinessId: string;
@@ -98,8 +98,11 @@ export class CreateMeetingPage implements OnInit {
         console.log('click');
         console.log(event);
         console.log(event.getDay());
+
         this.selectedDateByCalendar = event;
         //console.log();
+        console.log(' new format ' + moment(event).format('YYYY-M-D'));
+
 
         this.selectedDayByCalendar = event.toString().substring(0, 3);
         this.selectedDay = 'hello';
@@ -184,9 +187,8 @@ export class CreateMeetingPage implements OnInit {
 
 
             if (this.defaultOpeningHours.length > 0) {
-                const dateForFirestore = this.selectedDateByCalendar.getDate()
-                    + '.' + this.selectedDateByCalendar.getMonth()
-                    + '.' + this.selectedDateByCalendar.getFullYear();
+
+                const dateForFirestore = moment(this.selectedDateByCalendar).format('YYYY-M-D');
 
                 this.getMeetingsByIdBusinessByDate(idBusiness, dateForFirestore);
             }
@@ -261,7 +263,7 @@ export class CreateMeetingPage implements OnInit {
         const userId = localStorage.getItem('idUser');
 
         const meetingData: Meeting = {
-            date: this.selectedDateByCalendar.getDate() + '.' + this.selectedDateByCalendar.getMonth() + '.' + this.selectedDateByCalendar.getFullYear(),
+            date: moment(this.selectedDateByCalendar).format('YYYY-M-D'),
             time: time,
             idBusiness: this.selectedBusinessId,
             idUser: userId

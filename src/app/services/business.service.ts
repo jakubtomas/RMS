@@ -292,7 +292,7 @@ export class BusinessService {
     }
 
     getOneBusiness(documentId: string): Observable<Business | undefined> {
-        console.log(documentId);
+        console.log('function getOneBusiness document  ' +  documentId);
 
         return this.businessCollection2.doc(documentId).get().pipe(
             map(changes => {

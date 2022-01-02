@@ -143,6 +143,11 @@ export class CreateCalendarPage implements OnInit {
 
         };
 
+        //todo pri nacitany stranky create meeting s calendarom
+        // ked nemam otvaracie hodiny show message lebo inak error in console
+
+
+
 
         // todo prestavky niesu nastavene
         // todo typovanie v interface
