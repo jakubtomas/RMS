@@ -22,14 +22,13 @@ import {MeetingService} from "../../../services/meeting.service";
 export class CreateCalendarPage implements OnInit {
 
     messageFirebase: string;
-    validForm: boolean = false;
     selectedBusinessId: string;
     calendar: Calendar;
     isUpdateCalendar: boolean = false;
     docIdCalendar: string;
     errorsFromHours: string[] = [];
     timeZone: string = moment().format().toString().substring(19, 22);
-    timeZoneFirestore: string;
+    minutesForMeeting = '15'; // todo dokoncit ulozenie dlzky meetingu
     timeMeeting: TimeMeeting[] = [];
 
 
@@ -121,7 +120,8 @@ export class CreateCalendarPage implements OnInit {
 
 
     saveData() {
-        console.log("save data ");
+
+        console.log("save data "  + this.minutesForMeeting);
         console.log(moment().format());
 
         console.log(" calendar");

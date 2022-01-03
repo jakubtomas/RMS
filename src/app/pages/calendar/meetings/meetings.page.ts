@@ -3,6 +3,7 @@ import {Observable} from "rxjs";
 import {Meeting} from "../../../interfaces/meeting";
 import {MeetingService} from "../../../services/meeting.service";
 import {Router} from "@angular/router";
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-meetings',
@@ -12,11 +13,14 @@ import {Router} from "@angular/router";
 export class MeetingsPage implements OnInit {
 
 
+    todayDate = moment().format('YYYY-M-D');
+
   private userId = localStorage.getItem('idUser');
   // todo osetrit error
   //todo osetri ked nemam ziadny zaznam
 
-  timeMeeting$: Observable<Meeting[]> = this.meetingService.getMeetingsByIdUser(this.userId);
+  timeMeeting$: Observable<Meeting[]> =
+      this.meetingService.getMeetingsByIdUser(this.userId, this.todayDate);
 
 
   //todo vytvorit pipe na zoradanie dat podla datumu

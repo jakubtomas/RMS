@@ -22,11 +22,13 @@ export class MeetingService {
     meetingCollection: AngularFirestoreCollection<Meeting>;
     meetingCollection2: AngularFirestoreCollection<Meeting>;
     meetingCollection3: AngularFirestoreCollection<Meeting>;
+    meetingCollection4: AngularFirestoreCollection<Meeting>;
 
     constructor(public afs: AngularFirestore) {
 
         this.meetingCollection = this.afs.collection('meetings');
         this.meetingCollection2 = this.afs.collection('meetings');
+        this.meetingCollection4 = this.afs.collection('meetings');
         // this.meetingCollection3 = this.afs.collection('meetings',
         //     ref => ref.where('date', '==', 'hello')
         //               .where('idBusiness', '==', 'helloo')
@@ -91,12 +93,12 @@ export class MeetingService {
     //todo create function for list of my Meetings
     // create page for list of my Meetings
     //
-    getMeetingsByIdUser(idUser:string):Observable<Meeting[]>{
+    getMeetingsByIdUser(idUser:string, currentDay?:string):Observable<Meeting[]>{
         this.meetingCollection3 = this.afs.collection('meetings',
             ref => ref.where('idUser', '==', idUser)
-                .where('date','<', '2022-2-30')
-                .where('date','>', '2022-1-14')
-              //  .orderBy('date')
+                //.where('date','<', '2022-2-30')
+                .where('date','>', currentDay).limit(10)
+              /* .orderBy('date')*/
 
         );
 
@@ -119,7 +121,8 @@ export class MeetingService {
     }
 
     deleteMeeting(docIdMeeting: string): Promise<void> {
-        return this.meetingCollection3.doc(docIdMeeting).delete();
+
+        return this.meetingCollection4.doc(docIdMeeting).delete();
     }
 
 // ' ' + item.idBusiness + ' ' + item.idUser + ' ' + item.time.start

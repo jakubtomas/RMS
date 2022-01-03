@@ -12,8 +12,12 @@
 <ion-content class="ion-padding">
 
     <ion-card>
+        <ion-item>
+            <h1> Current date  {{todayDate}}</h1>
+        </ion-item>
         <ion-list>
             <ion-item>
+
                 <ion-label class="orderBy" style="cursor:pointer"
                            (click)="reverseTimeList()"> <!--todo hover color and mouse type change-->
                     Date &#x25B2; &#x25BC;
@@ -23,9 +27,9 @@
             <ion-item-sliding *ngFor="let item of timeMeeting$ | async">
                 <ion-item (click)="selectMeeting(item)" class="item">
                     <ion-card-header>
-                        <ion-card-subtitle>{{item.date }}</ion-card-subtitle>
-                        <ion-card-subtitle>{{item.idBusiness }}</ion-card-subtitle>
-                        <ion-card-subtitle>{{item.idUser }}</ion-card-subtitle>
+                        <ion-card-subtitle><b>Date</b> {{item.date }}</ion-card-subtitle>
+                        <ion-card-subtitle><b>ID Business</b>   {{item.idBusiness }}</ion-card-subtitle>
+                        <ion-card-subtitle><b>ID User</b> {{item.idUser }}</ion-card-subtitle>
                         <ion-card-subtitle>{{item.time.start + '  ' + item.time.end}}</ion-card-subtitle>
 
                     </ion-card-header>

@@ -19,8 +19,8 @@
     </ion-card-header>
 
     <section>
-      <ion-button color="warning" (click)="editCalendar()">Change date</ion-button>
-      <ion-button color="danger" (click)="showAlertForDelete('')">Delete Meeting</ion-button>
+      <ion-button color="warning" (click)="editDateMeeting(this.business.id)">Change date</ion-button>
+      <ion-button color="danger" (click)="showAlertForDeleteMeeting(docIdMeeting)">Delete Meeting</ion-button>
     </section>
   </ion-card>
 

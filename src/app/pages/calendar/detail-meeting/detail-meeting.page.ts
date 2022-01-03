@@ -2,6 +2,8 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {BusinessService} from "../../../services/business.service";
 import {Business} from "../../../interfaces/business";
+import {AlertController, ToastController} from "@ionic/angular";
+import {MeetingService} from 'src/app/services/meeting.service';
 
 @Component({
     selector: 'app-detail-meeting',
@@ -11,18 +13,23 @@ import {Business} from "../../../interfaces/business";
 export class DetailMeetingPage implements OnInit ,OnDestroy{
     business: Business;
     subscription;
+    docIdMeeting;
 
     constructor(private route: ActivatedRoute,
-        private businessService: BusinessService) {
+        private router: Router,
+        private toastCtrl: ToastController,
+        public alertController: AlertController,
+        private businessService: BusinessService,
+        private meetingService: MeetingService) {
     }
 
     ngOnInit() {
         this.route.queryParams.subscribe((params: Params) => {
 
             if (params['docIdMeeting'] != undefined) {
-                console.log('we have detailBusiness');
-                console.log(params['docIdMeeting'] +'   ' + params['idBusiness'] );
+                this.docIdMeeting = params['docIdMeeting'];
 
+                console.log(params['docIdMeeting'] +'   ' + params['idBusiness'] );
             }
 
             if (params['idBusiness']) {
@@ -43,6 +50,70 @@ export class DetailMeetingPage implements OnInit ,OnDestroy{
             }
         );
     }
+
+    private editDateMeeting(idBusiness:string) {
+        this.router.navigate(['/create-meeting'], {queryParams: {businessId: idBusiness}})
+    }
+
+    private async showAlertForDeleteMeeting(docIdMeeting:string): Promise<any> {
+
+
+        const alert = await this.alertController.create({
+            cssClass: 'my-custom-class',
+            header: 'Confirm Meeting',
+            animated: true,
+            backdropDismiss: true,
+            message: 'Are you sure you want to delete appointment?',
+            buttons: [
+                {
+                    text: 'Cancel',
+                    role: 'cancel',
+                    cssClass: 'secondary',
+                    handler: () => {
+                        console.log('no');
+                        //todo back to detail meeting ts without change
+
+
+                    }
+                }, {
+                    text: 'Yes',
+                    handler: () => {
+                        // todo show message succesfully deleted meeting
+                        this.deleteMeeting(docIdMeeting);
+                        //this.saveMeeting(time);
+
+                    }
+                }]
+        });
+
+        await alert.present();
+    }
+    private async showToast(msg: string) {
+        let toast = await this.toastCtrl.create({
+            message: msg,
+            duration: 3000,
+            position: 'middle'
+        });
+
+        toast.onDidDismiss();
+        await toast.present();
+    }
+
+     deleteMeeting(docIdMeeting:string):void {
+            this.meetingService.deleteMeeting(docIdMeeting).then(value => {
+
+                this.router.navigate(['/meetings']);
+                this.showToast('Meeting have been successfully deleted ')
+
+            }).catch((error) => {
+                console.log("error you got error ");
+
+                this.showToast('Meeting have been unsuccessfully deleted ');
+                console.log(error);
+            //todo Error Message something is wronh
+            });
+    }
+
 
     ngOnDestroy(): void {
         this.subscription.unsubscribe()

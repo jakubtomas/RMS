@@ -163,13 +163,7 @@ export class RegistrationPage implements OnInit {
 
             } else {
                 this.firebaseErrorMessage = result.message;
-               /* console.log("unsuccessful registration account createUser.ts  ");
 
-                console.log(result);
-                console.log(result.message);
-
-                console.log(result.code);
-                console.log('result message ');*/
             }
         })
 

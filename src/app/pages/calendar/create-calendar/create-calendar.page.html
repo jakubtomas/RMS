@@ -16,7 +16,9 @@
             <ion-item>
                 <h3>Let's create calendar with opening hours </h3>
             </ion-item>
+            <h5>Reminder your opening hours will be save according to your time zone {{timeZone}}</h5>
         </ion-card>
+
 
 
         <form [formGroup]="contactForm" novalidate>
@@ -145,10 +147,10 @@
 
         </form>
 
-
-        <!--<div *ngFor="let error of errorsFromHours; let i = index">-->
-           <!--{{i}} <em>{{error}}</em>-->
-        <!--</div>-->
+        <ion-item>
+            <ion-label>Time of meeting in minutes </ion-label>
+            <ion-datetime [(ngModel)]="minutesForMeeting" displayFormat="mm" minuteValues="0,5,10,15,20,25,30,35,40,45,50,55,60"></ion-datetime>
+        </ion-item>
 
         <ion-card *ngIf="errorsFromHours.length >0 ">
             <h2>Warning</h2>
@@ -181,28 +183,5 @@
         </ng-template>
 
     </div>
-
-   <!-- <div *ngFor="let item of calendar.week" class="schedule ">
-        <ion-row>
-            <ion-col>
-                <div>{{item.day}}</div>
-            </ion-col>
-            <ion-col>
-                <div>{{item.openingHours.toString()}}</div>
-            </ion-col>
-            <ion-col>
-                <div>{{item.closingHours}}</div>
-            </ion-col>
-        </ion-row>
-    </div>
--->
-    <ion-list>
-       <div *ngFor="let meeting of timeMeeting">
-           <ion-item>
-               <ion-label>{{meeting.start}} --- {{meeting.end}}</ion-label>
-           </ion-item>
-       </div>
-
-    </ion-list>
 
 </ion-content>

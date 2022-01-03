@@ -27,7 +27,7 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
     myId: string;
     isThisMyBusiness: boolean = false;
     subscription;
-    hodina;
+
     timeZone = moment().format().toString().substring(19, 22);
 
     constructor(
@@ -184,9 +184,8 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
 
     changeDateFormat(): void {
 
-        // create mock Date and set value
         const newWeek = this.calendar.week.map((item, index) => {
-            if (index == 6) {
+           /* if (index == 6) {
 
 
                 const basicTime = '10:25 AM';
@@ -209,13 +208,12 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
                 console.log('newtime 2  ' + newTime2);
 
 
+/!*
                 this.hodina = moment
                     .duration(moment(item.closingHours, 'HH:mm').add("70","minutes")
                         .diff(moment(item.openingHours, 'HH:mm'))
                     ).asMinutes();
-                console.log(this.hodina);
-                console.log('show me your time ');
-
+*!/
 
                 return {
                     day: item.day,
@@ -228,8 +226,13 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
                     openingHours: item.openingHours ,
                     closingHours: item.closingHours
                 };
-            }
+            }*/
 
+            return {
+                day: item.day,
+                openingHours: item.openingHours ,
+                closingHours: item.closingHours
+            };
         });
 
         this.calendar = {
