@@ -6,15 +6,13 @@ import {CalendarService} from "../../../services/calendar.service";
 import {CalendarMode, Step} from "ionic2-calendar/calendar";
 import {Observable} from "rxjs";
 import {Business} from "../../../interfaces/business";
-//import * as moment from "../create-calendar/create-calendar.page";
 import * as moment from 'moment';
 import {TimeMeeting} from "../../../interfaces/timeMeeting";
-import {Calendar} from "../../../interfaces/calendar";
 
 import {CalendarComponent} from "ionic2-calendar";
 import {MeetingService} from "../../../services/meeting.service";
 import {Meeting} from "../../../interfaces/meeting";
-import {user} from "@angular/fire/auth";
+import {before} from "selenium-webdriver/testing";
 
 @Component({
     selector: 'app-create-meeting',
@@ -29,6 +27,8 @@ export class CreateMeetingPage implements OnInit {
     selectedDateByCalendar: Date;
     meetingsByDateBusiness: Meeting[] = [];
     defaultOpeningHours: TimeMeeting[] = [];
+    businessCalendar: boolean = true;
+
 
 
     //todo set correct date month number
@@ -54,8 +54,7 @@ export class CreateMeetingPage implements OnInit {
         private toastCtrl: ToastController,
         public alertController: AlertController,
         public meetingService: MeetingService,
-        private calendarService: CalendarService) {
-    }
+        private calendarService: CalendarService) {}
 
     ngOnInit() {
         this.route.queryParams.subscribe((params: Params) => {
@@ -63,7 +62,6 @@ export class CreateMeetingPage implements OnInit {
             if (params['businessId'] != undefined) {
                 this.selectedBusinessId = params['businessId'];
                 console.log("I got business id " + this.selectedBusinessId);
-
             }
         })
     }
@@ -85,12 +83,10 @@ export class CreateMeetingPage implements OnInit {
 
     back() {
         this.myCal.slidePrev();
-
     }
 
     onViewTittleChanged(title) {
         console.log(title + ' this is tittle');
-
         this.viewTitle = title;
     }
 
@@ -103,7 +99,6 @@ export class CreateMeetingPage implements OnInit {
         //console.log();
         console.log(' new format ' + moment(event).format('YYYY-M-D'));
 
-
         this.selectedDayByCalendar = event.toString().substring(0, 3);
         this.selectedDay = 'hello';
 
@@ -114,6 +109,9 @@ export class CreateMeetingPage implements OnInit {
     private getOpeningHoursByIdBusiness(idBusiness: string): void {
         this.calendarService.getOpeningHoursByIdBusiness(idBusiness).subscribe(calendar => {
 
+            if (calendar.length < 1) {
+                this.businessCalendar = false;
+            }
             let open;
             let close;
             switch (this.selectedDayByCalendar) {
@@ -169,7 +167,7 @@ export class CreateMeetingPage implements OnInit {
 
             this.defaultOpeningHours = [];
             while (isCalculate) {
-
+                // todo change dates acccording to data from firestore
                 ends.add('15', "minutes");
 
                 if (ends <= realEnd) {
@@ -188,7 +186,7 @@ export class CreateMeetingPage implements OnInit {
 
             if (this.defaultOpeningHours.length > 0) {
 
-                const dateForFirestore = moment(this.selectedDateByCalendar).format('YYYY-M-D');
+                const dateForFirestore = moment(this.selectedDateByCalendar).format('L');
 
                 this.getMeetingsByIdBusinessByDate(idBusiness, dateForFirestore);
             }
@@ -211,45 +209,65 @@ export class CreateMeetingPage implements OnInit {
     selectTime(time) {
         console.log('your time is ' + time.toString() + '   ' + JSON.stringify(time));
 
-        this.timeMeeting = [];
+        //this.timeMeeting = [];
         console.log('I know ' + this.selectedDateByCalendar);
 
         if (this.selectedDateByCalendar && time) {
             this.showAlertForConfirmMeeting(this.selectedDateByCalendar, time);
+           // this.showAlert('mockSttring');
         }
-        //create Object
-        // toggle
-        // id user from localStorage
     }
 
     private async showAlertForConfirmMeeting(date: Date, time): Promise<any> {
-        console.log(date.getDate() + ' ' + date.getMonth() + '  ' + date.getFullYear());
 
+
+        //console.log(date.getDate() + ' ' + date.getMonth() + '  ' + date.getFullYear());
         const confirmDay = date.getDate() + '.' + date.getMonth() + '.' + date.getFullYear();
+        // 2022-01-06T14:24:36+01:00
+        //console.log(' vstupny cas  je ' + date );
+        let upravenyCas = moment(date).format("YYYY-MM-DD");
+        /*console.log(' upraveny cas ' + upravenyCas);
+        console.log(' upraveny cas ' + upravenyCas+"T00:00:00+01:00");
+*/
+//        upravenyCas = upravenyCas + "T00:00:00+01:00";
+        upravenyCas = upravenyCas + "T00:00:00";
+
+        //const modifyDate = moment(upravenyCas).add(0, 'minutes').format();
+        const modifyDate = upravenyCas;
+/*
+
+        console.log('------------------------------------------------');
+        console.log(' last Upravenz cas  ' + modifyDate);
+        console.log('--------------');
+        const value = moment(time.start, 'HH:mm').add(0, 'minutes').format();
+        console.log('novy format casu  ' + value );
+        console.log('novy format casu  ' + value );
+*/
+
 
         const alert = await this.alertController.create({
             cssClass: 'my-custom-class',
             header: 'Confirm Meeting',
-            animated: true,
-            backdropDismiss: true,
+
             message: 'Are you sure you want to create appointment?' +
                 '\n' + '' + confirmDay + ' ' + JSON.stringify(time) + ' ' + time.valueOf('start').toString(),
             buttons: [
                 {
                     text: 'Cancel',
                     role: 'cancel',
-                    cssClass: 'secondary',
                     handler: () => {
                         console.log('no');
                         //todo when click no List of meeting is invisible
+
                     }
                 }, {
                     text: 'Yes',
                     handler: () => {
                         // todo show message you created succ appointment
-                        // function which save data into Firestore 
+                        // function which save data into Firestore
                         console.log('continue');
-                        this.saveMeeting(time);
+
+                        this.saveMeeting(time,modifyDate );
 
                     }
                 }]
@@ -259,12 +277,30 @@ export class CreateMeetingPage implements OnInit {
     }
 
 
-    saveMeeting(time): void {
+    private saveMeeting(time, modifyDate): void {
         const userId = localStorage.getItem('idUser');
 
+        console.log(time.start);
+        const minutesFromHour = moment(time.start, 'HH:mm').hours() * 60;
+        const minutesFromMinutes = moment(time.start, 'HH:mm').minutes();
+        const startInMinutes = minutesFromHour + minutesFromMinutes;
+        // try new Date ('2017-01-01')
+        // modifyDate = moment(modifyDate).add(startInMinutes, 'minutes').format();
+        
+        const beforeSave = moment(modifyDate).add(startInMinutes, 'minutes').format();
+        console.log('before save');
+        console.log(beforeSave);
+        console.log(beforeSave.substring(0, 16));
+
         const meetingData: Meeting = {
-            date: moment(this.selectedDateByCalendar).format('YYYY-M-D'),
-            time: time,
+            dateForCalendar: moment(this.selectedDateByCalendar).format('L'),
+            date: beforeSave.substring(0, 16),
+            time: {
+                end: time.end,
+                start: time.start
+                //startMinutes: startInMinutes
+            },
+            minutes: startInMinutes,
             idBusiness: this.selectedBusinessId,
             idUser: userId
         };
@@ -283,8 +319,8 @@ export class CreateMeetingPage implements OnInit {
         });
     }
 
-    private getMeetingsByIdBusinessByDate(idBusiness: string, date: string): void {
-        this.meetingService.getMeetingsByIdBusinessByDate(idBusiness, date).subscribe(meetings => {
+    private getMeetingsByIdBusinessByDate(idBusiness: string, dateForCalendar: string): void {
+        this.meetingService.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar).subscribe(meetings => {
 
 
             this.timeMeeting = [];
@@ -326,8 +362,6 @@ export class CreateMeetingPage implements OnInit {
              }
              });
              */
-
-
             // this.filterReservedHours(this.defaultOpeningHours, meetings)
 
         }, error => {

@@ -27,11 +27,12 @@
                 <ion-input type="text" formControlName="zipCode"></ion-input>
             </ion-item>
 
-            <!--todo when we have zipCode check the length -->
+            <!--
+           // todo when we have zipCode check the length
             <div *ngIf="zipCode.errors?.required && zipCode.touched">
                 <em> zipCode  is required.</em>
             </div>
-
+-->
             <ion-item>
                 <ion-label><sup>*</sup> Type of organization </ion-label>
                 <ion-select interface="popover" formControlName="typeOrganization" placeholder="Select One"

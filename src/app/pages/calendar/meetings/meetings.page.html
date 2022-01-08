@@ -14,6 +14,7 @@
     <ion-card>
         <ion-item>
             <h1> Current date  {{todayDate}}</h1>
+            <p>{{hodina}}</p>
         </ion-item>
         <ion-list>
             <ion-item>
@@ -24,13 +25,16 @@
                 </ion-label>
 
             </ion-item>
-            <ion-item-sliding *ngFor="let item of timeMeeting$ | async">
+            <ion-item-sliding *ngFor="let item of timeMeeting ">
                 <ion-item (click)="selectMeeting(item)" class="item">
                     <ion-card-header>
                         <ion-card-subtitle><b>Date</b> {{item.date }}</ion-card-subtitle>
                         <ion-card-subtitle><b>ID Business</b>   {{item.idBusiness }}</ion-card-subtitle>
                         <ion-card-subtitle><b>ID User</b> {{item.idUser }}</ion-card-subtitle>
                         <ion-card-subtitle>{{item.time.start + '  ' + item.time.end}}</ion-card-subtitle>
+                        <ion-card-subtitle>{{item.time.startMinutes}}</ion-card-subtitle>
+                        <ion-card-subtitle>{{playTime}}</ion-card-subtitle>
+                        <ion-card-subtitle>{{hodina}}</ion-card-subtitle>
 
                     </ion-card-header>
 
@@ -38,6 +42,7 @@
                     <ion-label style="cursor:pointer">{{item.start}} {{item.end}} </ion-label>
                 </ion-item>
             </ion-item-sliding>
+
 
         </ion-list>
     </ion-card>

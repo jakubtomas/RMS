@@ -53,9 +53,9 @@ export class SearchBusinessPage implements OnInit {
         this.typesOrganization = this.getTypesOrganization();
         this.registerForm = new FormGroup(
             {/*todo doplnit */
-                nameOrganization: new FormControl('',),
-                city: new FormControl('',),
-                zipCode: new FormControl('',),
+                nameOrganization: new FormControl(''),
+                city: new FormControl(''),
+                zipCode: new FormControl('', Validators.required),
                 typeOrganization: new FormControl('', Validators.required),
             });
 

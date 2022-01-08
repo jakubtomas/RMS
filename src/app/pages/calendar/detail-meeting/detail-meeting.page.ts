@@ -4,16 +4,18 @@ import {BusinessService} from "../../../services/business.service";
 import {Business} from "../../../interfaces/business";
 import {AlertController, ToastController} from "@ionic/angular";
 import {MeetingService} from 'src/app/services/meeting.service';
+import {Meeting} from "../../../interfaces/meeting";
 
 @Component({
     selector: 'app-detail-meeting',
     templateUrl: './detail-meeting.page.html',
     styleUrls: ['./detail-meeting.page.scss'],
 })
-export class DetailMeetingPage implements OnInit ,OnDestroy{
+export class DetailMeetingPage implements OnInit, OnDestroy {
     business: Business;
     subscription;
     docIdMeeting;
+    meetingDetails:Meeting;
 
     constructor(private route: ActivatedRoute,
         private router: Router,
@@ -29,7 +31,8 @@ export class DetailMeetingPage implements OnInit ,OnDestroy{
             if (params['docIdMeeting'] != undefined) {
                 this.docIdMeeting = params['docIdMeeting'];
 
-                console.log(params['docIdMeeting'] +'   ' + params['idBusiness'] );
+                console.log(params['docIdMeeting'] + '   ' + params['idBusiness']);
+                this.getOneMeeting(this.docIdMeeting);
             }
 
             if (params['idBusiness']) {
@@ -41,21 +44,22 @@ export class DetailMeetingPage implements OnInit ,OnDestroy{
 
     getOneBusiness(documentID: string): void {
         // todo osetrit ked nenajde business
-        this.subscription = this.businessService.getOneBusiness(documentID).subscribe((business) => {
+        this.subscription =
+            this.businessService.getOneBusiness(documentID).subscribe((business) => {
                 this.business = business;
                 console.log(business);
-                
+
             }, error => {
                 console.log(error);
             }
         );
     }
 
-    private editDateMeeting(idBusiness:string) {
+    private editDateMeeting(idBusiness: string) {
         this.router.navigate(['/create-meeting'], {queryParams: {businessId: idBusiness}})
     }
 
-    private async showAlertForDeleteMeeting(docIdMeeting:string): Promise<any> {
+    private async showAlertForDeleteMeeting(docIdMeeting: string): Promise<any> {
 
 
         const alert = await this.alertController.create({
@@ -88,6 +92,7 @@ export class DetailMeetingPage implements OnInit ,OnDestroy{
 
         await alert.present();
     }
+
     private async showToast(msg: string) {
         let toast = await this.toastCtrl.create({
             message: msg,
@@ -99,7 +104,20 @@ export class DetailMeetingPage implements OnInit ,OnDestroy{
         await toast.present();
     }
 
-     deleteMeeting(docIdMeeting:string):void {
+
+    private getOneMeeting(docIdMeeting: string) {
+        if (docIdMeeting) {
+            this.meetingService.getOneMeeting(docIdMeeting).subscribe(meeting => {
+                this.meetingDetails = meeting;
+                console.log(meeting);
+
+
+            })
+        }
+    }
+
+    private deleteMeeting(docIdMeeting: string): void {
+        if (docIdMeeting) {
             this.meetingService.deleteMeeting(docIdMeeting).then(value => {
 
                 this.router.navigate(['/meetings']);
@@ -110,8 +128,12 @@ export class DetailMeetingPage implements OnInit ,OnDestroy{
 
                 this.showToast('Meeting have been unsuccessfully deleted ');
                 console.log(error);
-            //todo Error Message something is wronh
+                //todo Error Message something is wronh
             });
+        } else {
+            this.showToast('No possible to delete something is wrong');
+
+        }
     }
 
 

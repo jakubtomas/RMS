@@ -350,9 +350,6 @@ export class CreateCalendarPage implements OnInit {
                 }
 
             }
-            console.log(' result ');
-
-            console.log(this.timeMeeting);
 
 
             // todo I am saving time zone in last value of string
@@ -424,7 +421,7 @@ export class CreateCalendarPage implements OnInit {
         week[item].openingHours = '';
         week[item].closingHours = '';
 
-        this.contactForm.setValue({
+        /*this.contactForm.setValue({
             MondayOpening: '',
             MondayClosing: '',
             TuesdayOpening: '',
@@ -440,8 +437,8 @@ export class CreateCalendarPage implements OnInit {
             SundayOpening: '',
             SundayClosing: ''
         });
-
-        /*this.contactForm.setValue({
+*/
+        this.contactForm.setValue({
          MondayOpening: week[0]?.openingHours,
          MondayClosing: week[0]?.closingHours,
          TuesdayOpening: week[1]?.openingHours,
@@ -456,7 +453,7 @@ export class CreateCalendarPage implements OnInit {
          SaturdayClosing: week[5]?.closingHours,
          SundayOpening: week[6]?.openingHours,
          SundayClosing: week[6]?.closingHours
-         });*/
+         });
 
     }
 

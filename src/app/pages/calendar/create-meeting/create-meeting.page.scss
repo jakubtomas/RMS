@@ -15,12 +15,23 @@
 
 }
 
-.isNotAvailable {
-  background-color: #CFD3E0;
-}
-
-
 .event-detail-container[_ngcontent-meq-c141] {
   border-top: 2px darkgrey solid;
   visibility: hidden;
+}
+ion-item.item a {
+  background-color: #ced3d8;
+  width: 100%;
+  height: 100%;
+  color: #1a1a1a;
+}
+ion-item.item a ion-label {
+  margin-top: 15px;
+  margin-left: 10px;
+}
+.isAvailable {
+  margin-left: 10px;
+}
+.closedDay {
+  text-align: center;
 }

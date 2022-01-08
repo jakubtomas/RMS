@@ -27,8 +27,6 @@ export class RegisterBusinessPage implements OnInit {
     ionTitle: string;
     ionButton: string;
 
-    selectedOption: string = "Health Care";
-
 
     get nameOrganization(): FormControl {
         return this.registerForm.get('nameOrganization') as FormControl;
@@ -89,7 +87,7 @@ export class RegisterBusinessPage implements OnInit {
 
 
         this.registerForm = new FormGroup(
-            {/*todo doplnit */
+            {
                 nameOrganization: new FormControl('', Validators.required),
                 phoneNumber: new FormControl('', Validators.required),
                 zipCode: new FormControl('', Validators.required),

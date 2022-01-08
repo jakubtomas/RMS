@@ -18,6 +18,16 @@
       <ion-card-subtitle>Zip Code {{business.zipCode}}</ion-card-subtitle>
     </ion-card-header>
 
+    <ion-card-header>
+      <ion-card-subtitle><b>Date</b> {{meetingDetails.date }}</ion-card-subtitle>
+      <ion-card-subtitle><b>ID Business</b>   {{meetingDetails.idBusiness }}</ion-card-subtitle>
+      <ion-card-subtitle><b>ID User</b> {{meetingDetails.idUser }}</ion-card-subtitle>
+      <ion-card-subtitle>{{meetingDetails.time.start + '  ' + meetingDetails.time.end}}</ion-card-subtitle>
+      <ion-card-subtitle>{{meetingDetails.time.startMinutes}}</ion-card-subtitle>
+
+    </ion-card-header>
+
+
     <section>
       <ion-button color="warning" (click)="editDateMeeting(this.business.id)">Change date</ion-button>
       <ion-button color="danger" (click)="showAlertForDeleteMeeting(docIdMeeting)">Delete Meeting</ion-button>

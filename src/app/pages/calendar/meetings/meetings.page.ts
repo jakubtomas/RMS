@@ -13,16 +13,22 @@ import * as moment from 'moment';
 export class MeetingsPage implements OnInit {
 
 
-    todayDate = moment().format('YYYY-M-D');
+    //todayDate = moment().format('YYYY-M-D');
+    //todayDate = moment().format('L');
+    todayDate = moment().format('L');
+    dayForMeeting = moment().subtract(24, "hours").format();
 
   private userId = localStorage.getItem('idUser');
-  // todo osetrit error
+    // todo osetrit error
   //todo osetri ked nemam ziadny zaznam
 
-  timeMeeting$: Observable<Meeting[]> =
-      this.meetingService.getMeetingsByIdUser(this.userId, this.todayDate);
+    timeMeeting = [];
+    playTime = 'hello';
+    hodina;
+      // this.meetingService.getMeetingsByIdUser(this.userId, this.todayDate);
 
-
+  // todo pipe pre vytvorenie datumu Format Dates
+    // moment().format('MMMM Do YYYY, h:mm:ss a');
   //todo vytvorit pipe na zoradanie dat podla datumu
   // maximalny zobrazit 10 prispevok na stranku potom pouzit pagination
   // znova vytiahnut data od 10 po 20
@@ -35,7 +41,51 @@ export class MeetingsPage implements OnInit {
       private router: Router) { }
 
   ngOnInit() {
+      this.getMeetingsByIdUser()
   }
+
+
+  private getMeetingsByIdUser(){
+      this.meetingService.getMeetingsByIdUserOrderByDate(this.userId, this.dayForMeeting).subscribe(meetings => {
+          this.timeMeeting = meetings;
+
+          console.log(meetings);
+          console.log('--------------------');
+          console.log(meetings.length);
+          console.log('--------------------');
+
+
+          this.playTime = meetings[0].time.start;
+
+          console.log('---------------');
+
+          console.log(this.playTime);
+          console.log(moment(this.playTime, 'HH:mm').hours()*60);
+          console.log(moment(this.playTime, 'HH:mm').minutes());
+
+          console.log('---------------');
+          //console.log(moment.duration(moment(this.playTime, 'HH:mm')));
+
+
+          this.hodina = moment
+              .duration(moment(meetings[0].time.start, 'HH:mm').diff(moment('24:00', 'HH:mm'))).asMinutes();
+
+          console.log(this.hodina+  'pocet minut ');
+
+
+      }, error => {
+          console.log("you got error ");
+          console.log(error);
+      })
+
+
+     /* this.hodina = moment
+          .duration(moment(this.playTime, 'HH:mm').add("70","minutes")
+                                                      .diff(moment(this.playTime, 'HH:mm'))
+          ).asMinutes();*/
+  }
+
+
 
   selectMeeting(meeting:Meeting):void {
     console.log('click detail');
