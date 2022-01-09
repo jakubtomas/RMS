@@ -126,13 +126,6 @@ export class MeetingService {
 
         console.log('funny code ');
 
-       /* this.meetingCollection3.get().subscribe(value => console.log(value)
-        );
-        */
-
-      //return this.meetingCollection3.valueChanges();
-      //  console.log();
-
         return this.meetingCollection3.snapshotChanges().pipe(
             map(changes => {
                 return changes.map(a => {
@@ -143,20 +136,17 @@ export class MeetingService {
             }));
 
 
-    }
+     }
 
     /*getOneBusiness(documentId: string): Observable<Business | undefined> {
         console.log('function getOneBusiness document  ' +  documentId);
 
         return this.businessCollection2.doc(documentId).get().pipe(
             map(changes => {
-
                 const data = changes.data();
                 data.id = documentId;
                 return data;
-
             }));
-
     }*/
 
     getOneMeeting(documentId:string): Observable<Meeting> {

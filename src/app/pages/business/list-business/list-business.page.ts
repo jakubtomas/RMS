@@ -26,6 +26,7 @@ export class ListBusinessPage implements OnInit {
     businesses$: Observable<Business[]> = // todo change function getAllMyBusinesss delete paramter
         this.businessService.getAllMyBusinesses("mock");
 
+
     constructor(private route: ActivatedRoute,
         private businessService: BusinessService,
         private router: Router) {

@@ -215,7 +215,7 @@ export class RegisterBusinessPage implements OnInit {
                 zipCode: "014440",
                 city: "Presov",
                 street: 'presovska 42',
-                typeOrganization: "wellnes"
+                typeOrganization: null
             });
 
         }

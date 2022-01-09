@@ -58,11 +58,12 @@
         </form>
 
 
-        <ion-item>
-            <h3>Choose business</h3>
-        </ion-item>
 
-        <ion-card><!--todo check header ,, zoradit podla mena -->
+
+        <ion-card *ngIf="businesses"><!--todo check header ,, zoradit podla mena -->
+            <ion-item>
+                <h3>Choose business</h3>
+            </ion-item>
             <ion-list>
                 <ion-item>
                     <ion-label class="orderBy" style="cursor:pointer"

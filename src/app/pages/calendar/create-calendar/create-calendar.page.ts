@@ -27,7 +27,7 @@ export class CreateCalendarPage implements OnInit {
     isUpdateCalendar: boolean = false;
     docIdCalendar: string;
     errorsFromHours: string[] = [];
-    timeZone: string = moment().format().toString().substring(19, 22);
+    timeZone: string = moment().format().toString().substring(19, 22);//25
     minutesForMeeting = '15'; // todo dokoncit ulozenie dlzky meetingu
     timeMeeting: TimeMeeting[] = [];
 
@@ -156,6 +156,11 @@ export class CreateCalendarPage implements OnInit {
         console.log(JSON.stringify(calendar));
 
         if (this.errorsFromHours.length === 0) {// when we do not have errors
+            
+            console.log('this data I am saving ');
+            console.log(calendar);
+            
+            
             this.calendarService.addCalendar(calendar).then(value => {
                 this.showToast("Calendar successfully created");
                 this.router.navigate(['/detail-business'], {queryParams: {businessId: this.selectedBusinessId}})
@@ -358,7 +363,7 @@ export class CreateCalendarPage implements OnInit {
             this.contactForm.setValue({ // todo create function and refactoring
                 MondayOpening: calendar.week[0]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[0]?.openingHours + ':00.000' + this.calendar.timeZone + ':00',
                 MondayClosing: calendar.week[0]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[0]?.closingHours + ':00.000' + this.calendar.timeZone + ':00',
-                TuesdayOpening: calendar.week[0]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[0]?.openingHours + ':00.000' + this.calendar.timeZone + ':00',
+                TuesdayOpening: calendar.week[1]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[0]?.openingHours + ':00.000' + this.calendar.timeZone + ':00',
                 TuesdayClosing: calendar.week[1]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[1]?.closingHours + ':00.000' + this.calendar.timeZone + ':00',
                 WednesdayOpening: calendar.week[2]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[2]?.openingHours + ':00.000' + this.calendar.timeZone + ':00',
                 WednesdayClosing: calendar.week[2]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[2]?.closingHours + ':00.000' + this.calendar.timeZone + ':00',
@@ -400,7 +405,11 @@ export class CreateCalendarPage implements OnInit {
         };
 
         if (this.errorsFromHours.length === 0) {
+            console.log(' data for update ');
+            console.log(updateCalendar);
+            
             this.calendarService.updateCalendar(this.docIdCalendar, updateCalendar).then(() => {
+
                 console.log("uspesny update ");
                 this.router.navigate(['/detail-business'], {queryParams: {businessId: updateCalendar.idBusiness}});
                 this.showToast("The Update Is Done Successfully")

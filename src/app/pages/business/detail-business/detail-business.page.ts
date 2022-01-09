@@ -247,8 +247,14 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
 
     getCalendars(): void {
         this.calendarService.getCalendars().subscribe(calendars => {
-
             this.calendars = calendars;
+
+            console.log('Kalendare  ');
+            console.log(calendars);
+            console.log('................');
+            
+            
+            
             if (this.calendars.length > 0) {
                 this.calendars.forEach(calendar => {
                     if (calendar.idBusiness === this.selectedBusinessId) {

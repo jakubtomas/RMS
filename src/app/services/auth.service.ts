@@ -1,10 +1,11 @@
 import {Injectable} from '@angular/core';
-import {AngularFireAuth} from "@angular/fire/compat/auth";
 import {Router} from "@angular/router";
 import firebase from "firebase/compat";
 import UserCredential = firebase.auth.UserCredential;
-import { getAuth, updateProfile } from "firebase/auth";
+import { getAuth, updateProfile, User } from "firebase/auth";
 import {Observable} from "rxjs";
+import {AngularFireAuth} from "@angular/fire/compat/auth";
+import {AngularFirestore} from "@angular/fire/compat/firestore";
 
 //import {auth} from "firebase/compat";
 
@@ -17,22 +18,30 @@ export class AuthService {
     user: any;
 
     constructor(
-        public afAuth: AngularFireAuth
+        private afAuth: AngularFireAuth,
+        private afs: AngularFirestore,
+       // private User: User
     ) {//todo maybe is better use localStorage
+
         console.log(this.afAuth.authState);
         console.log('chekc this ');
-       // this.afAuth.user.
+        // this.afAuth.user.
         //
-        
+
+
         this.afAuth.authState.subscribe(user => {
             if (user) {
                 console.log("priradenie localStorage ");
                 console.log(user.emailVerified);
+                console.log(user.uid);
+
+                console.log(user.toJSON());
+
                 
                 this.user = user;
                 localStorage.setItem('idUser', user.uid);
                 localStorage.setItem('email', user.email);
-                localStorage.setItem('emailVerified', user.emailVerified+"");
+                localStorage.setItem('emailVerified', user.emailVerified + "");
 
             } else {
                 localStorage.setItem('idUser', null);
@@ -48,6 +57,30 @@ export class AuthService {
 
         return this.afAuth.createUserWithEmailAndPassword(email, password)
             .then((result: UserCredential ) => {
+
+                console.log('result after  registration done');
+                
+                console.log(result);
+                console.log(result.user);
+                console.log(result.user.uid);
+                //console.log(r);
+                /*this.afs.collection('users').doc(result.user.uid).set({displayName: 'mockString'}).then(
+                    (value => {
+                        console.log('ulozenie mena');
+                        console.log(value);
+                        
+                    })
+                );*/
+
+                //todo take data from Form firstName Second Name  na save to mock String
+                this.afAuth.currentUser.then(user => {
+                    user.updateProfile({displayName: 'mockString'}).then(value => {
+                        console.log(value);
+                        console.log('meno pridate');
+                        
+                    })
+
+                });
 
                 result.user.sendEmailVerification();
 

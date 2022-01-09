@@ -97,7 +97,7 @@ export class BusinessService {
 
     setOrderBy(orderBy: string) {
 
-        if (orderBy === "nameOrganization") {
+        if (orderBy ="nameOrganization") {
             this.businessCollection = this.afs.collection('business',
                 ref => ref.orderBy('nameOrganization', "asc"));
 
@@ -197,6 +197,10 @@ export class BusinessService {
 
      return idMyBusinesses;
      }*/
+    getBusinessPermissions(): Observable<BusinessPermission[]> { //Id user id organization
+        return this.businessPermissionCollection.valueChanges();
+    }
+
 
     getIdsOfMyBusinesses(): Observable<string[]> {
         const userId = localStorage.getItem('idUser');
@@ -219,21 +223,13 @@ export class BusinessService {
     }
 
     getAllMyBusinesses(orderBy: string): Observable<Business[]> {
-        //let idsMyBusinesses = [];
 
-        // getOneBusiness
-
-
-        // return this.getIdsOfMyBusinesses().pipe(
-        //     mergeMap(value => this.getOneBusiness(value)),
-        //         toArray()
-        //
-        // );
         console.log('call function ');
         this.businessCollection = this.afs.collection('business');
 
         return this.getIdsOfMyBusinesses().pipe(
-            switchMap(idsBusinesses => forkJoin(idsBusinesses.map(id => this.getOneBusiness(id)))),
+            switchMap(idsBusinesses =>
+                forkJoin(idsBusinesses.map(id => this.getOneBusiness(id)))),
             tap((response) =>
 
                 console.log('////////////////// ', response))
@@ -309,9 +305,6 @@ export class BusinessService {
     // create collection for permission businesse write condition where businesses is
     // create function and
 
-    getBusinessPermissions(): Observable<BusinessPermission[]> {
-        return this.businessPermissionCollection.valueChanges();
-    }
 
     getOneBusinessDemo()/*: Observable<Business>*/ {
 
@@ -326,27 +319,6 @@ export class BusinessService {
 
             console.log("after filter ");
             console.log(myBusinesses);
-
-            // for every id myBusiness I am calling function which return my Document with detail Information
-
-
-            /*myBusinesses.forEach(one => {
-             console.log(one.idOrganization);
-
-             let resultDocument = this.businessCollection2.doc(one.idOrganization).valueChanges();
-
-             resultDocument.subscribe(document => {
-
-             if (document !== undefined) {
-             console.log("------------------");
-             console.log(document);
-             this.oneUserBusinesses.push(document);
-             // create BehaviourSubject or subject for this
-             console.log("lenght of array   " + this.oneUserBusinesses.length);
-             //this.subject.next(document);
-             }
-             })
-             });*/
 
         });
 

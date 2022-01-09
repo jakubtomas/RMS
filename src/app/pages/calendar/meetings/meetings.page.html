@@ -11,14 +11,15 @@
 
 <ion-content class="ion-padding">
 
-    <ion-card>
-        <ion-item>
-            <h1> Current date  {{todayDate}}</h1>
-            <p>{{hodina}}</p>
-        </ion-item>
+    <ion-item>
+        <h1> Current date  {{todayDate}}</h1>
+        <p>{{hodina}}</p>
+    </ion-item>
+
+    <ion-card *ngIf="timeMeeting.length > 0 ; else isNotAvailable">
+
         <ion-list>
             <ion-item>
-
                 <ion-label class="orderBy" style="cursor:pointer"
                            (click)="reverseTimeList()"> <!--todo hover color and mouse type change-->
                     Date &#x25B2; &#x25BC;
@@ -35,7 +36,6 @@
                         <ion-card-subtitle>{{item.time.startMinutes}}</ion-card-subtitle>
                         <ion-card-subtitle>{{playTime}}</ion-card-subtitle>
                         <ion-card-subtitle>{{hodina}}</ion-card-subtitle>
-
                     </ion-card-header>
 
                     <ion-button fill="outline" slot="end">Details</ion-button>
@@ -46,4 +46,10 @@
 
         </ion-list>
     </ion-card>
+    <ng-template #isNotAvailable >
+        <ion-item >
+            <h3>Empty list of your meetings</h3>
+        </ion-item>
+    </ng-template>
+
 </ion-content>

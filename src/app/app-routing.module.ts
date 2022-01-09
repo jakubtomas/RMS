@@ -74,6 +74,10 @@ const routes: Routes = [
     path: 'detail-meeting',
     loadChildren: () => import('./pages/calendar/detail-meeting/detail-meeting.module').then( m => m.DetailMeetingPageModule)
   },
+  {
+    path: 'calendar-meetings',
+    loadChildren: () => import('./pages/calendar/calendar-meetings/calendar-meetings.module').then( m => m.CalendarMeetingsPageModule)
+  },
 
 
 

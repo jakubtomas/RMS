@@ -55,7 +55,7 @@ export class SearchBusinessPage implements OnInit {
             {/*todo doplnit */
                 nameOrganization: new FormControl(''),
                 city: new FormControl(''),
-                zipCode: new FormControl('', Validators.required),
+                zipCode: new FormControl(''),
                 typeOrganization: new FormControl('', Validators.required),
             });
 

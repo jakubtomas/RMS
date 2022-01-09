@@ -14,8 +14,6 @@ export class RegistrationPage implements OnInit {
 
     registerForm: FormGroup;
 
-
-
     successMsg: string = '';
     errorMsg: string = '';
     firebaseErrorMessage: string;
@@ -70,12 +68,7 @@ export class RegistrationPage implements OnInit {
 
     constructor(private fb: FormBuilder,
                 private authService : AuthService,
-                private router: Router) {
-
-    }
-
-
-    // get password(): FormControl { return this.registerForm.get('password') as FormControl; }
+                private router: Router) {}
 
     ngOnInit() {
 
@@ -103,13 +96,10 @@ export class RegistrationPage implements OnInit {
             this.passwordMatchValidator
         );
 
-       //  this.registerForm.setValue({email: "jakubshoop@gmail.com", password: '123123',password2: '123123'})
-       //  this.registerForm.setValue({email: this.generateEmail(), password: '123123',password2: '123123'})
-
     }
 
 
-    passwordMatchValidator(model: FormGroup): ValidationErrors {
+    private passwordMatchValidator(model: FormGroup): ValidationErrors {
         const password = model.get('password');
         const password2 = model.get('password2');
         
@@ -129,6 +119,8 @@ export class RegistrationPage implements OnInit {
 
                 return errorMismatch;
             } else {
+                console.log('password match');
+                
                 password2.setErrors(null);
                 return null;
             }

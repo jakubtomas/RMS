@@ -4,15 +4,11 @@ import {BusinessService} from "../../../services/business.service";
 import {AlertController, ToastController} from "@ionic/angular";
 import {CalendarService} from "../../../services/calendar.service";
 import {CalendarMode, Step} from "ionic2-calendar/calendar";
-import {Observable} from "rxjs";
-import {Business} from "../../../interfaces/business";
 import * as moment from 'moment';
 import {TimeMeeting} from "../../../interfaces/timeMeeting";
-
 import {CalendarComponent} from "ionic2-calendar";
 import {MeetingService} from "../../../services/meeting.service";
 import {Meeting} from "../../../interfaces/meeting";
-import {before} from "selenium-webdriver/testing";
 
 @Component({
     selector: 'app-create-meeting',
@@ -28,23 +24,19 @@ export class CreateMeetingPage implements OnInit {
     meetingsByDateBusiness: Meeting[] = [];
     defaultOpeningHours: TimeMeeting[] = [];
     businessCalendar: boolean = true;
-
-
+    selectedBusinessId: string;
 
     //todo set correct date month number
     //todo nastavenie kalendar kolko dni vpred sa moze registrovat
     // kazda pobocka si to moze  urcit sama
-
-    //todo when we dont have opening hours in Sunday show message this day is closed
     viewTitle: string;
     eventSource = [];
+
     calendar = {
         mode: 'month' as CalendarMode,
         step: 30 as Step,
         currentDate: new Date()
     };
-
-    selectedBusinessId: string;
 
     @ViewChild(CalendarComponent) myCal: CalendarComponent;
 
@@ -53,7 +45,7 @@ export class CreateMeetingPage implements OnInit {
         private router: Router,
         private toastCtrl: ToastController,
         public alertController: AlertController,
-        public meetingService: MeetingService,
+        private meetingService: MeetingService,
         private calendarService: CalendarService) {}
 
     ngOnInit() {
@@ -95,10 +87,9 @@ export class CreateMeetingPage implements OnInit {
         console.log(event);
         console.log(event.getDay());
 
-        this.selectedDateByCalendar = event;
         //console.log();
         console.log(' new format ' + moment(event).format('YYYY-M-D'));
-
+        this.selectedDateByCalendar = event;
         this.selectedDayByCalendar = event.toString().substring(0, 3);
         this.selectedDay = 'hello';
 
@@ -111,6 +102,7 @@ export class CreateMeetingPage implements OnInit {
 
             if (calendar.length < 1) {
                 this.businessCalendar = false;
+                return
             }
             let open;
             let close;

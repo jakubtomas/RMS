@@ -12,18 +12,19 @@ export class CalendarService {
 //https://ionicframework.com/docs/
     calendarCollection: AngularFirestoreCollection<Calendar>;
     calendarCollection2: AngularFirestoreCollection<Calendar>;
+    calendarCollection3: AngularFirestoreCollection<Calendar>;
 
     constructor(public afs: AngularFirestore) {
         this.calendarCollection = this.afs.collection('calendar',
             ref => ref.orderBy('idBusiness', 'asc'));
         this.calendarCollection2 = this.afs.collection('calendar');
-
+        this.calendarCollection3 = this.afs.collection('calendar')
     }
 
     //addCalendar(calendarData: Business): Promise<DocumentReference<BusinessPermission>> {
     addCalendar(calendarData: Calendar): Promise<DocumentReference<Calendar>> {
-        console.log(" problem here");
-        return this.calendarCollection.add(calendarData);
+
+        return this.calendarCollection3.add(calendarData);
     }
 
     getCalendars(): Observable<Calendar[]> {
