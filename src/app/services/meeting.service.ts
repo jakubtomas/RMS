@@ -4,11 +4,13 @@ import {Business} from "../interfaces/business";
 import {Meeting} from "../interfaces/meeting";
 import {BusinessPermission} from "../interfaces/businessPermission";
 import firebase from "firebase/compat/app";
-import {map} from "rxjs/operators";
+import {map, switchMap, tap} from "rxjs/operators";
 
-import {Observable} from "rxjs";
+import {forkJoin, Observable, of} from "rxjs";
 import {Calendar} from "../interfaces/calendar";
 import {Firestore, where} from "@angular/fire/firestore";
+import * as moment from 'moment';
+import {BusinessService} from "./business.service";
 
 @Injectable({
     providedIn: 'root'
@@ -24,7 +26,8 @@ export class MeetingService {
     meetingCollection3: AngularFirestoreCollection<Meeting>;
     meetingCollection4: AngularFirestoreCollection<Meeting>;
 
-    constructor(public afs: AngularFirestore) {
+    constructor(public afs: AngularFirestore,
+        private businessService: BusinessService) {
 
         this.meetingCollection = this.afs.collection('meetings');
         this.meetingCollection2 = this.afs.collection('meetings');
@@ -35,45 +38,20 @@ export class MeetingService {
         // );
     }
 
-    addMeeting(meetingData: Meeting) {
+    addMeeting(meetingData: Meeting): Promise<any> {
         return this.meetingCollection.add(meetingData);
     }
-
-    // add meeting with new date 2000-12-25
-
-    /*getMeetingsByIdBusinessByDate(idBusiness: string, date: string): Observable<any> {
-        // date id Business
-        // reminder how to work with stream of data
-        console.log(' call getMeeting with data');
-        console.log(idBusiness + '   ' + date);
-
-
-        this.meetingCollection2 = this.afs.collection('meetings',
-            ref => {
-                let query: firebase.firestore.CollectionReference | firebase.firestore.Query = ref.orderBy('nameOrganization', 'asc');
-
-                if (date) {
-                    query = query.where('date', '==', '29.12.2021');
-                }
-
-                if (idBusiness) {
-                    query = query.where('idBusiness', '==', 'helloo');
-                }
-
-                return query;
-            });
-
-        return this.meetingCollection2.valueChanges();
-    }*/
-    // vytiahnut si akymkolvek sposobom data
-
 
 
     getMeetingsByIdBusinessByDate(idBusiness: string, dateForCalendar: string): Observable<Meeting[]> {
 
+        const helpTime = moment(dateForCalendar).format('YYYY-MM-DDT00:00:00+00:00');
+
         this.meetingCollection3 = this.afs.collection('meetings',
             ref => ref.where('dateForCalendar', '==', dateForCalendar)
                       .where('idBusiness', '==', idBusiness)
+                      .where('date', '>', helpTime)
+
         );
 
         return this.meetingCollection3.snapshotChanges().pipe(
@@ -86,38 +64,97 @@ export class MeetingService {
             }));
     }
 
+    /*
+
+     getMeetingsByIdUserByDate(idUser: string, dateForCalendar: string): Observable<Meeting[]> {
+
+     // todo change default  Time Zone
+     const helpTime = moment(dateForCalendar).format('YYYY-MM-DDT00:00:00+02:00');
+
+     this.meetingCollection3 = this.afs.collection('meetings',
+     ref => ref.where('dateForCalendar', '==', dateForCalendar)
+     .where('idUser', '==', idUser)
+     .where('date', '>', helpTime)
+     );
+
+     return this.meetingCollection3.snapshotChanges().pipe(
+     map(changes => {
+     return changes.map(a => {
+     const data = a.payload.doc.data() as Meeting;
+     data.id = a.payload.doc.id;
+     return data;
+     });
+     }));
+
+
+     }
+     */
+
+    getMeetingsByIdUserByDate(idUser: string, dateForCalendar: string): Observable<Meeting[]> {
+
+        // todo change default  Time Zone
+        const helpTime = moment(dateForCalendar).format('YYYY-MM-DDT00:00:00+01:00');
+
+        this.meetingCollection3 = this.afs.collection('meetings',
+            ref => ref.where('dateForCalendar', '==', dateForCalendar)
+                      .where('idUser', '==', idUser)
+                      .where('date', '>', helpTime)
+        );
+
+        return this.meetingCollection3.snapshotChanges().pipe(
+            map(changes => {
+                return changes.map(a => {
+                    const data = a.payload.doc.data() as Meeting;
+                    data.id = a.payload.doc.id;
+                    return data;
+                });
+            }));
+
+
+        //todo  for every meeting we have to call
+        //  business information user FORKJOIN
+        // also when we call  getMeetingsByIdUserByDate do same thing
+
+
+    }
+
 
     //todo create function for list of my Meetings
     // create page for list of my Meetings
     //
     /*getMeetingsByIdUser(idUser: string, currentDay?: string): Observable<Meeting[]> {
-        console.log('funny code ');
-        this.meetingCollection3 = this.afs.collection('meetings',
-            ref => ref.where('idUser', '==', idUser)
-                      //.limit(10)
-                      .where('dateForCalendar', '>', currentDay)
+     console.log('funny code ');
+     this.meetingCollection3 = this.afs.collection('meetings',
+     ref => ref.where('idUser', '==', idUser)
+     //.limit(10)
+     .where('dateForCalendar', '>', currentDay)
 
-            //.orderBy('date')
-//                      .where('date', '>', currentDay)
-            // .startAt(1)
-            //  .limitToLast(5)
+     //.orderBy('date')
+     //                      .where('date', '>', currentDay)
+     // .startAt(1)
+     //  .limitToLast(5)
 
-            //.where('date','<', '2022-2-30')
-            // .where('date', '>', currentDay)
-            //.startAt(2)
-            //.limit(20)
-            //.orderBy('minutes')
-            /!* .orderBy('date')*!/
-        );*/
+     //.where('date','<', '2022-2-30')
+     // .where('date', '>', currentDay)
+     //.startAt(2)
+     //.limit(20)
+     //.orderBy('minutes')
+     /!* .orderBy('date')*!/
+     );*/
 
 
-    getMeetingsByIdUserOrderByDate(idUser:string, currentDay?:string):Observable<Meeting[]>{
+    getMeetingsByIdUserOrderByDate(idUser: string, currentDay?: string): Observable<Meeting[]> {
+
+        console.log('show me format ');
+        console.log(currentDay);
+
+
         this.meetingCollection3 = this.afs.collection('meetings',
             ref => ref.where('idUser', '==', idUser)
                       //.where('date','<', '2022-2-30')
 
                       .where('date', '>', currentDay)
-                 //     .startAt(10)
+            //     .startAt(10)
             //.startAt(2)
             //.limit(20)
             //.orderBy('minutes')
@@ -136,28 +173,68 @@ export class MeetingService {
             }));
 
 
-     }
+    }
+
+    getMeetingsAndDetailsBusinessByIdUserDemo(idUser: string, currentDay?: string) {
+        return this.getMeetingsByIdUserOrderByDate(idUser, currentDay).pipe(
+            switchMap((arrayMeetings: Meeting[], index: number) =>
+                forkJoin(arrayMeetings.map(meeting =>
+                    this.businessService.getOneBusiness(meeting.idBusiness)))),
+                    tap((response) =>
+                    console.log(';;;;;;;;;;;' + JSON.stringify(response)))
+            );
+
+    }
+
+    getMeetingsAndDetailsBusinessByIdUser(idUser: string, currentDay?: string) {
+        return this.getMeetingsByIdUserOrderByDate(idUser, currentDay).pipe(
+            switchMap((arrayMeetings: Meeting[], index: number) =>
+                forkJoin(arrayMeetings.map(meeting =>
+                {
+                    return this.businessService.getOneBusiness(meeting.idBusiness).pipe(
+                       map(business =>{
+                           return  {
+                               business,
+                               meeting
+                           }
+                       } )
+                    ).pipe(
+                        tap(x =>
+                        console.log('x value ' + JSON.stringify(x) )
+                        )
+                    )
+                }))
+            ),
+            tap((response) => {
+                console.log(' response');
+                console.log(response);
+                
+            })
+            
+        );
+
+    }
+
 
     /*getOneBusiness(documentId: string): Observable<Business | undefined> {
-        console.log('function getOneBusiness document  ' +  documentId);
+     console.log('function getOneBusiness document  ' +  documentId);
 
-        return this.businessCollection2.doc(documentId).get().pipe(
-            map(changes => {
-                const data = changes.data();
-                data.id = documentId;
-                return data;
-            }));
-    }*/
+     return this.businessCollection2.doc(documentId).get().pipe(
+     map(changes => {
+     const data = changes.data();
+     data.id = documentId;
+     return data;
+     }));
+     }*/
 
-    getOneMeeting(documentId:string): Observable<Meeting> {
+    getOneMeeting(documentId: string): Observable<Meeting> {
         //return this.meetingCollection2.doc('6p4hV0ozXqFPLC5c2IDe').valueChanges();
         return this.meetingCollection2.doc(documentId).valueChanges();
 
     }
 
 
-
-    getMeetingsByIdBusiness(idBusiness:string):Observable<Meeting[]>{
+    getMeetingsByIdBusiness(idBusiness: string): Observable<Meeting[]> {
         this.meetingCollection3 = this.afs.collection('meetings',
             ref => ref.where('idBusiness', '==', idBusiness)
         );

@@ -34,34 +34,37 @@ const routes: Routes = [
         path: 'registration',
         loadChildren: () => import('./pages/registration/registration.module').then(m => m.RegistrationPageModule)
     },
-
-
     {
         path: 'list-business',
-        loadChildren: () => import('./pages/business/list-business/list-business.module').then(m => m.ListBusinessPageModule)
+        loadChildren: () => import('./pages/business/list-business/list-business.module').then(m => m.ListBusinessPageModule),
+        canActivate: [AuthGuard]
     },
     {
         path: 'register-business',
         loadChildren: () => import('./pages/business/register-business/register-business.module').then(m => m.RegisterBusinessPageModule),
-       // canActivate: [AuthGuard]
-        canActivate: [OwnerBusinessGuard]
+
+        canActivate: [AuthGuard,OwnerBusinessGuard]
     },
     {
         path: 'detail-business',
-        loadChildren: () => import('./pages/business/detail-business/detail-business.module').then(m => m.DetailBusinessPageModule)
+        loadChildren: () => import('./pages/business/detail-business/detail-business.module').then(m => m.DetailBusinessPageModule),
+        canActivate: [AuthGuard]
     },
 
   {
     path: 'create-calendar',
-    loadChildren: () => import('./pages/calendar/create-calendar/create-calendar.module').then( m => m.CreateCalendarPageModule)
+    loadChildren: () => import('./pages/calendar/create-calendar/create-calendar.module').then( m => m.CreateCalendarPageModule),
+      canActivate: [AuthGuard]
   },
   {
     path: 'search-business',
-    loadChildren: () => import('./pages/business/search-business/search-business.module').then( m => m.SearchBusinessPageModule)
+    loadChildren: () => import('./pages/business/search-business/search-business.module').then( m => m.SearchBusinessPageModule),
+      canActivate: [AuthGuard]
   },
   {
     path: 'create-meeting',
-    loadChildren: () => import('./pages/calendar/create-meeting/create-meeting.module').then( m => m.CreateMeetingPageModule)
+    loadChildren: () => import('./pages/calendar/create-meeting/create-meeting.module').then( m => m.CreateMeetingPageModule),
+      canActivate: [AuthGuard]
   },
   /*{
     path: 'meetings',
@@ -69,14 +72,18 @@ const routes: Routes = [
   },*/
   {
     path: 'meetings',
-    loadChildren: () => import('./pages/calendar/meetings/meetings.module').then( m => m.MeetingsPageModule)
-  },  {
+    loadChildren: () => import('./pages/calendar/meetings/meetings.module').then( m => m.MeetingsPageModule),
+      canActivate: [AuthGuard]
+  },
+  {
     path: 'detail-meeting',
-    loadChildren: () => import('./pages/calendar/detail-meeting/detail-meeting.module').then( m => m.DetailMeetingPageModule)
+    loadChildren: () => import('./pages/calendar/detail-meeting/detail-meeting.module').then( m => m.DetailMeetingPageModule),
+      canActivate: [AuthGuard]
   },
   {
     path: 'calendar-meetings',
-    loadChildren: () => import('./pages/calendar/calendar-meetings/calendar-meetings.module').then( m => m.CalendarMeetingsPageModule)
+    loadChildren: () => import('./pages/calendar/calendar-meetings/calendar-meetings.module').then( m => m.CalendarMeetingsPageModule),
+      canActivate: [AuthGuard]
   },
 
 

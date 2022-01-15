@@ -108,6 +108,11 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
         );
     }
 
+    selectMeetings(): void {
+        //this.router.navigate(['/register-business', {businessId: this.selectedBusinessId}]);
+        this.router.navigate(['/calendar-meetings'], {queryParams: {businessId: this.selectedBusinessId}})
+
+    }
     editBusiness(): void {
         //this.router.navigate(['/register-business', {businessId: this.selectedBusinessId}]);
         this.router.navigate(['/register-business'], {queryParams: {businessId: this.selectedBusinessId}})
@@ -209,7 +214,7 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
 
 
 /!*
-                this.hodina = moment
+                this.currentTime = moment
                     .duration(moment(item.closingHours, 'HH:mm').add("70","minutes")
                         .diff(moment(item.openingHours, 'HH:mm'))
                     ).asMinutes();

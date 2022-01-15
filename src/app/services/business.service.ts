@@ -47,6 +47,13 @@ export class BusinessService {
 
     subject$ = new Subject();
 
+    public businessSubject = new BehaviorSubject(false);
+    businessMode$ = this.businessSubject.asObservable();
+
+    updateBusinessMode(newValue:boolean){
+        this.businessSubject.next(newValue)
+    }
+
     typesOfOrganization = [
         {name: "Health Care"},
         {name: "Food/Restaurant"},
@@ -253,7 +260,6 @@ export class BusinessService {
          );
          */
 
-
         /*this.businessCollection = this.afs.collection('business',
          ref => ref.where(firebase.firestore.FieldPath.documentId(), 'in', idsMyBusinesses));
 
@@ -265,8 +271,6 @@ export class BusinessService {
          return data;
          });
          }));*/
-
-
         // return this.businessCollection.snapshotChanges().pipe(
         //     map(changes => {
         //         return changes.map(a => {
@@ -275,7 +279,6 @@ export class BusinessService {
         //             return data;
         //         });
         //     }));
-
 
         /*return this.businessCollection.snapshotChanges().pipe(
          map(changes => {
@@ -286,7 +289,6 @@ export class BusinessService {
          });
          }));*/
     }
-
     getOneBusiness(documentId: string): Observable<Business | undefined> {
         console.log('function getOneBusiness document  ' +  documentId);
 

@@ -15,15 +15,35 @@
         </ion-item>
     </ion-card>
 
-    <ion-card *ngIf="!isActiveMode">
+    <div class="grid-item">
 
-        <p><a routerLink="/register-business">register-business</a></p>
+    </div>
 
-        <p><a routerLink="/list-business">list of businesses </a></p>
-        <p><a routerLink="/search-business">search business </a></p>
-        <p><a routerLink="/meetings">My meeting </a></p>
-        <p><a routerLink="/calendar-meetings">Calendar Meetings</a></p>
-    </ion-card>
+    <ion-grid>
+        <ion-row>
+            <ion-col col-3>
+                <div class="searchElement" routerLink="/meetings">
+                    <ion-icon class="ion-1x" name="calendar" ></ion-icon>
+                    <p>My Meetings</p>
+                </div>
+            </ion-col>
+
+            <ion-col col-3 *ngIf="(businessMode | async)">
+                <div class="searchElement" routerLink="/register-business">
+                    <ion-icon class="ion-1x" name="add-circle" ></ion-icon>
+                    <p>Create Business</p>
+                </div>
+            </ion-col>
+
+            <ion-col col-3>
+               <div class="searchElement" routerLink="/search-business">
+                   <ion-icon class="ion-1x" name="search-outline" ></ion-icon>
+                   <p>Search Business</p>
+               </div>
+            </ion-col>
+        </ion-row>
+
+    </ion-grid>
 
     <ion-card>
         <ion-item button (click)="logout()" detail="false">

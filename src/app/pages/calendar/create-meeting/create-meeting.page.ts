@@ -93,6 +93,9 @@ export class CreateMeetingPage implements OnInit {
         this.selectedDayByCalendar = event.toString().substring(0, 3);
         this.selectedDay = 'hello';
 
+        console.log('checko hours ' + moment(this.selectedDateByCalendar).format('L'));
+        console.log('checko hours ' + moment(this.selectedDateByCalendar).format());
+
         this.getOpeningHoursByIdBusiness(this.selectedBusinessId);
 
     }
@@ -104,6 +107,7 @@ export class CreateMeetingPage implements OnInit {
                 this.businessCalendar = false;
                 return
             }
+
             let open;
             let close;
             switch (this.selectedDayByCalendar) {
@@ -146,9 +150,6 @@ export class CreateMeetingPage implements OnInit {
                     console.log("No such day exists!");
                     break;
             }
-
-
-            // todo pridat intervali , pridat aj do DB s DB
 
             // create logaritmus
             const realEnd = moment(close, 'HH:mm');
@@ -285,8 +286,11 @@ export class CreateMeetingPage implements OnInit {
         console.log(beforeSave.substring(0, 16));
 
         const meetingData: Meeting = {
+
+            // here is this
             dateForCalendar: moment(this.selectedDateByCalendar).format('L'),
-            date: beforeSave.substring(0, 16),
+            //date: beforeSave.substring(0, 16),
+            date: beforeSave,
             time: {
                 end: time.end,
                 start: time.start

@@ -21,24 +21,35 @@
 
                 <ion-list *ngIf="(afAuth.user | async); else loggedOut" lines="none">
                     <ion-list-header>
-                        Account
+                        Business
                     </ion-list-header>
 
-                    <ion-menu-toggle autoHide="false">
-                        <ion-item routerLink="/account" routerLinkActive="active" routerDirection="root" detail="false">
-                            <ion-icon slot="start" name="person"></ion-icon>
-                            <ion-label>
-                                Account
-                            </ion-label>
-                        </ion-item>
-                    </ion-menu-toggle>
+                    <div *ngIf="(businessMode | async)">
 
-                    <ion-menu-toggle autoHide="false">
-                        <ion-item routerLink="/support" routerLinkActive="active" routerDirection="root" detail="false">
-                            <ion-icon slot="start" name="help"></ion-icon>
-                            <ion-label>
-                                Support
-                            </ion-label>
+                        <ion-menu-toggle autoHide="false">
+                            <ion-item routerLink="/list-business" routerLinkActive="active" routerDirection="root" detail="false">
+                                <ion-icon slot="start" name="business"></ion-icon>
+                                <ion-label>
+                                    My Businesses
+                                </ion-label>
+                            </ion-item>
+                        </ion-menu-toggle>
+
+                        <ion-menu-toggle autoHide="false">
+                            <ion-item routerLink="/support" routerLinkActive="active" routerDirection="root" detail="false">
+                                <ion-icon slot="start" name="help"></ion-icon>
+                                <ion-label>
+                                    Support
+                                </ion-label>
+                            </ion-item>
+                        </ion-menu-toggle>
+
+                    </div>
+
+                    <ion-menu-toggle autoHide="false" (ionChange)="clickToggle($event)">
+                        <ion-item>
+                            <ion-toggle slot="start" name="kiwi" color="success" ></ion-toggle>
+                            <ion-label>Business mode</ion-label>
                         </ion-item>
                     </ion-menu-toggle>
 
@@ -50,14 +61,6 @@
                             </ion-label>
                         </ion-item>
                     </ion-menu-toggle>
-
-                    <ion-menu-toggle autoHide="false" (ionChange)="clickToggle($event)">
-                        <ion-item>
-                            <ion-toggle slot="start" name="kiwi" color="success" ></ion-toggle>
-                            <ion-label>Business mode</ion-label>
-                        </ion-item>
-                    </ion-menu-toggle>
-
 
                 </ion-list>
 

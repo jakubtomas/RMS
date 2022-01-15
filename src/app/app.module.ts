@@ -17,10 +17,11 @@ import {AngularFireDatabaseModule} from "@angular/fire/compat/database";
 import {AngularFireAuthModule} from '@angular/fire/compat/auth';
 import { OrderBusinessesPipe } from './pipes/order-businesses.pipe';
 import { OrderByOpeningHoursPipe } from './pipes/order-by-opening-hours.pipe';
+import { FormatMeetingPipe } from './pipes/format-meeting.pipe';
  // import { OrderBusinessesPipe } from './order-businesses.pipe';
 
 @NgModule({
-    declarations: [AppComponent, OrderByOpeningHoursPipe],
+    declarations: [AppComponent, OrderByOpeningHoursPipe, FormatMeetingPipe],
     entryComponents: [],
     imports: [BrowserModule,
               FormsModule,

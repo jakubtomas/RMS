@@ -16,6 +16,8 @@ export class DashboardPage implements OnInit {
     emailVerified: boolean = false;
     email: string = ' ';
     isActiveMode: boolean = false;
+    businessMode = this.businessService.businessMode$;
+
 
     constructor(
         private route: ActivatedRoute,
@@ -58,4 +60,10 @@ export class DashboardPage implements OnInit {
         this.authService.signOut();
     }
 
+    doRedirect(address:string){
+        console.log('clikc');
+        console.log(event);
+        
+    }
+    
 }

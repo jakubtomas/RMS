@@ -1,10 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CalendarMode, Step} from "ionic2-calendar/calendar";
 import {MeetingService} from "../../../services/meeting.service";
 import {TimeMeeting} from "../../../interfaces/timeMeeting";
 import {Meeting} from "../../../interfaces/meeting";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import * as moment from 'moment';
+import {CalendarComponent} from "ionic2-calendar";
 
 
 @Component({
@@ -12,13 +13,16 @@ import * as moment from 'moment';
     templateUrl: './calendar-meetings.page.html',
     styleUrls: ['./calendar-meetings.page.scss'],
 })
-export class CalendarMeetingsPage implements OnInit {
+export class CalendarMeetingsPage implements OnInit, OnDestroy {
 
-    timeMeeting: TimeMeeting[] = [];
+    timeMeeting: Meeting[] = [];
     meetingsByDateBusiness: Meeting[] = [];
     selectedDayByCalendar: string;
     selectedDateByCalendar: Date;
     selectedBusinessId: string;
+    hodina;
+    private idUser= localStorage.getItem('idUser');
+
 
 
     viewTitle: string;
@@ -29,12 +33,13 @@ export class CalendarMeetingsPage implements OnInit {
         currentDate: new Date()
     };
 
+    @ViewChild(CalendarComponent) myCal: CalendarComponent;
+
     constructor(
         private router: Router,
         private meetingService: MeetingService,
         private route: ActivatedRoute
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         this.route.queryParams.subscribe((params: Params) => {
@@ -46,7 +51,15 @@ export class CalendarMeetingsPage implements OnInit {
         })
     }
 
-    onCurrentDateChanged(event: Date) {
+    next() {
+        this.myCal.slideNext();
+    }
+
+    back() {
+        this.myCal.slidePrev();
+    }
+
+    onCurrentDateChanged(event: Date):void {
         console.log('click');
         console.log(event);
         console.log(event.getDay());
@@ -55,9 +68,17 @@ export class CalendarMeetingsPage implements OnInit {
         this.selectedDayByCalendar = event.toString().substring(0, 3);
 
         const dateForFirestore = moment(this.selectedDateByCalendar).format('L');
+
         if (this.selectedBusinessId && dateForFirestore) {
             this.getMeetingsByIdBusinessByDate(this.selectedBusinessId, dateForFirestore);
+        } else {
+            this.getMeetingsByIdUserByDate(this.idUser, dateForFirestore);
         }
+
+
+
+
+
         /* this.selectedDateByCalendar = event;
          //console.log();
          console.log(' new format ' + moment(event).format('YYYY-M-D'));
@@ -69,7 +90,7 @@ export class CalendarMeetingsPage implements OnInit {
          */
     }
 
-    onViewTittleChanged(title) {
+    onViewTittleChanged(title):void {
         console.log(title + ' this is tittle');
         this.viewTitle = title;
     }
@@ -87,17 +108,20 @@ export class CalendarMeetingsPage implements OnInit {
     // create list according to opening hours and meetings
     // which we have
 
+    private getMeetingsByIdUserByDate(idUser: string, dateForCalendar: string): void {
 
-    private getMeetingsByIdBusinessByDate(idBusiness: string, dateForCalendar: string): void {
+        //dany den minus 24 hodin
+        // rovnasa dany datum
 
-        this.meetingService.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar).subscribe(meetings => {
+        const helpTime = moment(dateForCalendar).format('YYYY-MM-DDT00:00:00+01:00');
 
-            console.log(' your meetings ');
+        console.log('zmeneny time ');
+        console.log(helpTime);
 
+        this.meetingService.getMeetingsByIdUserByDate(idUser, dateForCalendar).subscribe(meetings => {
+            console.log(' your meetings by User by Date ');
             console.log(meetings);
-
-
-            this.timeMeeting = [];
+            this.timeMeeting = meetings;
             console.log('your meetings for this day ');
             console.log(meetings);
             this.meetingsByDateBusiness = meetings;
@@ -110,6 +134,32 @@ export class CalendarMeetingsPage implements OnInit {
             console.log("you got error ");
             console.log(error);
         })
+    }
 
+
+    private getMeetingsByIdBusinessByDate(idBusiness: string, dateForCalendar: string): void {
+
+        this.meetingService.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar).subscribe(meetings => {
+
+            console.log(' your meetings by Id User ');
+            console.log(meetings);
+
+            this.timeMeeting = meetings;
+            console.log('your meetings for this day ');
+            console.log(meetings);
+            this.meetingsByDateBusiness = meetings;
+
+
+            // this.filterReservedHours(this.defaultOpeningHours, meetings)
+
+        }, error => {
+            // todo set ErrorMessage Something is wrong
+            console.log("you got error ");
+            console.log(error);
+        })
+    }
+
+    ngOnDestroy(): void {
+        this.selectedBusinessId = null;
     }
 }

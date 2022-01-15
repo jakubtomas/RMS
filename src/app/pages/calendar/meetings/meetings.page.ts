@@ -23,8 +23,9 @@ export class MeetingsPage implements OnInit {
     //todo osetri ked nemam ziadny zaznam
 
     timeMeeting = [];
-    playTime = 'hello';
-    hodina;
+    meetingWithBusiness = [];
+    //playTime = 'hello';
+    currentTime;
     // this.meetingService.getMeetingsByIdUser(this.userId, this.todayDate);
 
     // todo pipe pre vytvorenie datumu Format Dates
@@ -42,13 +43,40 @@ export class MeetingsPage implements OnInit {
     }
 
     ngOnInit() {
-        this.getMeetingsByIdUser()
+        this.getMeetingsAndDetailsBusinessByIdUser();
+        //this.getMeetingsByIdUser()
+
     }
 
+    private getMeetingsAndDetailsBusinessByIdUser() {
+        this.meetingService.getMeetingsAndDetailsBusinessByIdUser(this.userId, this.dayForMeeting)
+            .subscribe(meetings => {
+                console.log('skusobna function ');
+                console.log(meetings);
+                this.meetingWithBusiness = meetings;
+
+                console.log('meeting with busines s');
+
+                console.log(this.meetingWithBusiness);
+
+
+                if (meetings.length > 0) {
+                    this.currentTime = moment
+                        .duration(moment(meetings[0].meeting.time.start, 'HH:mm')
+                            .diff(moment('24:00', 'HH:mm'))).asMinutes();
+                }
+
+            }, error => {
+                console.log("you got error ");
+                console.log(error);
+            })
+
+    }
 
     private getMeetingsByIdUser() {
         this.meetingService.getMeetingsByIdUserOrderByDate(this.userId, this.dayForMeeting).subscribe(meetings => {
             this.timeMeeting = meetings;
+
 
             /*
              console.log(meetings);
@@ -64,18 +92,17 @@ export class MeetingsPage implements OnInit {
              */
             //console.log(moment.duration(moment(this.playTime, 'HH:mm')));
 
-            if (meetings.length > 0 ) {
-                this.hodina = moment
-                    .duration(moment(meetings[0].time.start, 'HH:mm').diff(moment('24:00', 'HH:mm'))).asMinutes();
+            if (meetings.length > 0) {
+                this.currentTime = moment
+                    .duration(moment(meetings[0].time.start, 'HH:mm')
+                        .diff(moment('24:00', 'HH:mm'))).asMinutes();
             }
 
         }, error => {
             console.log("you got error ");
             console.log(error);
         })
-
-
-        /* this.hodina = moment
+        /* this.currentTime = moment
          .duration(moment(this.playTime, 'HH:mm').add("70","minutes")
          .diff(moment(this.playTime, 'HH:mm'))
          ).asMinutes();*/

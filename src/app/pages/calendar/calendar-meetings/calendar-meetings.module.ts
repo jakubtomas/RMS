@@ -8,6 +8,7 @@ import { CalendarMeetingsPageRoutingModule } from './calendar-meetings-routing.m
 
 import { CalendarMeetingsPage } from './calendar-meetings.page';
 import {NgCalendarModule} from "ionic2-calendar";
+import {FormatMeetingPipe} from "../../../pipes/format-meeting.pipe";
 
 @NgModule({
   imports: [
@@ -15,9 +16,8 @@ import {NgCalendarModule} from "ionic2-calendar";
     FormsModule,
     IonicModule,
     CalendarMeetingsPageRoutingModule,
-    NgCalendarModule
-
+    NgCalendarModule,
   ],
-  declarations: [CalendarMeetingsPage]
+  declarations: [CalendarMeetingsPage,FormatMeetingPipe]
 })
 export class CalendarMeetingsPageModule {}

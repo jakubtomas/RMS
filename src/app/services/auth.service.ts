@@ -2,10 +2,11 @@ import {Injectable} from '@angular/core';
 import {Router} from "@angular/router";
 import firebase from "firebase/compat";
 import UserCredential = firebase.auth.UserCredential;
-import { getAuth, updateProfile, User } from "firebase/auth";
+import {getAuth, updateProfile, User} from "firebase/auth";
 import {Observable} from "rxjs";
 import {AngularFireAuth} from "@angular/fire/compat/auth";
 import {AngularFirestore} from "@angular/fire/compat/firestore";
+import {BusinessService} from "./business.service";
 
 //import {auth} from "firebase/compat";
 
@@ -20,7 +21,8 @@ export class AuthService {
     constructor(
         private afAuth: AngularFireAuth,
         private afs: AngularFirestore,
-       // private User: User
+        private businessService: BusinessService
+        // private User: User
     ) {//todo maybe is better use localStorage
 
         console.log(this.afAuth.authState);
@@ -37,7 +39,7 @@ export class AuthService {
 
                 console.log(user.toJSON());
 
-                
+
                 this.user = user;
                 localStorage.setItem('idUser', user.uid);
                 localStorage.setItem('email', user.email);
@@ -52,40 +54,40 @@ export class AuthService {
 
 
     // string , validacia
-    createUser(email:string, password:string): Promise<null | {code: string,message: string} > {
+    createUser(email: string, password: string): Promise<null | { code: string, message: string }> {
 
 
         return this.afAuth.createUserWithEmailAndPassword(email, password)
-            .then((result: UserCredential ) => {
+                   .then((result: UserCredential) => {
 
-                console.log('result after  registration done');
-                
-                console.log(result);
-                console.log(result.user);
-                console.log(result.user.uid);
-                //console.log(r);
-                /*this.afs.collection('users').doc(result.user.uid).set({displayName: 'mockString'}).then(
-                    (value => {
+                       console.log('result after  registration done');
+
+                       console.log(result);
+                       console.log(result.user);
+                       console.log(result.user.uid);
+                       //console.log(r);
+                       /*this.afs.collection('users').doc(result.user.uid).set({displayName: 'mockString'}).then(
+                        (value => {
                         console.log('ulozenie mena');
                         console.log(value);
-                        
-                    })
-                );*/
 
-                //todo take data from Form firstName Second Name  na save to mock String
-                this.afAuth.currentUser.then(user => {
-                    user.updateProfile({displayName: 'mockString'}).then(value => {
-                        console.log(value);
-                        console.log('meno pridate');
-                        
-                    })
+                        })
+                        );*/
 
-                });
+                       //todo take data from Form firstName Second Name  na save to mock String
+                       this.afAuth.currentUser.then(user => {
+                           user.updateProfile({displayName: 'mockString'}).then(value => {
+                               console.log(value);
+                               console.log('meno pridate');
 
-                result.user.sendEmailVerification();
+                           })
 
-                return null;
-            }).catch((error) => {
+                       });
+
+                       result.user.sendEmailVerification();
+
+                       return null;
+                   }).catch((error) => {
 
                 if (error.code) {
                     //return one object from array [0]
@@ -107,7 +109,7 @@ export class AuthService {
             {"code": "auth/user-not-found", "message": "User/Email not found "},
             {"code": "auth/wrong-password", "message": "The password is invalid "},
         ]; /*todo osetrit moznu result a pozri dalsie dokumentaciu
-        auth/too-many-requests*/
+         auth/too-many-requests*/
         //return the array only with one object
         return messages.filter(object => object.code === errorCode);
 
@@ -115,54 +117,55 @@ export class AuthService {
     }
 
     //Login
-    login(email:string, password:string): Promise<any> {//observable
+    login(email: string, password: string): Promise<any> {//observable
         return this.afAuth.signInWithEmailAndPassword(email, password)
-            .then((result) => {
-                console.log('Auth Service: loginUser: success');
-                console.log(result);
+                   .then((result) => {
+                       console.log('Auth Service: loginUser: success');
+                       console.log(result);
 
-                // localStorage.setItem("",,JSON.stringify(result.user))
-                // this.router.navigate(['dashboard']);
-                return null;
-            })
-            .catch(error => {
-                console.log('Auth Service: login error...');
-                console.log('error code', error.code);
-                console.log('error', error);
-
-
-                if (error.code) {
-                    //return one object from array [0]
-                    return this.createErrorMessage(error.code)[0];
-                }
-
-                return {code: "problem", message: "Something is wrong from server"};
+                       // localStorage.setItem("",,JSON.stringify(result.user))
+                       // this.router.navigate(['dashboard']);
+                       return null;
+                   })
+                   .catch(error => {
+                       console.log('Auth Service: login error...');
+                       console.log('error code', error.code);
+                       console.log('error', error);
 
 
-                /*
-                if (error.code)
-                    return {isValid: false, message: error.message};*/
-            });
+                       if (error.code) {
+                           //return one object from array [0]
+                           return this.createErrorMessage(error.code)[0];
+                       }
+
+                       return {code: "problem", message: "Something is wrong from server"};
+
+
+                       /*
+                        if (error.code)
+                        return {isValid: false, message: error.message};*/
+                   });
 
     }
 
     /*SendVerificationMail() {
-        return this.afAuth.currentUser.then(u => u.sendEmailVerification())
-            .then(() => {
-                //this.router.navigate(['email-verification']);
+     return this.afAuth.currentUser.then(u => u.sendEmailVerification())
+     .then(() => {
+     //this.router.navigate(['email-verification']);
 
-                //this.router.navigate(['dashboard']);
-            });
-    }*/
+     //this.router.navigate(['dashboard']);
+     });
+     }*/
 
     signOut(): Promise<void> {
         return this.afAuth.signOut()
-            .then(() => {
-                // localStorage.removeItem('user');
-                //    this.router.navigate(['/login']);
-                console.log("user logout successfully  ");
-
-            }).catch(error => {
+                   .then(() => {
+                       // localStorage.removeItem('user');
+                       //    this.router.navigate(['/login']);
+                       console.log("user logout successfully ");
+                       // todo create message user has benn successfully log out ci ako
+                       this.businessService.updateBusinessMode(false);
+                   }).catch(error => {
                 console.log("Auth service Logout , error");
                 console.log("error code ,", error.code);
                 console.log("error  ,", error);

@@ -53,13 +53,11 @@
 
 
             <section><!-- take idUser and compare with localStorage -->
-                <header>Possibility with business</header>
                 <ion-button color="warning" (click)="editBusiness()">Edit</ion-button>
                 <ion-button color="danger" (click)="showAlertForDelete('business')">Delete</ion-button>
+                <br>
+                <ion-button color="primary" (click)="selectMeetings()">All Meetings</ion-button>
             </section>
-
-            <br>
-
 
             <div *ngIf="calendar else activeButton">
                 <h4 class="calendarName"> Opening and Closing Hours </h4>

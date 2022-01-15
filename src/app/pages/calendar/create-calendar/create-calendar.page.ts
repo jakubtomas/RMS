@@ -185,11 +185,11 @@ export class CreateCalendarPage implements OnInit {
 
         // let duration =
 
-        // let hodina = moment
+        // let currentTime = moment
         //     .duration(moment(sundayC, 'YYYY/MM/DD HH:mm')
         //         .diff(moment(sundayO, 'YYYY/MM/DD HH:mm'))
         //     ).asMinutes();
-        // console.log(hodina);
+        // console.log(currentTime);
         // console.log('Hodina');
         //
         // use this function for saving data intp firestore
