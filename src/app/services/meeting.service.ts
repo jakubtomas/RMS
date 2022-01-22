@@ -90,6 +90,50 @@ export class MeetingService {
      }
      */
 
+    getMeetingsByIdUserOrderByDate(idUser: string, currentDay?: string): Observable<Meeting[]> {
+
+        this.meetingCollection3 = this.afs.collection('meetings',
+            ref => ref.where('idUser', '==', idUser)
+                      .where('date', '>', currentDay)
+        );
+
+        return this.meetingCollection3.snapshotChanges().pipe(
+            map(changes => {
+                return changes.map(a => {
+                    const data = a.payload.doc.data() as Meeting;
+                    data.id = a.payload.doc.id;
+                    return data;
+                });
+            }));
+
+    }
+
+    getMeetingsAndDetailsBusinessByIdUser(idUser: string, currentDay?: string) {
+        return this.getMeetingsByIdUserOrderByDate(idUser, currentDay).pipe(
+            switchMap((arrayMeetings: Meeting[]) =>
+                forkJoin(arrayMeetings.map(meeting =>
+                {
+                    return this.businessService.getOneBusiness(meeting.idBusiness).pipe(
+                        map(business =>{
+                            return  {
+                                business,
+                                meeting
+                            }
+                        } )
+                    ).pipe(
+                        tap(x =>
+                            console.log('x value ' + JSON.stringify(x) )
+                        ))}))
+            ),
+            tap((response) => {
+                console.log(' response');
+                console.log(response);
+
+            })
+        );
+    }
+
+
     getMeetingsByIdUserByDate(idUser: string, dateForCalendar: string): Observable<Meeting[]> {
 
         // todo change default  Time Zone
@@ -109,13 +153,24 @@ export class MeetingService {
                     return data;
                 });
             }));
+    }
 
+    getMeetingsByIdUserForOneDay(idUser: string, dateForCalendar: string){
 
-        //todo  for every meeting we have to call
-        //  business information user FORKJOIN
-        // also when we call  getMeetingsByIdUserByDate do same thing
+        return this.getMeetingsByIdUserByDate(idUser, dateForCalendar).pipe(
+            switchMap((arrayMeetings: Meeting[]) =>
+            forkJoin(arrayMeetings.map(meeting => {
+                return this.businessService.getOneBusiness(meeting.idBusiness).pipe(
+                    map(business =>{
+                        return {business, meeting}
+                    }))
+                }
+            ))),tap((response) => {
+                console.log(' response frasa ');
+                console.log(response);
 
-
+            })
+        )
     }
 
 
@@ -143,37 +198,7 @@ export class MeetingService {
      );*/
 
 
-    getMeetingsByIdUserOrderByDate(idUser: string, currentDay?: string): Observable<Meeting[]> {
 
-        console.log('show me format ');
-        console.log(currentDay);
-
-
-        this.meetingCollection3 = this.afs.collection('meetings',
-            ref => ref.where('idUser', '==', idUser)
-                      //.where('date','<', '2022-2-30')
-
-                      .where('date', '>', currentDay)
-            //     .startAt(10)
-            //.startAt(2)
-            //.limit(20)
-            //.orderBy('minutes')
-            /* .orderBy('date')*/
-        );
-
-        console.log('funny code ');
-
-        return this.meetingCollection3.snapshotChanges().pipe(
-            map(changes => {
-                return changes.map(a => {
-                    const data = a.payload.doc.data() as Meeting;
-                    data.id = a.payload.doc.id;
-                    return data;
-                });
-            }));
-
-
-    }
 
     getMeetingsAndDetailsBusinessByIdUserDemo(idUser: string, currentDay?: string) {
         return this.getMeetingsByIdUserOrderByDate(idUser, currentDay).pipe(
@@ -186,34 +211,6 @@ export class MeetingService {
 
     }
 
-    getMeetingsAndDetailsBusinessByIdUser(idUser: string, currentDay?: string) {
-        return this.getMeetingsByIdUserOrderByDate(idUser, currentDay).pipe(
-            switchMap((arrayMeetings: Meeting[], index: number) =>
-                forkJoin(arrayMeetings.map(meeting =>
-                {
-                    return this.businessService.getOneBusiness(meeting.idBusiness).pipe(
-                       map(business =>{
-                           return  {
-                               business,
-                               meeting
-                           }
-                       } )
-                    ).pipe(
-                        tap(x =>
-                        console.log('x value ' + JSON.stringify(x) )
-                        )
-                    )
-                }))
-            ),
-            tap((response) => {
-                console.log(' response');
-                console.log(response);
-                
-            })
-            
-        );
-
-    }
 
 
     /*getOneBusiness(documentId: string): Observable<Business | undefined> {

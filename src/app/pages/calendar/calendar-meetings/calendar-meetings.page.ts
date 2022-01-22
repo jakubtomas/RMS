@@ -82,6 +82,8 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
             this.getMeetingsByIdBusinessByDate(this.selectedBusinessId, dateForFirestore);
         } else {
             this.getMeetingsByIdUserByDate(this.idUser, dateForFirestore);
+            console.log('here we are mnau ');
+            
         }// todo pouzit Fork join aj pre vytiahnutie detail About Business
 
     }
@@ -103,6 +105,7 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
         console.log('2222222222222222222222222222222');
 
         console.log(helpTime);
+        this.meetingService.getMeetingsByIdUserForOneDay(idUser, dateForCalendar).subscribe();
 
         this.meetingService.getMeetingsByIdUserByDate(idUser, dateForCalendar).subscribe(meetings => {
             console.log(' your meetings by User by Date ');
