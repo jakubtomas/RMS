@@ -13,12 +13,16 @@ export class CalendarService {
     calendarCollection: AngularFirestoreCollection<Calendar>;
     calendarCollection2: AngularFirestoreCollection<Calendar>;
     calendarCollection3: AngularFirestoreCollection<Calendar>;
+    calendarCollection4: AngularFirestoreCollection<Calendar>;
 
     constructor(public afs: AngularFirestore) {
         this.calendarCollection = this.afs.collection('calendar',
             ref => ref.orderBy('idBusiness', 'asc'));
         this.calendarCollection2 = this.afs.collection('calendar');
-        this.calendarCollection3 = this.afs.collection('calendar')
+        this.calendarCollection3 = this.afs.collection('calendar');
+
+        this.calendarCollection4 = this.afs.collection('calendar',
+            ref => ref.orderBy('idBusiness', 'asc'));
     }
 
     //addCalendar(calendarData: Business): Promise<DocumentReference<BusinessPermission>> {
@@ -28,7 +32,7 @@ export class CalendarService {
     }
 
     getCalendars(): Observable<Calendar[]> {
-        return this.calendarCollection.snapshotChanges().pipe(
+        return this.calendarCollection4.snapshotChanges().pipe(
             map(changes => {
                 return changes.map(a => {
                     const data = a.payload.doc.data() as Calendar;

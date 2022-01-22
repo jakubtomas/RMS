@@ -51,14 +51,9 @@ export class MeetingsPage implements OnInit {
     private getMeetingsAndDetailsBusinessByIdUser() {
         this.meetingService.getMeetingsAndDetailsBusinessByIdUser(this.userId, this.dayForMeeting)
             .subscribe(meetings => {
-                console.log('skusobna function ');
+                console.log('getMeetingsAndDetrails BusinesBy id user');
                 console.log(meetings);
                 this.meetingWithBusiness = meetings;
-
-                console.log('meeting with busines s');
-
-                console.log(this.meetingWithBusiness);
-
 
                 if (meetings.length > 0) {
                     this.currentTime = moment
@@ -110,7 +105,6 @@ export class MeetingsPage implements OnInit {
 
 
     selectMeeting(meeting: Meeting): void {
-        console.log('click detail');
         this.router.navigate(['/detail-meeting'], {
             queryParams: {
                 docIdMeeting: meeting.id,

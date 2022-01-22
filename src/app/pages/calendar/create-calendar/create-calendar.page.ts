@@ -21,20 +21,27 @@ import {MeetingService} from "../../../services/meeting.service";
 })
 export class CreateCalendarPage implements OnInit {
 
+   // contactForm: FormGroup;
     messageFirebase: string;
     selectedBusinessId: string;
     calendar: Calendar;
     isUpdateCalendar: boolean = false;
     docIdCalendar: string;
     errorsFromHours: string[] = [];
-    timeZone: string = moment().format().toString().substring(19, 22);//25
-    minutesForMeeting = '15'; // todo dokoncit ulozenie dlzky meetingu
+    timeZone: string = moment().format().toString().substring(19, 25);//25
+
     timeMeeting: TimeMeeting[] = [];
 
 
     //data for component
     ionTitle: string;
     ionButton: string;
+
+
+    get MinutesForMeeting(): FormControl {
+        return this.contactForm.get('MinutesForMeeting') as FormControl;
+    }
+
 
     contactForm = new FormGroup(
         {
@@ -59,6 +66,9 @@ export class CreateCalendarPage implements OnInit {
             SundayOpening: new FormControl("",),
             SundayClosing: new FormControl("",),
 
+
+            MinutesForMeeting: new FormControl("",Validators.required),
+
             // todo validators form , kontrolovat obidva hodnoty requere
             // univerzalny , input moze byt string
         });
@@ -68,10 +78,7 @@ export class CreateCalendarPage implements OnInit {
         private calendarService: CalendarService,
         private meetingService: MeetingService,
         private toastCtrl: ToastController,
-        private router: Router) {
-
-    }
-
+        private router: Router) {}
 
     ngOnInit() {
         this.messageFirebase = null;
@@ -96,7 +103,7 @@ export class CreateCalendarPage implements OnInit {
     }
 
 
-    setValuesForPage() {
+    setValuesForPage():void {
         if (this.isUpdateCalendar) {
             this.ionTitle = 'Update opening hours';
             this.ionButton = 'Update';
@@ -121,7 +128,6 @@ export class CreateCalendarPage implements OnInit {
 
     saveData() {
 
-        console.log("save data "  + this.minutesForMeeting);
         console.log(moment().format());
 
         console.log(" calendar");
@@ -133,10 +139,14 @@ export class CreateCalendarPage implements OnInit {
         //todo logaritmus  count all opening , closing Hours
         // porovnanie can not be empty opening and also closing if yes show error message
 
+        console.log(this.contactForm.value.MinutesForMeeting);
+        console.log(this.MinutesForMeeting);
+
+
 
         let calendar: Calendar = {
             idBusiness: this.selectedBusinessId,
-// save
+            timeMeeting: 15,
             week: this.mapOpeningClosingHours(),
             break: 'hello',
             timeZone: this.timeZone
@@ -161,9 +171,10 @@ export class CreateCalendarPage implements OnInit {
             console.log(calendar);
             
             
-            this.calendarService.addCalendar(calendar).then(value => {
+            this.calendarService.addCalendar(calendar).then(() => {
                 this.showToast("Calendar successfully created");
-                this.router.navigate(['/detail-business'], {queryParams: {businessId: this.selectedBusinessId}})
+                this.router.navigate(['/detail-business'],
+                    {queryParams: {businessId: this.selectedBusinessId}})
 
             }).catch((error) => {
                 console.log('error');
@@ -173,6 +184,42 @@ export class CreateCalendarPage implements OnInit {
         }
     }
 
+    updateCalendars(): void {
+
+
+        console.log(this.contactForm.value.MinutesForMeeting);
+        console.log(this.MinutesForMeeting);
+
+        console.log("click update calendars ");
+        console.log(moment().format());
+
+
+        let updateCalendar: Calendar = {
+            idBusiness: this.calendar.idBusiness,
+            week: this.mapOpeningClosingHours(),
+            timeMeeting: 15,
+            break: 'no break',
+            timeZone: this.timeZone
+
+        };
+
+        if (this.errorsFromHours.length === 0) {
+            console.log(' data for update ');
+            console.log(updateCalendar);
+
+            this.calendarService.updateCalendar(this.docIdCalendar, updateCalendar).then(() => {
+
+                console.log("uspesny update ");
+                this.router.navigate(['/detail-business'], {queryParams: {businessId: updateCalendar.idBusiness}});
+                this.showToast("The Update Is Done Successfully")
+
+            }).catch((error) => {
+                console.log("error you got error ");
+                console.log(error);
+                // this.messageFirebase = "Something is wrong";
+            });
+        }
+    }
 
     private mapOpeningClosingHours(): Day[] {
         const formData = this.contactForm.value;
@@ -200,8 +247,6 @@ export class CreateCalendarPage implements OnInit {
 
         console.log('po uprave ');
         const value = moment(formData.MondayOpening).format('HH:mm');
-        console.log(value);
-        console.log('vyipsaniae hodn oae ro');
 
 
         // save data into databas pomocou moment(formData.SundayOpening).format('HH:mm');
@@ -299,7 +344,8 @@ export class CreateCalendarPage implements OnInit {
             SaturdayOpening: '',
             SaturdayClosing: '',
             SundayOpening: '',
-            SundayClosing: ''
+            SundayClosing: '',
+            MinutesForMeeting:null
         });
     }
 
@@ -314,8 +360,9 @@ export class CreateCalendarPage implements OnInit {
             // const attemptValue =
             this.calendar = calendar;
 
-
+            console.log('your data from Firestore ');
             console.log(calendar);
+            console.log(calendar.timeMeeting);
             console.log(' show me this album ');
 
             console.log(calendar.week[0]?.openingHours);
@@ -331,8 +378,6 @@ export class CreateCalendarPage implements OnInit {
             openTime.add('10', "minutes");
             console.log('after change  ' + openTime.format('HH:mm'));
 
-
-            // create logaritmus
             const realEnd = moment(close, 'HH:mm');
 
             let isCalculate = true;
@@ -361,21 +406,24 @@ export class CreateCalendarPage implements OnInit {
             // const time = "2021-12-20T" + basicTime + ':56.702+01:00';
 
             this.contactForm.setValue({ // todo create function and refactoring
-                MondayOpening: calendar.week[0]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[0]?.openingHours + ':00.000' + this.calendar.timeZone + ':00',
-                MondayClosing: calendar.week[0]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[0]?.closingHours + ':00.000' + this.calendar.timeZone + ':00',
-                TuesdayOpening: calendar.week[1]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[0]?.openingHours + ':00.000' + this.calendar.timeZone + ':00',
-                TuesdayClosing: calendar.week[1]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[1]?.closingHours + ':00.000' + this.calendar.timeZone + ':00',
-                WednesdayOpening: calendar.week[2]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[2]?.openingHours + ':00.000' + this.calendar.timeZone + ':00',
-                WednesdayClosing: calendar.week[2]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[2]?.closingHours + ':00.000' + this.calendar.timeZone + ':00',
-                ThursdayOpening: calendar.week[3]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[3]?.openingHours + ':00.000' + this.calendar.timeZone + ':00',
-                ThursdayClosing: calendar.week[3]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[3]?.closingHours + ':00.000' + this.calendar.timeZone + ':00',
-                FridayOpening: calendar.week[4]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[4]?.openingHours + ':00.000' + this.calendar.timeZone + ':00',
-                FridayClosing: calendar.week[4]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[4]?.closingHours + ':00.000' + this.calendar.timeZone + ':00',
-                SaturdayOpening: calendar.week[5]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[5]?.openingHours + ':00.000' + this.calendar.timeZone + ':00',
-                SaturdayClosing: calendar.week[5]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[5]?.closingHours + ':00.000' + this.calendar.timeZone + ':00',
-                SundayOpening: calendar.week[6]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[6]?.openingHours + ':00.000' + this.calendar.timeZone + ':00',
-                SundayClosing: calendar.week[6]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[6]?.closingHours + ':00.000' + this.calendar.timeZone + ':00'
+                MondayOpening: calendar.week[0]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[0]?.openingHours + ':00.000' + this.calendar.timeZone ,
+                MondayClosing: calendar.week[0]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[0]?.closingHours + ':00.000' + this.calendar.timeZone ,
+                TuesdayOpening: calendar.week[1]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[1]?.openingHours + ':00.000' + this.calendar.timeZone ,
+                TuesdayClosing: calendar.week[1]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[1]?.closingHours + ':00.000' + this.calendar.timeZone ,
+                WednesdayOpening: calendar.week[2]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[2]?.openingHours + ':00.000' + this.calendar.timeZone ,
+                WednesdayClosing: calendar.week[2]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[2]?.closingHours + ':00.000' + this.calendar.timeZone ,
+                ThursdayOpening: calendar.week[3]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[3]?.openingHours + ':00.000' + this.calendar.timeZone ,
+                ThursdayClosing: calendar.week[3]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[3]?.closingHours + ':00.000' + this.calendar.timeZone ,
+                FridayOpening: calendar.week[4]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[4]?.openingHours + ':00.000' + this.calendar.timeZone ,
+                FridayClosing: calendar.week[4]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[4]?.closingHours + ':00.000' + this.calendar.timeZone ,
+                SaturdayOpening: calendar.week[5]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[5]?.openingHours + ':00.000' + this.calendar.timeZone ,
+                SaturdayClosing: calendar.week[5]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[5]?.closingHours + ':00.000' + this.calendar.timeZone ,
+                SundayOpening: calendar.week[6]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[6]?.openingHours + ':00.000' + this.calendar.timeZone ,
+                SundayClosing: calendar.week[6]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[6]?.closingHours + ':00.000' + this.calendar.timeZone ,
                 // show data for update
+
+                MinutesForMeeting: calendar.timeMeeting == null ? null :calendar.timeMeeting
+               // MinutesForMeeting: 20
 
                 // todo ukladanie casu do UTC , cas prekonvertovat do UTC , skonvertuje cas do toho pouzivatela
 
@@ -390,38 +438,7 @@ export class CreateCalendarPage implements OnInit {
         })
     }
 
-    updateCalendars(): void {
 
-        console.log("click update calendars ");
-        console.log(moment().format());
-
-
-        let updateCalendar: Calendar = {
-            idBusiness: this.calendar.idBusiness,
-            week: this.mapOpeningClosingHours(),
-            break: 'no break',
-            timeZone: this.timeZone
-
-        };
-
-        if (this.errorsFromHours.length === 0) {
-            console.log(' data for update ');
-            console.log(updateCalendar);
-            
-            this.calendarService.updateCalendar(this.docIdCalendar, updateCalendar).then(() => {
-
-                console.log("uspesny update ");
-                this.router.navigate(['/detail-business'], {queryParams: {businessId: updateCalendar.idBusiness}});
-                this.showToast("The Update Is Done Successfully")
-
-            }).catch((error) => {
-                console.log("error you got error ");
-                console.log(error);
-                // this.messageFirebase = "Something is wrong";
-            });
-        }
-
-    }
 
     resetHours(event, item) {
 

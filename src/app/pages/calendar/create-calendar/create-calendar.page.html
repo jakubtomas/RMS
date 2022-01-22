@@ -17,7 +17,9 @@
                 <h3>Let's create calendar with opening hours </h3>
             </ion-item>
             <h5>Reminder your opening hours will be save according to your time zone {{timeZone}}</h5>
-        </ion-card>
+
+            <p>* require parameter</p>
+            <br>
 
         <form [formGroup]="contactForm" novalidate>
 
@@ -136,6 +138,19 @@
                      <ion-icon name="backspace" (click)="resetHours($event, 6)"></ion-icon>
                 </ion-item>
 
+                <ion-item class="item">
+
+                    <ion-label><sup>*</sup> Time of meeting in minutes </ion-label>
+                    <ion-input type="number"  formControlName="MinutesForMeeting" ></ion-input>
+                    <!--<ion-datetime formControlName="MinutesForMeeting"-->
+                                  <!--displayFormat="mm" minuteValues="5,10,15,20,25,30,35,40,45,50,55,60"></ion-datetime>-->
+                <!---->
+                </ion-item>
+
+                <div *ngIf="MinutesForMeeting.errors?.required && MinutesForMeeting.touched">
+                    <em> Minutes for meeting  required.</em>
+                </div>
+
             </div>
 
            <!-- <ion-item>
@@ -143,12 +158,18 @@
                 <ion-input formControlName="calendarName"></ion-input>
             </ion-item>-->
 
+            <!--<ion-item>-->
+                <!--<ion-label>Time of meeting in minutes </ion-label>-->
+                <!--<ion-datetime [(ngModel)]="minutesForMeeting"-->
+                              <!--displayFormat="mm" minuteValues="0,5,10,15,20,25,30,35,40,45,50,55,60"></ion-datetime>-->
+            <!--</ion-item>-->
         </form>
 
-        <ion-item>
+      <!--  <ion-item>
             <ion-label>Time of meeting in minutes </ion-label>
-            <ion-datetime [(ngModel)]="minutesForMeeting" displayFormat="mm" minuteValues="0,5,10,15,20,25,30,35,40,45,50,55,60"></ion-datetime>
-        </ion-item>
+            <ion-datetime [(ngModel)]="minutesForMeeting"
+                          displayFormat="mm" minuteValues="0,5,10,15,20,25,30,35,40,45,50,55,60"></ion-datetime>
+        </ion-item>-->
 
         <ion-card *ngIf="errorsFromHours.length >0 ">
             <h2>Warning</h2>
@@ -169,17 +190,18 @@
         </ion-button>
 
         <ion-button *ngIf="!isUpdateCalendar else updateButton " type="submit" expand="block" (click)="saveData()"
-                    [disabled]="!contactForm">Save calendar data
+                    [disabled]="!contactForm.valid">Save calendar data
         </ion-button>
 
         <ng-template #updateButton>
 
             <section>
-                <ion-button expand="block" (click)="updateCalendars()" [disabled]="!contactForm">{{ionButton}}
+                <ion-button expand="block" (click)="updateCalendars()" [disabled]="!contactForm.valid">{{ionButton}}
                 </ion-button>
             </section>
         </ng-template>
 
+        </ion-card>
     </div>
 
 </ion-content>

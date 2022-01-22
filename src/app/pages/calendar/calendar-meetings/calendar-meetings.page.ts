@@ -6,6 +6,8 @@ import {Meeting} from "../../../interfaces/meeting";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import * as moment from 'moment';
 import {CalendarComponent} from "ionic2-calendar";
+import {Business} from "../../../interfaces/business";
+import {BusinessService} from "../../../services/business.service";
 
 
 @Component({
@@ -20,10 +22,10 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
     selectedDayByCalendar: string;
     selectedDateByCalendar: Date;
     selectedBusinessId: string;
-    hodina;
+
     private idUser= localStorage.getItem('idUser');
-
-
+    business: Business;
+    subscription;
 
     viewTitle: string;
     eventSource = [];
@@ -38,7 +40,8 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
     constructor(
         private router: Router,
         private meetingService: MeetingService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private businessService : BusinessService
     ) {}
 
     ngOnInit() {
@@ -47,16 +50,22 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
             if (params['businessId'] != undefined) {
                 this.selectedBusinessId = params['businessId'];
                 console.log("I got business id " + this.selectedBusinessId);
+
+                this.getOneBusiness(this.selectedBusinessId);
             }
         })
     }
 
-    next() {
+    next():void {
         this.myCal.slideNext();
     }
 
-    back() {
+    back():void {
         this.myCal.slidePrev();
+    }
+
+    reverseTimeList():void{
+        this.timeMeeting.reverse();
     }
 
     onCurrentDateChanged(event: Date):void {
@@ -73,21 +82,8 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
             this.getMeetingsByIdBusinessByDate(this.selectedBusinessId, dateForFirestore);
         } else {
             this.getMeetingsByIdUserByDate(this.idUser, dateForFirestore);
-        }
+        }// todo pouzit Fork join aj pre vytiahnutie detail About Business
 
-
-
-
-
-        /* this.selectedDateByCalendar = event;
-         //console.log();
-         console.log(' new format ' + moment(event).format('YYYY-M-D'));
-
-         this.selectedDayByCalendar = event.toString().substring(0, 3);
-         this.selectedDay = 'hello';
-
-         this.getOpeningHoursByIdBusiness(this.selectedBusinessId);
-         */
     }
 
     onViewTittleChanged(title):void {
@@ -96,26 +92,16 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
     }
 
 
-    // control that I am Owner  of this business
-    // fetch all meetings by idBusiness
-    // console.log
-
-
-    // get opening Hours  create list of hours according to
-    // business and opening hours
-
-
-    // create list according to opening hours and meetings
-    // which we have
-
     private getMeetingsByIdUserByDate(idUser: string, dateForCalendar: string): void {
 
-        //dany den minus 24 hodin
+        // dany den minus 24 hodin
         // rovnasa dany datum
 
         const helpTime = moment(dateForCalendar).format('YYYY-MM-DDT00:00:00+01:00');
 
         console.log('zmeneny time ');
+        console.log('2222222222222222222222222222222');
+
         console.log(helpTime);
 
         this.meetingService.getMeetingsByIdUserByDate(idUser, dateForCalendar).subscribe(meetings => {
@@ -138,19 +124,12 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
 
 
     private getMeetingsByIdBusinessByDate(idBusiness: string, dateForCalendar: string): void {
+            console.log('11111111111111111111111111111111111111111');
 
         this.meetingService.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar).subscribe(meetings => {
 
-            console.log(' your meetings by Id User ');
-            console.log(meetings);
-
             this.timeMeeting = meetings;
-            console.log('your meetings for this day ');
-            console.log(meetings);
             this.meetingsByDateBusiness = meetings;
-
-
-            // this.filterReservedHours(this.defaultOpeningHours, meetings)
 
         }, error => {
             // todo set ErrorMessage Something is wrong
@@ -159,7 +138,30 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
         })
     }
 
+
+    selectMeeting(meeting:Meeting):void{
+        this.router.navigate(['/detail-meeting'], {
+            queryParams: {
+                docIdMeeting: meeting.id,
+                idBusiness: meeting.idBusiness
+                //todo add parametaer calendar link after delete and change should redirect to back
+                // on this url calendar meetints
+            }
+        });
+    }
+
+    getOneBusiness(documentID: string): void {
+
+        this.subscription = this.businessService.getOneBusiness(documentID).subscribe((business) => {
+                this.business = business;
+            }, error => {
+                console.log(error);
+            }
+        );
+    }
+
     ngOnDestroy(): void {
         this.selectedBusinessId = null;
+       // this.subscription.unsubscribe();
     }
 }

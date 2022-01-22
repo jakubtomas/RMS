@@ -17,11 +17,12 @@ import {AngularFireDatabaseModule} from "@angular/fire/compat/database";
 import {AngularFireAuthModule} from '@angular/fire/compat/auth';
 import { OrderBusinessesPipe } from './pipes/order-businesses.pipe';
 import { OrderByOpeningHoursPipe } from './pipes/order-by-opening-hours.pipe';
-import { FormatMeetingPipe } from './pipes/format-meeting.pipe';
+import { FormatMeetingPipe } from './shared/shared/pipes/format-meeting.pipe';
+import {SharedModule} from "./shared/shared/shared.module";
  // import { OrderBusinessesPipe } from './order-businesses.pipe';
 
 @NgModule({
-    declarations: [AppComponent, OrderByOpeningHoursPipe, FormatMeetingPipe],
+    declarations: [AppComponent, OrderByOpeningHoursPipe ],
     entryComponents: [],
     imports: [BrowserModule,
               FormsModule,
@@ -34,6 +35,8 @@ import { FormatMeetingPipe } from './pipes/format-meeting.pipe';
               AngularFirestoreModule,
               AngularFireDatabaseModule,
               AngularFireAuthModule,
+              SharedModule
+              //FormatMeetingPipe
 
     ],
     providers: [{provide: RouteReuseStrategy, useClass: IonicRouteStrategy}],

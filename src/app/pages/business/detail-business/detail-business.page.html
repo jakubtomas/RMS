@@ -28,7 +28,7 @@
          </ion-card-content>
      </ion-card>-->
 
-    <ion-card *ngIf="business">
+    <ion-card *ngIf="business" class="schedule">
         <ion-card-header>
             <ion-card-title>Name  {{business.nameOrganization}}</ion-card-title>
             <ion-card-subtitle>Address {{business.nameStreetWithNumber}}</ion-card-subtitle>
@@ -41,17 +41,35 @@
                     Wisconsin Territory in 1836.
                 </ion-card-content>
         -->
+        <div *ngIf="calendar && !isThisMyBusiness" >
+            <h4 class="calendarName"> Opening Hours </h4>
+            <h3 class="calendarName">Time Zone {{calendar.timeZone}}</h3>
+            <div *ngFor="let item of calendar.week" class="schedule ">
+                <ion-row class="table">
+                    <ion-col>
+                        <div>{{item.day}}</div>
+                    </ion-col>
+                    <ion-col>
+                        <div>{{item.openingHours}}</div>
+                    </ion-col>
+                    <ion-col>
+                        <div>{{item.closingHours}}</div>
+                    </ion-col>
+                </ion-row>
+            </div>
+        </div>
+
+
         <div *ngIf="!isThisMyBusiness">
-            <section>
-                <header>Create TimeMeeting</header>
-                <ion-button expand="block" (click)="createMeeting()">Create TimeMeeting</ion-button>
+
+            <br><br>
+            <section class="schedule create-meeting-button">
+                <ion-button expand="block" (click)="createMeeting()">Create Meeting</ion-button>
             </section>
         </div>
 
 
         <div *ngIf="isThisMyBusiness">
-
-
             <section><!-- take idUser and compare with localStorage -->
                 <ion-button color="warning" (click)="editBusiness()">Edit</ion-button>
                 <ion-button color="danger" (click)="showAlertForDelete('business')">Delete</ion-button>
@@ -63,7 +81,7 @@
                 <h4 class="calendarName"> Opening and Closing Hours </h4>
                 <h3 class="calendarName">Time Zone {{calendar.timeZone}}</h3>
                 <div *ngFor="let item of calendar.week" class="schedule ">
-                    <ion-row>
+                    <ion-row class="table">
                         <ion-col>
                             <div>{{item.day}}</div>
                         </ion-col>

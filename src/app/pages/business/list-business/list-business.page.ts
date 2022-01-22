@@ -115,7 +115,8 @@ export class ListBusinessPage implements OnInit {
                 /*
                  const array = permission.filter(value => value.idUser == userId);
                  console.log(array);*/
-                this.businessPermission = permission.filter(value => value.idUser == userId);
+                this.businessPermission =
+                    permission.filter(value => value.idUser == userId);
 
                 // this.getAllMyBusinesses();
             }, error => {
@@ -162,8 +163,13 @@ export class ListBusinessPage implements OnInit {
 
         if (business.id !== null) {
             //this.router.navigate(['/detail-business', {businessId: business.id}])
-            this.router.navigate(['/detail-business'], {queryParams: {businessId: business.id}})
+            this.router.navigate(['/detail-business'],
+                {queryParams: {businessId: business.id}})
         }
+    }
+
+    ngOnDestroy(): void {
+     //   businesses$.pipe()
     }
 
 

@@ -29,7 +29,7 @@
             <ion-item-sliding *ngFor="let item of meetingWithBusiness ">
                 <ion-item (click)="selectMeeting(item.meeting)" class="item">
                     <ion-card-header>
-                        <ion-card-subtitle><b>Date</b> {{item.meeting.date }}</ion-card-subtitle>
+                        <ion-card-subtitle><b>Date</b> {{item.meeting.date | formatMeeting }}</ion-card-subtitle>
                         <ion-card-subtitle><b>Start End   </b>{{item.meeting.time.start + '   ' + item.meeting.time.end}}</ion-card-subtitle>
                         <ion-card-subtitle><b>Name of Organization</b>   {{item.business.typeOfOrganization }}</ion-card-subtitle>
                         <ion-card-subtitle><b>City</b>   {{item.business.city }}</ion-card-subtitle>

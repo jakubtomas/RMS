@@ -88,7 +88,9 @@ export class CreateMeetingPage implements OnInit {
         console.log(event.getDay());
 
         //console.log();
-        console.log(' new format ' + moment(event).format('YYYY-M-D'));
+        console.log(event);
+        
+        console.log(' new format ' + moment(event).format('D-M-YYYY'));
         this.selectedDateByCalendar = event;
         this.selectedDayByCalendar = event.toString().substring(0, 3);
         this.selectedDay = 'hello';
@@ -158,10 +160,17 @@ export class CreateMeetingPage implements OnInit {
             let starts = moment(open, 'HH:mm');
             let ends = moment(open, 'HH:mm');
 
+            let timeMeeting;
+            if (calendar[0].timeMeeting) {
+                timeMeeting = calendar[0].timeMeeting;
+            } else {
+                timeMeeting = 15;
+            }
+
             this.defaultOpeningHours = [];
             while (isCalculate) {
                 // todo change dates acccording to data from firestore
-                ends.add('15', "minutes");
+                ends.add(timeMeeting, "minutes");
 
                 if (ends <= realEnd) {
                     this.defaultOpeningHours.push(
@@ -201,71 +210,46 @@ export class CreateMeetingPage implements OnInit {
 
     selectTime(time) {
         console.log('your time is ' + time.toString() + '   ' + JSON.stringify(time));
+        console.log(time);
+        console.log(time.start);
+        console.log(time.end);
 
         //this.timeMeeting = [];
         console.log('I know ' + this.selectedDateByCalendar);
 
         if (this.selectedDateByCalendar && time) {
             this.showAlertForConfirmMeeting(this.selectedDateByCalendar, time);
-           // this.showAlert('mockSttring');
+           
         }
     }
 
     private async showAlertForConfirmMeeting(date: Date, time): Promise<any> {
-
-
-        //console.log(date.getDate() + ' ' + date.getMonth() + '  ' + date.getFullYear());
-        const confirmDay = date.getDate() + '.' + date.getMonth() + '.' + date.getFullYear();
+        const confirmDay = moment(date).format('D.M.YYYY');
         // 2022-01-06T14:24:36+01:00
-        //console.log(' vstupny cas  je ' + date );
         let upravenyCas = moment(date).format("YYYY-MM-DD");
-        /*console.log(' upraveny cas ' + upravenyCas);
-        console.log(' upraveny cas ' + upravenyCas+"T00:00:00+01:00");
-*/
-//        upravenyCas = upravenyCas + "T00:00:00+01:00";
         upravenyCas = upravenyCas + "T00:00:00";
 
-        //const modifyDate = moment(upravenyCas).add(0, 'minutes').format();
         const modifyDate = upravenyCas;
-/*
-
-        console.log('------------------------------------------------');
-        console.log(' last Upravenz cas  ' + modifyDate);
-        console.log('--------------');
-        const value = moment(time.start, 'HH:mm').add(0, 'minutes').format();
-        console.log('novy format casu  ' + value );
-        console.log('novy format casu  ' + value );
-*/
-
-
+        
         const alert = await this.alertController.create({
-            cssClass: 'my-custom-class',
+            cssClass: 'alertForm',
             header: 'Confirm Meeting',
 
             message: 'Are you sure you want to create appointment?' +
-                '\n' + '' + confirmDay + ' ' + JSON.stringify(time) + ' ' + time.valueOf('start').toString(),
+                '\n' + '' + confirmDay + '\n' +' Start  ' +  time.start  + '\n\n\n\n\n'  + '\n' + 'End  ' + time.end,
             buttons: [
                 {
                     text: 'Cancel',
                     role: 'cancel',
-                    handler: () => {
-                        console.log('no');
-                        //todo when click no List of meeting is invisible
-
-                    }
+                    cssClass: 'secondary',
+                    handler: () => {}
                 }, {
                     text: 'Yes',
                     handler: () => {
-                        // todo show message you created succ appointment
-                        // function which save data into Firestore
-                        console.log('continue');
-
                         this.saveMeeting(time,modifyDate );
-
                     }
                 }]
         });
-
         await alert.present();
     }
 
@@ -300,70 +284,26 @@ export class CreateMeetingPage implements OnInit {
             idBusiness: this.selectedBusinessId,
             idUser: userId
         };
-        this.meetingService.addMeeting(meetingData).then(value => {
-            //this.showToast("Calendar successfully created");
-            //// this.router.navigate(['/detail-business'], {queryParams: {businessId: this.selectedBusinessId}})
+        this.meetingService.addMeeting(meetingData).then(_ => {
             this.showToast('Meeting have been successfully created')
-            // todo sett SuccesMessage you created new meeting
 
         }).catch((error) => {
             console.log('error');
             console.log(error);
-
-            // todo set ErrorMessage we did not add Meeting
-            //this.showToast("Something is wrong")
+            this.showToast('Meeting have been not created')
         });
     }
 
     private getMeetingsByIdBusinessByDate(idBusiness: string, dateForCalendar: string): void {
-        this.meetingService.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar).subscribe(meetings => {
-
-
+        this.meetingService.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar)
+            .subscribe(meetings => {
             this.timeMeeting = [];
-            console.log('your meetings for this day ');
-            console.log(meetings);
             this.meetingsByDateBusiness = meetings;
-
-
             this.filterReservedHours(this.defaultOpeningHours, meetings)
-            /*
-             this.defaultOpeningHours.forEach(time => {
-             let permissionForSave = true;
-             meetings.forEach(timeDB => {
-
-             if (time.start === timeDB.time.start && time.end === timeDB.time.end) {
-             permissionForSave = false;
-             }
-             });
-
-             if (permissionForSave) {
-             this.timeMeeting.push(time)
-             }
-             });
-             */
-
-            /*
-             this.timeMeeting = [];
-             this.defaultOpeningHours.forEach(time => {
-             let permissionForSave = true;
-             meetings.forEach(timeDB => {
-
-             if (time.start === timeDB.time.start && time.end === timeDB.time.end) {
-             permissionForSave = false;
-             }
-             });
-
-             if (permissionForSave) {
-             this.timeMeeting.push(time)
-             }
-             });
-             */
-            // this.filterReservedHours(this.defaultOpeningHours, meetings)
-
         }, error => {
             // todo set ErrorMessage Something is wrong
             console.log("you got error ");
-            console.log(error);
+            console.error(error);
         })
 
     }

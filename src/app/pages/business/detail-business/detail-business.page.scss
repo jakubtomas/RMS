@@ -1,3 +1,7 @@
+ion-card-header{
+  -ms-text-align-last: left;
+  text-align-last: left;
+}
 .schedule {
   max-width: 500px;
   margin: 0 auto;
@@ -6,4 +10,11 @@
 }
 .calendarName{
   text-align: center;
+}
+.table{
+  border-top: 1px solid #737373;
+
+}
+.create-meeting-button{
+  margin-bottom: 50px;
 }

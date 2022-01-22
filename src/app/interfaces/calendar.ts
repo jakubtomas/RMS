@@ -6,6 +6,6 @@ export interface Calendar {
 
     week: Day[];
     break: any;
-    timeMeeting?: string;
+    timeMeeting?: number;
     timeZone: string;
 }

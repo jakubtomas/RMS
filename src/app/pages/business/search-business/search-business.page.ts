@@ -52,7 +52,7 @@ export class SearchBusinessPage implements OnInit {
         this.firebaseErrorMessage = null;
         this.typesOrganization = this.getTypesOrganization();
         this.registerForm = new FormGroup(
-            {/*todo doplnit */
+            {
                 nameOrganization: new FormControl(''),
                 city: new FormControl(''),
                 zipCode: new FormControl(''),

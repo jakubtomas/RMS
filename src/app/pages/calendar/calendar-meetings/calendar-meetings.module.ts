@@ -8,7 +8,8 @@ import { CalendarMeetingsPageRoutingModule } from './calendar-meetings-routing.m
 
 import { CalendarMeetingsPage } from './calendar-meetings.page';
 import {NgCalendarModule} from "ionic2-calendar";
-import {FormatMeetingPipe} from "../../../pipes/format-meeting.pipe";
+import {FormatMeetingPipe} from "../../../shared/shared/pipes/format-meeting.pipe";
+import {SharedModule} from "../../../shared/shared/shared.module";
 
 @NgModule({
   imports: [
@@ -17,7 +18,8 @@ import {FormatMeetingPipe} from "../../../pipes/format-meeting.pipe";
     IonicModule,
     CalendarMeetingsPageRoutingModule,
     NgCalendarModule,
+    SharedModule
   ],
-  declarations: [CalendarMeetingsPage,FormatMeetingPipe]
+  declarations: [CalendarMeetingsPage]
 })
 export class CalendarMeetingsPageModule {}

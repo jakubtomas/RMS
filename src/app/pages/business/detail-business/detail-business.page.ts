@@ -1,16 +1,10 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Params, Router} from "@angular/router";
-import {catchError} from 'rxjs/operators';
 import {BusinessService} from "../../../services/business.service";
 import {Business} from "../../../interfaces/business";
 import {AlertController, ToastController} from '@ionic/angular';
-import {async} from 'rxjs';
-import {errorObject} from "rxjs/internal-compatibility";
 import {CalendarService} from "../../../services/calendar.service";
 import {Calendar} from "../../../interfaces/calendar";
-import {object} from "@angular/fire/database";
-// import * as moment from "../../calendar/create-calendar/create-calendar.page";
 import * as moment from 'moment';
 
 @Component({
@@ -24,11 +18,10 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
     selectedBusinessId: string;
     calendar: Calendar;
     calendars: Calendar[];
-    myId: string;
     isThisMyBusiness: boolean = false;
     subscription;
 
-    timeZone = moment().format().toString().substring(19, 22);
+    timeZone = moment().format().toString().substring(19, 25);
 
     constructor(
         private route: ActivatedRoute,
@@ -60,14 +53,6 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
                 this.messageFirebase = "Business successfully updated"
             }
         });
-
-        /*
-         * this.donorStore.getDonor(donorId).pipe(
-         filter(donor => !!donor),
-         take(1),
-         switchMap(() => this.donorStore.updateDonorLang(lang))
-         )*/
-
     }
 
     async showToast(msg: string) {
@@ -138,12 +123,7 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
     async showAlertForDelete(input: string): Promise<any> {
 
         let deleteBusiness: boolean = null;
-
-        if (input === "business") {
-            deleteBusiness = true;
-        } else {
-            deleteBusiness = false;
-        }
+        deleteBusiness = input === "business";
 
         const alert = await this.alertController.create({
             cssClass: 'my-custom-class',
@@ -189,7 +169,7 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
 
     changeDateFormat(): void {
 
-        const newWeek = this.calendar.week.map((item, index) => {
+        const newWeek = this.calendar.week.map((item) => {
            /* if (index == 6) {
 
 
@@ -259,9 +239,12 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
             console.log('................');
             
             
+            console.log(calendars.length);
             
             if (this.calendars.length > 0) {
                 this.calendars.forEach(calendar => {
+                    console.log(calendar.idBusiness + "  " + this.selectedBusinessId);
+                    
                     if (calendar.idBusiness === this.selectedBusinessId) {
                         // set calendar
 
@@ -284,32 +267,21 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
     }
 
     editCalendar(): void {
-        console.log("click edit calendar");
-
-        //  this.router.navigate(['/register-business', {businessId: this.selectedBusinessId}])
-        //  this.router.navigate(['/create-calendar', {docCalendarId: this.calendar.id, updateCalendar: true}]);
         this.router.navigate(['/create-calendar'], {queryParams: {docCalendarId: this.calendar.id}})
-
-
     }
 
-
     createCalendar(): void {
-        //    this.router.navigate(['/create-calendar', {businessId: this.selectedBusinessId}]);
-        this.router.navigate(['/create-calendar'], {queryParams: {businessId: this.selectedBusinessId}})
-
+        this.router.navigate(['/create-calendar'],
+            {queryParams: {businessId: this.selectedBusinessId}})
     }
 
     createMeeting(): void {
-        //    this.router.navigate(['/create-calendar', {businessId: this.selectedBusinessId}]);
-        console.log("go to another page ");
-
-        this.router.navigate(['/create-meeting'], {queryParams: {businessId: this.selectedBusinessId}})
-
+        this.router.navigate(['/create-meeting'],
+            {queryParams: {businessId: this.selectedBusinessId}})
     }
 
-    ngOnDestroy() {
-        this.subscription.unsubscribe()
+    ngOnDestroy():void {
+        this.subscription.unsubscribe();
     }
 
 

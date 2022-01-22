@@ -35,3 +35,15 @@ ion-item.item a ion-label {
 .closedDay {
   text-align: center;
 }
+.alertForm{
+
+  background-color: red ;
+  button.alert-button:nth-child(1){
+    color: red;
+  }
+
+  button.alert-button:nth-child(2){
+    color: green;
+  }
+}
+
