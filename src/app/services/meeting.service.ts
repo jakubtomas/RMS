@@ -166,63 +166,12 @@ export class MeetingService {
                     }))
                 }
             ))),tap((response) => {
-                console.log(' response frasa ');
+                console.log(' response');
                 console.log(response);
 
             })
         )
     }
-
-
-    //todo create function for list of my Meetings
-    // create page for list of my Meetings
-    //
-    /*getMeetingsByIdUser(idUser: string, currentDay?: string): Observable<Meeting[]> {
-     console.log('funny code ');
-     this.meetingCollection3 = this.afs.collection('meetings',
-     ref => ref.where('idUser', '==', idUser)
-     //.limit(10)
-     .where('dateForCalendar', '>', currentDay)
-
-     //.orderBy('date')
-     //                      .where('date', '>', currentDay)
-     // .startAt(1)
-     //  .limitToLast(5)
-
-     //.where('date','<', '2022-2-30')
-     // .where('date', '>', currentDay)
-     //.startAt(2)
-     //.limit(20)
-     //.orderBy('minutes')
-     /!* .orderBy('date')*!/
-     );*/
-
-
-
-
-    getMeetingsAndDetailsBusinessByIdUserDemo(idUser: string, currentDay?: string) {
-        return this.getMeetingsByIdUserOrderByDate(idUser, currentDay).pipe(
-            switchMap((arrayMeetings: Meeting[], index: number) =>
-                forkJoin(arrayMeetings.map(meeting =>
-                    this.businessService.getOneBusiness(meeting.idBusiness)))),
-                    tap((response) =>
-                    console.log(';;;;;;;;;;;' + JSON.stringify(response)))
-            );
-
-    }
-
-
-
-    /*getOneBusiness(documentId: string): Observable<Business | undefined> {
-     console.log('function getOneBusiness document  ' +  documentId);
-
-     return this.businessCollection2.doc(documentId).get().pipe(
-     map(changes => {
-     const data = changes.data();
-     data.id = documentId;
-     return data;
-     }));
-     }*/
 
     getOneMeeting(documentId: string): Observable<Meeting> {
         //return this.meetingCollection2.doc('6p4hV0ozXqFPLC5c2IDe').valueChanges();
@@ -240,7 +189,6 @@ export class MeetingService {
     }
 
     deleteMeeting(docIdMeeting: string): Promise<void> {
-
         return this.meetingCollection4.doc(docIdMeeting).delete();
     }
 

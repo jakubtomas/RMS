@@ -22,18 +22,18 @@ export class MeetingsPage implements OnInit {
     // todo osetrit error
     //todo osetri ked nemam ziadny zaznam
 
-    timeMeeting = [];
-    meetingWithBusiness = [];
     //playTime = 'hello';
     currentTime;
-    // this.meetingService.getMeetingsByIdUser(this.userId, this.todayDate);
-
     // todo pipe pre vytvorenie datumu Format Dates
     // moment().format('MMMM Do YYYY, h:mm:ss a');
     //todo vytvorit pipe na zoradanie dat podla datumu
     // maximalny zobrazit 10 prispevok na stranku potom pouzit pagination
     // znova vytiahnut data od 10 po 20
     // alebo vytiahnut vsetkz za mesiac may ,jun , jul
+
+    // this.meetingService.getMeetingsByIdUser(this.userId, this.todayDate);
+    timeMeeting = [];
+    meetingWithBusiness = [];
 
 
     //todo show with date in list of meetings
@@ -111,7 +111,10 @@ export class MeetingsPage implements OnInit {
                 idBusiness: meeting.idBusiness
             }
         });
+    }
 
+    reverseTimeList():void{
+        this.meetingWithBusiness.reverse();
     }
 
 }

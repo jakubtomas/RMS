@@ -292,12 +292,39 @@ export class BusinessService {
     getOneBusiness(documentId: string): Observable<Business | undefined> {
         console.log('function getOneBusiness document  ' +  documentId);
 
+
+        if (documentId === undefined) {
+            return undefined;
+        } else {
+
+        }
+
         return this.businessCollection2.doc(documentId).get().pipe(
             map(changes => {
 
                 const data = changes.data();
-                data.id = documentId;
-                return data;
+                if (data === undefined) {
+                    const mockObject = {
+                        id: '',
+                        idOwner: '',
+                        nameOrganization: '',
+                        phoneNumber: '',
+                        zipCode: '',
+                        city: '',
+                        nameStreetWithNumber: '',
+
+                        typeOfOrganization: '',
+                    };
+                    return mockObject;
+                } else {
+
+
+                    data.id = documentId;
+                    return data;
+
+
+
+                }
 
             }));
 

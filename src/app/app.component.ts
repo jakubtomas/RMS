@@ -13,6 +13,11 @@ import {Subject} from 'rxjs';
 export class AppComponent {
     appPages = [
         {
+            title: 'Search Business',
+            url: '/search-business',
+            icon: 'search'
+        },
+        {
             title: 'Schedule',
             //    url: '/tabs/tab1',
             url: '/calendar-meetings',
@@ -21,13 +26,13 @@ export class AppComponent {
         {
             title: 'Dashboard',
             url: '/dashboard',
-            icon: 'people'
+            icon: 'clipboard'
         },
 
         {
-            title: 'About',
-            url: '/app/tabs/about',
-            icon: 'information-circle'
+            title: 'My Meetings',
+            url: '/meetings',
+            icon: 'people'
         }
     ];
 

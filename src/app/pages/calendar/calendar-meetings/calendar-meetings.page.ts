@@ -22,6 +22,8 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
     selectedDayByCalendar: string;
     selectedDateByCalendar: Date;
     selectedBusinessId: string;
+    meetingWithBusiness = [];
+
 
     private idUser= localStorage.getItem('idUser');
     business: Business;
@@ -47,11 +49,17 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
     ngOnInit() {
         this.route.queryParams.subscribe((params: Params) => {
 
+            console.log('function is running again ');
+
+            this.meetingWithBusiness = [];
             if (params['businessId'] != undefined) {
                 this.selectedBusinessId = params['businessId'];
                 console.log("I got business id " + this.selectedBusinessId);
 
                 this.getOneBusiness(this.selectedBusinessId);
+            } else {
+                console.log('i dont have businessID');
+
             }
         })
     }
@@ -65,7 +73,7 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
     }
 
     reverseTimeList():void{
-        this.timeMeeting.reverse();
+        this.meetingWithBusiness.reverse();
     }
 
     onCurrentDateChanged(event: Date):void {
@@ -77,6 +85,7 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
         this.selectedDayByCalendar = event.toString().substring(0, 3);
 
         const dateForFirestore = moment(this.selectedDateByCalendar).format('L');
+        this.meetingWithBusiness = [];
 
         if (this.selectedBusinessId && dateForFirestore) {
             this.getMeetingsByIdBusinessByDate(this.selectedBusinessId, dateForFirestore);
@@ -105,17 +114,17 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
         console.log('2222222222222222222222222222222');
 
         console.log(helpTime);
-        this.meetingService.getMeetingsByIdUserForOneDay(idUser, dateForCalendar).subscribe();
+       // this.meetingService.getMeetingsByIdUserForOneDay(idUser, dateForCalendar).subscribe();
 
-        this.meetingService.getMeetingsByIdUserByDate(idUser, dateForCalendar).subscribe(meetings => {
+        this.meetingService.getMeetingsByIdUserForOneDay(idUser, dateForCalendar).subscribe(meetings => {
+            console.log('-----------------------');
             console.log(' your meetings by User by Date ');
             console.log(meetings);
-            this.timeMeeting = meetings;
-            console.log('your meetings for this day ');
-            console.log(meetings);
-            this.meetingsByDateBusiness = meetings;
+            console.log('-----------------------');
 
+            this.meetingWithBusiness = meetings;
 
+            //this.meetingsByDateBusiness = meetings;
             // this.filterReservedHours(this.defaultOpeningHours, meetings)
 
         }, error => {
@@ -131,8 +140,23 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
 
         this.meetingService.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar).subscribe(meetings => {
 
+            console.log('Meeting');
+            console.log(meetings);
+
             this.timeMeeting = meetings;
-            this.meetingsByDateBusiness = meetings;
+
+            let helpArray = [];
+            /*this.meetingsByDateBusiness =*/
+            meetings.map(meeting => {
+                helpArray.push({meeting})
+            });
+
+            this.meetingWithBusiness = helpArray;
+
+            console.log('????????????');
+            console.log(this.meetingWithBusiness);
+            console.log('????????????');
+
 
         }, error => {
             // todo set ErrorMessage Something is wrong
@@ -155,13 +179,14 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
 
     getOneBusiness(documentID: string): void {
 
-        this.subscription = this.businessService.getOneBusiness(documentID).subscribe((business) => {
+        this.businessService.getOneBusiness(documentID).subscribe((business) => {
                 this.business = business;
             }, error => {
                 console.log(error);
             }
         );
     }
+
 
     ngOnDestroy(): void {
         this.selectedBusinessId = null;

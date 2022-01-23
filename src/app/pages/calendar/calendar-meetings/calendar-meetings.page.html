@@ -1,7 +1,8 @@
+<script src="../../../app.component.ts"></script>
 <ion-header>
     <ion-toolbar>
-        <ion-title *ngIf="!business">Meetings for Business  </ion-title>
-        <ion-title *ngIf="business">Business  {{business.nameOrganization}}</ion-title>
+        <ion-title *ngIf="!business">My Calendar  </ion-title>
+        <ion-title *ngIf="business">Business Calendar {{business.nameOrganization}}</ion-title>
     </ion-toolbar>
 </ion-header>
 
@@ -46,7 +47,7 @@
 
 
 
-    <ion-card *ngIf="timeMeeting.length > 0 ; else isNotAvailable">
+    <ion-card *ngIf="meetingWithBusiness.length > 0 ; else isNotAvailable">
 
         <ion-list>
             <ion-item>
@@ -56,14 +57,21 @@
                 </ion-label>
 
             </ion-item>
-            <ion-item-sliding *ngFor="let item of timeMeeting ">
-                <ion-item (click)="selectMeeting(item)" class="item">
+            <ion-item-sliding *ngFor="let item of meetingWithBusiness ">
+                <ion-item (click)="selectMeeting(item.meeting)" class="item">
                     <ion-card-header>
-                        <ion-card-subtitle><b>Date</b> {{item.date | formatMeeting}}</ion-card-subtitle>
-                        <ion-card-subtitle><b>ID Business</b>   {{item.idBusiness }}</ion-card-subtitle>
-                        <ion-card-subtitle><b>ID User</b> {{item.idUser }}</ion-card-subtitle>
-                        <ion-card-subtitle><b>Start End  </b>{{item.time.start + '  ' + item.time.end}}</ion-card-subtitle>
+                        <ion-card-subtitle><b>Date</b> {{item.meeting.date | formatMeeting }}</ion-card-subtitle>
+                        <ion-card-subtitle><b>Start End   </b>{{item.meeting.time.start + '   ' + item.meeting.time.end}}</ion-card-subtitle>
 
+                        <div *ngIf="item.business">
+                            <ion-card-subtitle><b>Name of Organization</b>   {{item.business.typeOfOrganization }}</ion-card-subtitle>
+                            <ion-card-subtitle><b>City</b>   {{item.business.city }}</ion-card-subtitle>
+                            <ion-card-subtitle><b>Address</b>   {{item.business.nameStreetWithNumber }}</ion-card-subtitle>
+
+                        </div>
+                        <!--
+                             <ion-card-subtitle>{{item.meeting.time.startMinutes}}</ion-card-subtitle>
+                             <ion-card-subtitle>{{currentTime}}</ion-card-subtitle>-->
                     </ion-card-header>
 
                     <ion-button fill="outline" slot="end">Details</ion-button>

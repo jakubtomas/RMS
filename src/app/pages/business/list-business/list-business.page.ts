@@ -4,6 +4,7 @@ import {AuthService} from "../../../services/auth.service";
 import {BusinessService} from "../../../services/business.service";
 import {Business} from "../../../interfaces/business";
 import {Observable} from "rxjs";
+import {filter, map} from "rxjs/operators";
 
 interface Item {
     id?: string;
@@ -24,7 +25,9 @@ export class ListBusinessPage implements OnInit {
     private businessPermission;
     directionOrderBy: string = 'asc';
     businesses$: Observable<Business[]> = // todo change function getAllMyBusinesss delete paramter
-        this.businessService.getAllMyBusinesses("mock");
+        this.businessService.getAllMyBusinesses("mock").pipe(
+            map(businesses=> businesses.filter((business) => business.nameOrganization))
+        );
 
 
     constructor(private route: ActivatedRoute,

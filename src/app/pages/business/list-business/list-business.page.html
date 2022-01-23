@@ -11,17 +11,20 @@
 
 
 <ion-content class="ion-padding">
+
+    <div class="searchElement" routerLink="/register-business">
+        <ion-icon class="ion-1x" name="add-circle" ></ion-icon>
+        <p>Create Business</p>
+    </div>
+
     <ion-card *ngIf="messageFirebase">
         <ion-item color="success">
             <label class="ion-text-center">{{messageFirebase}}</label>
         </ion-item>
     </ion-card>
 
-    <ion-item>
-        <h3>Click for details</h3>
-    </ion-item>
 
-    <ion-card>
+    <ion-card *ngIf="businesses$ | async ; else noBusiness">
         <ion-list>
             <ion-item>
                 <ion-label class="orderBy" style="cursor:pointer"
@@ -42,6 +45,12 @@
 
         </ion-list>
     </ion-card>
+
+    <ng-template #noBusiness >
+        <h1> Your list of Businesses is empty </h1>
+
+    </ng-template>
+
 
 
 </ion-content>
