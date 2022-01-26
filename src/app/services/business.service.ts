@@ -216,17 +216,7 @@ export class BusinessService {
             map((array: BusinessPermission[]) => array.filter(permission => permission.idUser == userId)),
             map((value: BusinessPermission[]) => value.map((item: BusinessPermission) => item.idOrganization))
         )
-            // BUSINESS PERMISSIONS
-            /*        this.getBusinessPermissions().subscribe(permissions => {
 
-             myBusinesses = permissions.filter(permission => permission.idUser == userId);
-             myBusinesses.forEach((value) => {
-             idMyBusinesses.push(value.idOrganization);
-             });
-
-             })*/;
-
-        //return of(idMyBusinesses);
     }
 
     getAllMyBusinesses(orderBy: string): Observable<Business[]> {

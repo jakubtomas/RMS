@@ -47,6 +47,8 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() {
+        console.log('ng on init calendar meetings ');
+        
         this.route.queryParams.subscribe((params: Params) => {
 
             console.log('function is running again ');

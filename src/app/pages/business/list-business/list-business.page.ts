@@ -46,6 +46,7 @@ export class ListBusinessPage implements OnInit {
         this.route.queryParams.subscribe((params: Params) => {
 
             if (params['deletedBusiness']) {
+
                 this.messageFirebase = 'Business successfully deleted'
             }
 
