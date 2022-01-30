@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {AuthService} from "../../../services/auth.service";
 import {BusinessService} from "../../../services/business.service";
@@ -17,17 +17,19 @@ interface Item {
     templateUrl: './list-business.page.html',
     styleUrls: ['./list-business.page.scss'],
 })
-export class ListBusinessPage implements OnInit {
+export class ListBusinessPage implements OnInit, OnDestroy {
 
     items: Item[];
     messageFirebase: string;
     private orderBy: string = 'nameOrganization';
     private businessPermission;
     directionOrderBy: string = 'asc';
-    businesses$: Observable<Business[]> = // todo change function getAllMyBusinesss delete paramter
-        this.businessService.getAllMyBusinesses("mock").pipe(
-            map(businesses=> businesses.filter((business) => business.nameOrganization))
-        );
+    businesses: Business[];
+
+    // businesses$: Observable<Business[]> = // todo change function getAllMyBusinesss delete paramter
+    //     this.businessService.getAllMyBusinesses("mock").pipe(
+    //         map(businesses=> businesses.filter((business) => business.nameOrganization))
+    //     );
 
 
     constructor(private route: ActivatedRoute,
@@ -36,17 +38,13 @@ export class ListBusinessPage implements OnInit {
     }
 
     ngOnInit() {
-        //this.getAllBusinesses();
-        //when we go again this page ionic maybe have function
-        // vyriesit problem tu je ze tato funkcia sa nezavola vzdy ked sa prekliknem na tuto page
-        //pretoze si uklada info b stranke
+       // this.getAllMyBusinesses();
         this.messageFirebase = null;
-
 
         this.route.queryParams.subscribe((params: Params) => {
 
+            this.getAllMyBusinesses();
             if (params['deletedBusiness']) {
-
                 this.messageFirebase = 'Business successfully deleted'
             }
 
@@ -60,15 +58,6 @@ export class ListBusinessPage implements OnInit {
 
     }
 
-    //todo is essential thing set messagefirebase to null in another function which we call
-
-
-    getItems(): void {
-        this.businessService.getItems().subscribe(value => {
-            console.log(value);
-            this.items = value;
-        })
-    }
 
     orderByName(): void {
         if (this.orderBy === 'nameOrganization') {
@@ -78,15 +67,10 @@ export class ListBusinessPage implements OnInit {
             } else {
                 this.directionOrderBy = 'desc';
             }
-
         } else {
             this.orderBy = 'nameOrganization';
             this.directionOrderBy = 'asc';
-            // this.getAllBusinesses();
         }
-
-        console.log('click order by name');
-
     }
 
     orderByAddress(): void {
@@ -108,57 +92,21 @@ export class ListBusinessPage implements OnInit {
 
 
     // get all ID business which are my /
-    private getAllBusinessesPermission(): void {
-        this.businessService.getBusinessPermissions()
-            .subscribe(permission => {
-                console.log(permission);
+    private getAllMyBusinesses(): void {
+        this.businessService.getAllMyBusinesses("mock")
+            .subscribe(businesses => {
 
-                // take id local storage or else
-                const userId = localStorage.getItem('idUser');
-                console.log(userId);
-                /*
-                 const array = permission.filter(value => value.idUser == userId);
-                 console.log(array);*/
-                this.businessPermission =
-                    permission.filter(value => value.idUser == userId);
+                //businesses.map(businesses=> businesses.filter((business) => business.nameOrganization))
+                console.log('vypis businessoov ');
+                console.log(businesses);
+                this.businesses = businesses.filter((business) => business.nameOrganization)
 
-                // this.getAllMyBusinesses();
             }, error => {
                 console.log("error");
                 console.log(error);
             })
     }
 
-    /*private getAllMyBusinesses() {
-     this.businessPermission.forEach(value => {
-     this.businessService.getOneBusiness(value.idOrganization).subscribe(oneBusiness => {
-     this.myBusinesses.push(oneBusiness);
-     console.log("priradeny zazname");
-
-     }, error => {
-     console.log("error");
-     console.log(error);
-     })
-     });
-     console.log('all my businesses ');
-
-     console.log(this.myBusinesses);
-
-     }*/
-
-    /// write condition if my list business filter according to my idlist
-//     getAllBusinesses():void {
-//
-//         this.businessService.getAllMyBusinesses(this.orderBy).subscribe(business => {
-//             console.log(business);
-//             this.businesses = business;
-//
-//         }, error => {
-//             console.log("error");
-//             console.log(error);
-//         })
-//
-// }
     chooseBusiness(business: Business): void {
         console.log("call ssearthe function");
         console.log(business.id);
@@ -173,7 +121,9 @@ export class ListBusinessPage implements OnInit {
     }
 
     ngOnDestroy(): void {
-     //   businesses$.pipe()
+        this.messageFirebase = '';
+
+        //   businesses$.pipe()
     }
 
 

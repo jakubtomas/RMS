@@ -24,7 +24,7 @@
     </ion-card>
 
 
-    <ion-card *ngIf="businesses$ | async ; else noBusiness">
+    <ion-card *ngIf="businesses ; else noBusiness">
         <ion-list>
             <ion-item>
                 <ion-label class="orderBy" style="cursor:pointer"
@@ -36,7 +36,7 @@
                     Address &#x25B2; &#x25BC; </ion-label>
 
             </ion-item>
-            <ion-item-sliding *ngFor="let item of businesses$ | async  | orderBusinesses:[orderBy,directionOrderBy]">
+            <ion-item-sliding *ngFor="let item of businesses   | orderBusinesses:[orderBy,directionOrderBy]">
                 <ion-item (click)="chooseBusiness(item)" class="item">
                     <ion-label style="cursor:pointer">{{item.nameOrganization}} </ion-label>
                     <ion-label style="cursor:pointer">{{item.city + " " + item.nameStreetWithNumber}}</ion-label>

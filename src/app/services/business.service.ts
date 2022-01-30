@@ -258,7 +258,7 @@ export class BusinessService {
          return changes.map(a => {
          const data = a.payload.doc.data() as Business;
          data.id = a.payload.doc.id;
-         return data;
+         return data;meetign
          });
          }));*/
         // return this.businessCollection.snapshotChanges().pipe(
@@ -280,9 +280,7 @@ export class BusinessService {
          }));*/
     }
     getOneBusiness(documentId: string): Observable<Business | undefined> {
-        console.log('function getOneBusiness document  ' +  documentId);
-
-
+      //  console.log('function getOneBusiness document  ' +  documentId);
         if (documentId === undefined) {
             return undefined;
         } else {

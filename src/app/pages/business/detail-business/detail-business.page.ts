@@ -155,17 +155,6 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
         await alert.present();
     }
 
-    deleteCalendar(): void {
-        this.calendarService.deleteCalendar(this.calendar.id).then(() => {
-            this.showToast("Calendar has been deleted");
-            this.calendar = null;
-
-        }).catch((error) => {
-            console.log("error you got error ");
-            console.log(error);
-            this.messageFirebase = "Something is wrong";
-        });
-    }
 
     changeDateFormat(): void {
 
@@ -234,26 +223,15 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
         this.calendarService.getCalendars().subscribe(calendars => {
             this.calendars = calendars;
 
-            console.log('Kalendare  ');
-            console.log(calendars);
-            console.log('................');
-            
-            
             console.log(calendars.length);
-            
+
             if (this.calendars.length > 0) {
                 this.calendars.forEach(calendar => {
                     console.log(calendar.idBusiness + "  " + this.selectedBusinessId);
-                    
-                    if (calendar.idBusiness === this.selectedBusinessId) {
-                        // set calendar
 
-                        console.log('-----------------');
+                    if (calendar.idBusiness === this.selectedBusinessId) {
                         console.log('your calendar data are ');
                         console.log(calendar);
-                        console.log('-----------------');
-
-
                         this.calendar = calendar;
                         //call function fore format date
                         this.changeDateFormat();
@@ -266,13 +244,25 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
         })
     }
 
+    createCalendar(): void {
+        this.router.navigate(['/create-calendar'],
+            {queryParams: {businessId: this.selectedBusinessId}})
+    }
+
     editCalendar(): void {
         this.router.navigate(['/create-calendar'], {queryParams: {docCalendarId: this.calendar.id}})
     }
 
-    createCalendar(): void {
-        this.router.navigate(['/create-calendar'],
-            {queryParams: {businessId: this.selectedBusinessId}})
+    deleteCalendar(): void {
+        this.calendarService.deleteCalendar(this.calendar.id).then(() => {
+            this.showToast("Calendar has been deleted");
+            this.calendar = null;
+
+        }).catch((error) => {
+            console.log("error you got error ");
+            console.log(error);
+            this.messageFirebase = "Something is wrong";
+        });
     }
 
     createMeeting(): void {
@@ -281,7 +271,7 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
     }
 
     ngOnDestroy():void {
-        this.subscription.unsubscribe();
+      //  this.subscription.unsubscribe();
     }
 
 

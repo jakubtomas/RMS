@@ -121,9 +121,10 @@ export class MeetingService {
                             }
                         } )
                     ).pipe(
-                        tap(x =>
-                            console.log('x value ' + JSON.stringify(x) )
-                        ))}))
+                        // tap(x =>
+                        //     console.log('x value ' + JSON.stringify(x) )
+                        // )
+                    )}))
             ),
             tap((response) => {
                 console.log(' response');

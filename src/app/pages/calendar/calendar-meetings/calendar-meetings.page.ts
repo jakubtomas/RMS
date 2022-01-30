@@ -52,6 +52,7 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
         this.route.queryParams.subscribe((params: Params) => {
 
             console.log('function is running again ');
+            this.business = null;
 
             this.meetingWithBusiness = [];
             if (params['businessId'] != undefined) {
@@ -60,6 +61,7 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
 
                 this.getOneBusiness(this.selectedBusinessId);
             } else {
+
                 console.log('i dont have businessID');
 
             }
