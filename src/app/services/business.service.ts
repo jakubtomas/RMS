@@ -219,7 +219,7 @@ export class BusinessService {
 
     }
 
-    getAllMyBusinesses(orderBy: string): Observable<Business[]> {
+    getAllMyBusinesses(): Observable<Business[]> {
 
         console.log('call function ');
         this.businessCollection = this.afs.collection('business');

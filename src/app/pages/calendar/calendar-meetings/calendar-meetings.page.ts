@@ -81,9 +81,12 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
     }
 
     onCurrentDateChanged(event: Date):void {
+        console.log("---------------------------");
         console.log('click');
+
         console.log(event);
         console.log(event.getDay());
+        console.log("---------------------------");
 
         this.selectedDateByCalendar = event;
         this.selectedDayByCalendar = event.toString().substring(0, 3);
@@ -97,7 +100,7 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
             this.getMeetingsByIdUserByDate(this.idUser, dateForFirestore);
             console.log('here we are mnau ');
             
-        }// todo pouzit Fork join aj pre vytiahnutie detail About Business
+        }
 
     }
 

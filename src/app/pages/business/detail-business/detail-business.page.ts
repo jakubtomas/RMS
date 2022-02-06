@@ -43,10 +43,7 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
 
                 this.controlBusinessPermission(params['businessId']);
                 this.getOneBusiness(params['businessId']);
-                // this.getCalendar();
                 this.getCalendars();
-
-                // todo check am I owner this business?? for update,delete
 
             }
             if (params["updateDone"]) {

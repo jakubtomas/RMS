@@ -104,10 +104,7 @@ export class SearchBusinessPage implements OnInit {
     }
 
 
-    getSearchedBusinesses(searchValues: SearchBusiness) {
-        console.log("permisionso");
-        
-       // this.businessService.getAllOwnerBusinesses(); // todo delete
+    getSearchedBusinesses(searchValues: SearchBusiness): void{
         this.businessService.getSearchedBusinesses(searchValues).subscribe(value => {
             console.log(value);
             this.businesses = value;
@@ -117,22 +114,16 @@ export class SearchBusinessPage implements OnInit {
                 } else {
                     this.noResultMessage = false;
                 }
-
         })
     }
-
-
-    chooseBusiness(business: Business) {
+    chooseBusiness(business: Business) : void{
         console.log("call the function");
         console.log(business.id);
 
         console.log('business is  ' + business.nameOrganization);
 
         if (business.id !== null) {
-            //this.router.navigate(['/detail-business', {businessId: business.id}])
             this.router.navigate(['/detail-business'], {queryParams: {businessId: business.id}})
         }
     }
-
-
 }

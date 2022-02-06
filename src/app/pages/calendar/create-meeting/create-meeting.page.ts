@@ -25,10 +25,13 @@ export class CreateMeetingPage implements OnInit {
     defaultOpeningHours: TimeMeeting[] = [];
     businessCalendar: boolean = true;
     selectedBusinessId: string;
+    pastDay = false;
 
     //todo set correct date month number
     //todo nastavenie kalendar kolko dni vpred sa moze registrovat
     // kazda pobocka si to moze  urcit sama
+
+
     viewTitle: string;
     eventSource = [];
 
@@ -53,7 +56,9 @@ export class CreateMeetingPage implements OnInit {
 
             if (params['businessId'] != undefined) {
                 this.selectedBusinessId = params['businessId'];
+                console.log('---------------');
                 console.log("I got business id " + this.selectedBusinessId);
+                console.log('---------------');
             }
         })
     }
@@ -69,28 +74,37 @@ export class CreateMeetingPage implements OnInit {
         await toast.present();
     }
 
-    next() {
+    next():void {
         this.myCal.slideNext();
     }
 
-    back() {
+    back():void {
         this.myCal.slidePrev();
     }
 
-    onViewTittleChanged(title) {
-        console.log(title + ' this is tittle');
+    onViewTittleChanged(title):void {
         this.viewTitle = title;
     }
 
-    onCurrentDateChanged(event: Date) {
-        console.log('click');
-        console.log(event);
-        console.log(event.getDay());
+    onCurrentDateChanged(event: Date):void {
+        console.log('--------');
+        const today = moment().format();
+        const yesterday = moment().subtract(1, "day").format();
+        const selectedDay = moment(event).format();
 
-        //console.log();
-        console.log(event);
         
-        console.log(' new format ' + moment(event).format('D-M-YYYY'));
+        console.log("===============");
+        
+        console.log(today +  ' --+---- ' + selectedDay + ' -----  '   + event);
+        
+        
+
+        if (selectedDay > yesterday) {
+            this.pastDay = false;
+        } else {
+            this.pastDay = true;
+        }
+
         this.selectedDateByCalendar = event;
         this.selectedDayByCalendar = event.toString().substring(0, 3);
         this.selectedDay = 'hello';

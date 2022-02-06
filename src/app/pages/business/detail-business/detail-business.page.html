@@ -15,33 +15,34 @@
         </ion-item>
     </ion-card>
 
-    <!-- <ion-card>
-         <ion-item>
-             <ion-icon name="pin" slot="start"></ion-icon>
-             <ion-label>ion-item in a card, icon left, button right</ion-label>
-             <ion-button fill="outline" slot="end">View</ion-button>
-         </ion-item>
 
-         <ion-card-content>
-             This is content, without any paragraph or header tags,
-             within an ion-card-content element.
-         </ion-card-content>
-     </ion-card>-->
+    <ion-icon name="backspace" ></ion-icon>
+    <ion-icon ios="ios-clock" md="md-clock"></ion-icon>
 
     <ion-card *ngIf="business" class="schedule">
         <ion-card-header>
+            <ion-icon name="appstore"></ion-icon>
+            <ion-icon name="backspace"></ion-icon>
+            <ion-icon name="business"></ion-icon>
+            <ion-icon name="pin"></ion-icon>
+            <ion-icon name="clock"></ion-icon>
+            <ion-icon name="locate"></ion-icon>
+            <ion-icon name="time"></ion-icon>
+            <ion-icon name="alarm"></ion-icon>
+
+
             <ion-card-title>Name  {{business.nameOrganization}}</ion-card-title>
             <ion-card-subtitle>Address {{business.nameStreetWithNumber}}</ion-card-subtitle>
-            <ion-card-subtitle>City {{business.city}}</ion-card-subtitle>
+          <div class="skuska">
+              <ion-icon name="close-circle"></ion-icon>
+
+              <ion-card-subtitle>City {{business.city}}</ion-card-subtitle>
+          </div>
             <ion-card-subtitle>Zip Code {{business.zipCode}}</ion-card-subtitle>
         </ion-card-header>
-        <!--
-                <ion-card-content>
-                    Founded in 1829 on an isthmus between Lake Monona and Lake Mendota, Madison was named the capital of the
-                    Wisconsin Territory in 1836.
-                </ion-card-content>
-        -->
-        <div *ngIf="calendar && !isThisMyBusiness" >
+
+        <div *ngIf="(calendar && !isThisMyBusiness) ; else noOpeningHours" >
+
             <h4 class="calendarName"> Opening Hours </h4>
             <h3 class="calendarName">Time Zone {{calendar.timeZone}}</h3>
             <div *ngFor="let item of calendar.week" class="schedule ">
@@ -59,8 +60,17 @@
             </div>
         </div>
 
+        <ng-template #noOpeningHours>
+            <ion-item  *ngIf="!isThisMyBusiness">
+                <p>Opening hours are not available.
+                    The reservation calendar is not available because
+                    opening hours haven't been created. Please contact the owner.
+                </p>
+            </ion-item>
+        </ng-template>
 
-        <div *ngIf="!isThisMyBusiness">
+
+        <div *ngIf="!isThisMyBusiness && calendar">
 
             <br><br>
             <section class="schedule create-meeting-button">
@@ -101,8 +111,6 @@
 
             </div>
 
-
-            <!--todo condition ked mam kalendar button disabled for new calendar-->
             <ng-template #activeButton>
                 <section>
                     <header>Calendar</header>

@@ -27,7 +27,6 @@ export class RegisterBusinessPage implements OnInit {
     ionTitle: string;
     ionButton: string;
 
-
     get nameOrganization(): FormControl {
         return this.registerForm.get('nameOrganization') as FormControl;
     }
@@ -57,7 +56,6 @@ export class RegisterBusinessPage implements OnInit {
         return this.registerForm.get('typeOrganization') as FormControl;
     }
 
-
     constructor(private businessService: BusinessService,
         private router: Router,
         private route: ActivatedRoute) {
@@ -70,15 +68,11 @@ export class RegisterBusinessPage implements OnInit {
         this.typesOrganization = this.getTypesOrganization();
 
 
-        //todo vytvorit subject, a spravit nanho subsribe nameisto observable
         this.route.queryParams.subscribe((params: Params) => {
-            console.log('Parameter  ' + JSON.stringify(params));
-            console.log('daj my sem ten parameter  ' + params['businessId']);
 
             if (params['businessId'] != undefined) {
-                let businessId = params['businessId'];
-                console.log('dostal som id for update ' + params['businessId']);
 
+                let businessId = params['businessId'];
                 this.updateBusinessPage = true;
                 this.setValuesForPage();
                 this.getOneBusinessForUpdate(businessId)
@@ -93,12 +87,6 @@ export class RegisterBusinessPage implements OnInit {
                 zipCode: new FormControl('', Validators.required),
                 city: new FormControl('', Validators.required),
                 street: new FormControl('', Validators.required),
-                /*openingHours: new FormControl('', [
-                 Validators.required,
-                 ]),
-                 endingHours: new FormControl('', [
-                 Validators.required,
-                 ]),*/
                 typeOrganization: new FormControl('', Validators.required),
             }
 
@@ -106,7 +94,7 @@ export class RegisterBusinessPage implements OnInit {
         this.setRegisterFormValues();
     }
 
-    setValuesForPage() {
+    setValuesForPage():void {
         if (this.updateBusinessPage) {
             this.ionTitle = 'Update business';
             this.ionButton = 'Update';
@@ -116,9 +104,8 @@ export class RegisterBusinessPage implements OnInit {
         }
     }
 
-    onSubmit() {
+    onSubmit():void {
 
-        // fetch data
         let businessData: Business = {
             idOwner: localStorage.getItem('idUser'),
             nameOrganization: this.nameOrganization.value,
@@ -130,13 +117,7 @@ export class RegisterBusinessPage implements OnInit {
         };
 
         if (this.updateBusinessPage) {
-            // update function
-            console.log("Update business page true ");
-            console.log("-----------------------------");
-            console.log(businessData);
-
             this.updateBusiness(businessData)
-
         } else {
             this.createBusiness(businessData);
         }
@@ -144,29 +125,18 @@ export class RegisterBusinessPage implements OnInit {
     }
 
     createBusiness(businessData: Business): void {
-        this.businessService.addBusiness(businessData).then(value => {
-
-            console.log('id businessPermission' + value.id);
-
+        this.businessService.addBusiness(businessData).then(() => {
             this.createdNewBusiness = true;
-            //todo redirect na page list of business wiht new value from DB business where can create calendar
-            this.router.navigate(['/list-business', {createdBusiness: true}]);
+            this.router.navigate(['/list-business'], { queryParams:  {createdBusiness: true}});
         }).catch((error) => {
-            console.log("error you got error ");
-
             console.log(error);
             this.firebaseErrorMessage = 'Something is wrong.'
-            //todo maybe do delete values from db because one value unsuccessfully save
         });
     }
 
     updateBusiness(businessData: Business): void {
-        this.businessService.updateBusiness(businessData, this.businessId).then(value => {
-
-            console.log(this.businessId);
-         //   this.router.navigate(['/detail-business', {businessId: this.businessId, updateDone: true}]);
+        this.businessService.updateBusiness(businessData, this.businessId).then(() => {
             this.router.navigate(['/detail-business'], { queryParams: { businessId: this.businessId, updateDone: true}})
-
         }).catch((error) => {
             console.log(error);
             this.firebaseErrorMessage = "Something is wrong"
@@ -177,20 +147,12 @@ export class RegisterBusinessPage implements OnInit {
         return this.businessService.typesOfOrganization;
     }
 
-
-    getBusinessList() {
-        this.businessService.getBusinessList().subscribe(value => {
-            console.log('pocet zaznamov ' + value.length)
-        })
-    }
-
     getOneBusinessForUpdate(businessId: string):void {
 
-        this.businessId = businessId; // todo change before commit
+        this.businessId = businessId;
          this.businessService.getOneBusiness(businessId).subscribe((business) => {
              this.business = business;
              this.setRegisterFormValues();
-
          });
     }
 

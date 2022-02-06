@@ -26,7 +26,7 @@ export class ListBusinessPage implements OnInit, OnDestroy {
     directionOrderBy: string = 'asc';
     businesses: Business[];
 
-    // businesses$: Observable<Business[]> = // todo change function getAllMyBusinesss delete paramter
+    // businesses$: Observable<Business[]> = //
     //     this.businessService.getAllMyBusinesses("mock").pipe(
     //         map(businesses=> businesses.filter((business) => business.nameOrganization))
     //     );
@@ -43,13 +43,17 @@ export class ListBusinessPage implements OnInit, OnDestroy {
 
         this.route.queryParams.subscribe((params: Params) => {
 
+            console.log(' dostal som parametre ');
+            
             this.getAllMyBusinesses();
             if (params['deletedBusiness']) {
                 this.messageFirebase = 'Business successfully deleted'
             }
 
             if (params['createdBusiness'] != undefined) {
-                this.messageFirebase = 'Business successfully created'
+                this.messageFirebase = 'Business successfully created';
+                console.log(' Business created ');
+
             }
         }, error => {
             console.log("you got error ");
@@ -93,7 +97,7 @@ export class ListBusinessPage implements OnInit, OnDestroy {
 
     // get all ID business which are my /
     private getAllMyBusinesses(): void {
-        this.businessService.getAllMyBusinesses("mock")
+        this.businessService.getAllMyBusinesses()
             .subscribe(businesses => {
 
                 //businesses.map(businesses=> businesses.filter((business) => business.nameOrganization))
