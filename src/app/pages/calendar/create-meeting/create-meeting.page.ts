@@ -1,14 +1,14 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, Params, Router} from "@angular/router";
-import {BusinessService} from "../../../services/business.service";
-import {AlertController, ToastController} from "@ionic/angular";
-import {CalendarService} from "../../../services/calendar.service";
-import {CalendarMode, Step} from "ionic2-calendar/calendar";
+import {ActivatedRoute, Params, Router} from '@angular/router';
+import {BusinessService} from '../../../services/business.service';
+import {AlertController, ToastController} from '@ionic/angular';
+import {CalendarService} from '../../../services/calendar.service';
+import {CalendarMode, Step} from 'ionic2-calendar/calendar';
 import * as moment from 'moment';
-import {TimeMeeting} from "../../../interfaces/timeMeeting";
-import {CalendarComponent} from "ionic2-calendar";
-import {MeetingService} from "../../../services/meeting.service";
-import {Meeting} from "../../../interfaces/meeting";
+import {TimeMeeting} from '../../../interfaces/timeMeeting';
+import {CalendarComponent} from 'ionic2-calendar';
+import {MeetingService} from '../../../services/meeting.service';
+import {Meeting} from '../../../interfaces/meeting';
 
 @Component({
     selector: 'app-create-meeting',
@@ -23,7 +23,7 @@ export class CreateMeetingPage implements OnInit {
     selectedDateByCalendar: Date;
     meetingsByDateBusiness: Meeting[] = [];
     defaultOpeningHours: TimeMeeting[] = [];
-    businessCalendar: boolean = true;
+    businessCalendar = true;
     selectedBusinessId: string;
     pastDay = false;
 
@@ -54,17 +54,17 @@ export class CreateMeetingPage implements OnInit {
     ngOnInit() {
         this.route.queryParams.subscribe((params: Params) => {
 
-            if (params['businessId'] != undefined) {
-                this.selectedBusinessId = params['businessId'];
+            if (params.businessId !== undefined) {
+                this.selectedBusinessId = params.businessId;
                 console.log('---------------');
-                console.log("I got business id " + this.selectedBusinessId);
+                console.log('I got business id ' + this.selectedBusinessId);
                 console.log('---------------');
             }
-        })
+        });
     }
 
     private async showToast(msg: string) {
-        let toast = await this.toastCtrl.create({
+        const toast = await this.toastCtrl.create({
             message: msg,
             duration: 3000,
             position: 'middle'
@@ -74,30 +74,30 @@ export class CreateMeetingPage implements OnInit {
         await toast.present();
     }
 
-    next():void {
+    next(): void {
         this.myCal.slideNext();
     }
 
-    back():void {
+    back(): void {
         this.myCal.slidePrev();
     }
 
-    onViewTittleChanged(title):void {
+    onViewTittleChanged(title): void {
         this.viewTitle = title;
     }
 
-    onCurrentDateChanged(event: Date):void {
+    onCurrentDateChanged(event: Date): void {
         console.log('--------');
         const today = moment().format();
-        const yesterday = moment().subtract(1, "day").format();
+        const yesterday = moment().subtract(1, 'day').format();
         const selectedDay = moment(event).format();
 
-        
-        console.log("===============");
-        
+
+        console.log('===============');
+
         console.log(today +  ' --+---- ' + selectedDay + ' -----  '   + event);
-        
-        
+
+
 
         if (selectedDay > yesterday) {
             this.pastDay = false;
@@ -121,49 +121,49 @@ export class CreateMeetingPage implements OnInit {
 
             if (calendar.length < 1) {
                 this.businessCalendar = false;
-                return
+                return;
             }
 
             let open;
             let close;
             switch (this.selectedDayByCalendar) {
                 case 'Mon':
-                    console.log("It is a pondelok.");
+                    console.log('It is a pondelok.');
                     open = calendar[0].week[0]?.openingHours;
                     close = calendar[0].week[0]?.closingHours;
                     break;
                 case 'Tue':
-                    console.log("It is a utorok.");
+                    console.log('It is a utorok.');
                     open = calendar[0].week[1]?.openingHours;
                     close = calendar[0].week[1]?.closingHours;
                     break;
                 case 'Wed':
-                    console.log("It is a Streda.");
+                    console.log('It is a Streda.');
                     open = calendar[0].week[2]?.openingHours;
                     close = calendar[0].week[2]?.closingHours;
                     break;
                 case 'Thu':
-                    console.log("It is a Stvrotok.");
+                    console.log('It is a Stvrotok.');
                     open = calendar[0].week[3]?.openingHours;
                     close = calendar[0].week[3]?.closingHours;
                     break;
                 case 'Fri':
-                    console.log("It is a Piatok.");
+                    console.log('It is a Piatok.');
                     open = calendar[0].week[4]?.openingHours;
                     close = calendar[0].week[4]?.closingHours;
                     break;
                 case 'Sat':
-                    console.log("It is a Sobota.");
+                    console.log('It is a Sobota.');
                     open = calendar[0].week[5]?.openingHours;
                     close = calendar[0].week[5]?.closingHours;
                     break;
                 case 'Sun':
-                    console.log("It is a Nedela.");
+                    console.log('It is a Nedela.');
                     open = calendar[0].week[6]?.openingHours;
                     close = calendar[0].week[6]?.closingHours;
                     break;
                 default:
-                    console.log("No such day exists!");
+                    console.log('No such day exists!');
                     break;
             }
 
@@ -172,7 +172,7 @@ export class CreateMeetingPage implements OnInit {
 
             let isCalculate = true;
             let starts = moment(open, 'HH:mm');
-            let ends = moment(open, 'HH:mm');
+            const ends = moment(open, 'HH:mm');
 
             let timeMeeting;
             if (calendar[0].timeMeeting) {
@@ -184,7 +184,7 @@ export class CreateMeetingPage implements OnInit {
             this.defaultOpeningHours = [];
             while (isCalculate) {
                 // todo change dates acccording to data from firestore
-                ends.add(timeMeeting, "minutes");
+                ends.add(timeMeeting, 'minutes');
 
                 if (ends <= realEnd) {
                     this.defaultOpeningHours.push(
@@ -217,34 +217,27 @@ export class CreateMeetingPage implements OnInit {
 
         }, error => {
             // todo set ErrorMessage Something is wrong
-            console.log("you got error ");
+            console.log('you got error ');
             console.log(error);
-        })
+        });
     }
 
-    selectTime(time) {
-        console.log('your time is ' + time.toString() + '   ' + JSON.stringify(time));
-        console.log(time);
-        console.log(time.start);
-        console.log(time.end);
-
-        //this.timeMeeting = [];
-        console.log('I know ' + this.selectedDateByCalendar);
+    selectTime(time): void {
 
         if (this.selectedDateByCalendar && time) {
             this.showAlertForConfirmMeeting(this.selectedDateByCalendar, time);
-           
+
         }
     }
 
     private async showAlertForConfirmMeeting(date: Date, time): Promise<any> {
         const confirmDay = moment(date).format('D.M.YYYY');
         // 2022-01-06T14:24:36+01:00
-        let upravenyCas = moment(date).format("YYYY-MM-DD");
-        upravenyCas = upravenyCas + "T00:00:00";
+        let upravenyCas = moment(date).format('YYYY-MM-DD');
+        upravenyCas = upravenyCas + 'T00:00:00';
 
         const modifyDate = upravenyCas;
-        
+
         const alert = await this.alertController.create({
             cssClass: 'alertForm',
             header: 'Confirm Meeting',
@@ -277,7 +270,7 @@ export class CreateMeetingPage implements OnInit {
         const startInMinutes = minutesFromHour + minutesFromMinutes;
         // try new Date ('2017-01-01')
         // modifyDate = moment(modifyDate).add(startInMinutes, 'minutes').format();
-        
+
         const beforeSave = moment(modifyDate).add(startInMinutes, 'minutes').format();
         console.log('before save');
         console.log(beforeSave);
@@ -298,13 +291,13 @@ export class CreateMeetingPage implements OnInit {
             idBusiness: this.selectedBusinessId,
             idUser: userId
         };
-        this.meetingService.addMeeting(meetingData).then(_ => {
-            this.showToast('Meeting have been successfully created')
+      this.meetingService.addMeeting(meetingData).then(() => {
+            this.showToast('Meeting have been successfully created');
 
         }).catch((error) => {
             console.log('error');
             console.log(error);
-            this.showToast('Meeting have been not created')
+            this.showToast('Meeting have been not created');
         });
     }
 
@@ -313,12 +306,12 @@ export class CreateMeetingPage implements OnInit {
             .subscribe(meetings => {
             this.timeMeeting = [];
             this.meetingsByDateBusiness = meetings;
-            this.filterReservedHours(this.defaultOpeningHours, meetings)
+            this.filterReservedHours(this.defaultOpeningHours, meetings);
         }, error => {
             // todo set ErrorMessage Something is wrong
-            console.log("you got error ");
+            console.log('you got error ');
             console.error(error);
-        })
+        });
 
     }
 
@@ -346,24 +339,15 @@ export class CreateMeetingPage implements OnInit {
                     start: time.start,
                     end: time.end,
                     isAvailable: false
-                })
+                });
             }
         });
 
     }
 
+    // eslint-disable-next-line @typescript-eslint/member-ordering
     reverseTimeList(): void {
         this.timeMeeting.reverse();
     }
-
-    // add calendar plugin
-    //take data for generate calendar
-    // show calendar
-
-
-    // 1 GUI
-    // maybe set default day actually day with list
-    //functionality click on day and show list of free
-    // 2 create collection Firestore for meeting
 
 }

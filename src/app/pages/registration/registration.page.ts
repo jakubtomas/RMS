@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, ValidationErrors, Validators} from "@angular/forms";
-import {AuthService} from "../../services/auth.service";
-import {Router} from "@angular/router";
+import {FormBuilder, FormControl, FormGroup, ValidationErrors, Validators} from '@angular/forms';
+import {AuthService} from '../../services/auth.service';
+import {Router} from '@angular/router';
 //import {error} from "selenium-webdriver";
 //import {register} from "ts-node";
 
@@ -14,14 +14,14 @@ export class RegistrationPage implements OnInit {
 
     registerForm: FormGroup;
 
-    successMsg: string = '';
-    errorMsg: string = '';
+    successMsg = '';
+    errorMsg = '';
     firebaseErrorMessage: string;
 
 
 
     error_msg = {
-        'email': [
+        email: [
             {
                 type: 'required',
                 message: 'require  email.'
@@ -31,20 +31,20 @@ export class RegistrationPage implements OnInit {
                 message: 'Email is not valid.'
             }
         ],
-        'firstName': [
+        firstName: [
             {
                 type: 'required',
                 message: 'First name required'
             }
 
         ],
-        'lastName': [
+        lastName: [
             {
                 type: 'required',
                 message: 'Last name required'
             }
         ],
-        'password': [
+        password: [
             {
                 type: 'required',
                 message: 'Password is required.'
@@ -54,7 +54,7 @@ export class RegistrationPage implements OnInit {
                 message: 'Password length should be 6 characters long.'
             }
         ],
-        'password2': [
+        password2: [
             {
                 type: 'required',
                 message: 'Repeat password is required.'
@@ -66,8 +66,7 @@ export class RegistrationPage implements OnInit {
         ]
     };
 
-    constructor(private fb: FormBuilder,
-                private authService : AuthService,
+    constructor(private authService: AuthService,
                 private router: Router) {}
 
     ngOnInit() {
@@ -102,64 +101,52 @@ export class RegistrationPage implements OnInit {
     private passwordMatchValidator(model: FormGroup): ValidationErrors {
         const password = model.get('password');
         const password2 = model.get('password2');
-        
-        console.log("validator working");
-        
-//        console.log("passsword one is dirtz"+ password.dirty);
-         
 
-        //condition password and password2 touched and dirty
         if (password.dirty  || password2.dirty) {
 
             if (password.value !== password2.value) {
-                console.log("not match password set error ");
-
-                const errorMismatch = {"mismatch": true};
+                const errorMismatch = {mismatch: true};
                 password2.setErrors(errorMismatch);
-
                 return errorMismatch;
+
             } else {
-                console.log('password match');
-                
                 password2.setErrors(null);
                 return null;
             }
-
-
         }
  }
 
-    private generateEmail() {
-        let result = '';
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        const charactersLength = characters.length;
-        for (let i = 0; i < 5; i++) {
-            result += characters.charAt(Math.floor(Math.random() *
-                charactersLength));
-        }
-        return result + "@gmail.com";
-    }
+    // private generateEmail() {
+    //     let result = '';
+    //     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    //     const charactersLength = characters.length;
+    //     for (let i = 0; i < 5; i++) {
+    //         result += characters.charAt(Math.floor(Math.random() *
+    //             charactersLength));
+    //     }
+    //     return result + '@gmail.com';
+    // }
 
 
-    createUser() {
+    // eslint-disable-next-line @typescript-eslint/member-ordering
+    createUser(): void {
         const email: string = this.registerForm.get('email').value;
         const password: string = this.registerForm.get('password').value;
+        const firstName: string = this.registerForm.get('firstName').value;
+        const lastName: string = this.registerForm.get('lastName').value;
 
 
 
-        this.authService.createUser(email, password).then((result) => {
-            if (result == null) {// null is success, false means there was an error
-                console.log("successful registration createUser.ts");
+        this.authService.createUser(email, password,firstName,lastName).then((response) => {
+            if (response == null) {// null is success, false means there was an error
+                console.log('successful registration createUser.ts');
                 //todo send arlso message successfully
                  this.router.navigate(['/dashboard']);
 
             } else {
-                this.firebaseErrorMessage = result.message;
-
+                this.firebaseErrorMessage = response.message;
             }
-        })
-
-
+        });
     }
 
 
