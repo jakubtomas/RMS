@@ -1,125 +1,133 @@
 <ion-header>
-
-    <ion-toolbar>
-        <ion-buttons slot="start">
-            <ion-menu-button></ion-menu-button>
-        </ion-buttons>
-        <ion-title>Detail Business</ion-title>
-    </ion-toolbar>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Detail Business</ion-title>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content>
-    <ion-card *ngIf="messageFirebase">
-        <ion-item color="success">
-            <label class="ion-text-center">{{messageFirebase}}</label>
-        </ion-item>
-    </ion-card>
+  <ion-card *ngIf="messageFirebase">
+    <ion-item color="success">
+      <label class="ion-text-center">{{messageFirebase}}</label>
+    </ion-item>
+  </ion-card>
 
 
-    <ion-icon name="backspace" ></ion-icon>
-    <ion-icon ios="ios-clock" md="md-clock"></ion-icon>
+  <ion-card *ngIf="business" class="schedule">
+    <ion-card-header>
+      <div class="item">
+        <ion-icon name="information-circle-outline"></ion-icon>
+        <ion-card-subtitle>Name {{business.nameOrganization}}</ion-card-subtitle>
+      </div>
+      <div class="item">
+        <ion-icon name="location-outline"></ion-icon>
+        <ion-card-subtitle
+          >Address {{business.nameStreetWithNumber}}</ion-card-subtitle
+        >
+      </div>
+      <div class="item">
+        <ion-icon name="business"></ion-icon>
+        <ion-card-subtitle>City {{business.city}}</ion-card-subtitle>
+      </div>
 
-    <ion-card *ngIf="business" class="schedule">
-        <ion-card-header>
-            <ion-icon name="appstore"></ion-icon>
-            <ion-icon name="backspace"></ion-icon>
-            <ion-icon name="business"></ion-icon>
-            <ion-icon name="pin"></ion-icon>
-            <ion-icon name="clock"></ion-icon>
-            <ion-icon name="locate"></ion-icon>
-            <ion-icon name="time"></ion-icon>
-            <ion-icon name="alarm"></ion-icon>
+      <div class="item">
+        <ion-icon name="mail"></ion-icon>
+        <ion-card-subtitle>Zip Code {{business.zipCode}}</ion-card-subtitle>
+      </div>
+    </ion-card-header>
 
+    <div *ngIf="(calendar && !isThisMyBusiness) ; else noOpeningHours">
 
-            <ion-card-title>Name  {{business.nameOrganization}}</ion-card-title>
-            <ion-card-subtitle>Address {{business.nameStreetWithNumber}}</ion-card-subtitle>
-          <div class="skuska">
-              <ion-icon name="close-circle"></ion-icon>
+      <div class="item openingHoursBox">
+        <ion-icon name="time"></ion-icon>
+        <h4 class="openingHours">Opening Hours</h4>
+      </div>
 
-              <ion-card-subtitle>City {{business.city}}</ion-card-subtitle>
-          </div>
-            <ion-card-subtitle>Zip Code {{business.zipCode}}</ion-card-subtitle>
-        </ion-card-header>
+      <h3 class="calendarName">Time Zone {{calendar.timeZone}}</h3>
+      <div *ngFor="let item of calendar.week" class="schedule">
+        <ion-row class="table">
+          <ion-col>
+            <div>{{item.day}}</div>
+          </ion-col>
+          <ion-col>
+            <div>{{item.openingHours}}</div>
+          </ion-col>
+          <ion-col>
+            <div>{{item.closingHours}}</div>
+          </ion-col>
+        </ion-row>
+      </div>
+    </div>
 
-        <div *ngIf="(calendar && !isThisMyBusiness) ; else noOpeningHours" >
+    <ng-template #noOpeningHours>
+      <ion-item *ngIf="!isThisMyBusiness">
+        <p>
+          Opening hours are not available. The reservation calendar is not
+          available because opening hours haven't been created. Please contact
+          the owner.
+        </p>
+      </ion-item>
+    </ng-template>
 
-            <h4 class="calendarName"> Opening Hours </h4>
-            <h3 class="calendarName">Time Zone {{calendar.timeZone}}</h3>
-            <div *ngFor="let item of calendar.week" class="schedule ">
-                <ion-row class="table">
-                    <ion-col>
-                        <div>{{item.day}}</div>
-                    </ion-col>
-                    <ion-col>
-                        <div>{{item.openingHours}}</div>
-                    </ion-col>
-                    <ion-col>
-                        <div>{{item.closingHours}}</div>
-                    </ion-col>
-                </ion-row>
-            </div>
+    <div *ngIf="!isThisMyBusiness && calendar">
+      <br /><br />
+      <section class="schedule create-meeting-button">
+        <ion-button expand="block" (click)="createMeeting()"
+          >Create Meeting</ion-button
+        >
+      </section>
+    </div>
+
+    <div *ngIf="isThisMyBusiness">
+      <section>
+        <!-- take idUser and compare with localStorage -->
+        <ion-button color="warning" (click)="editBusiness()">Edit</ion-button>
+        <ion-button color="danger" (click)="showAlertForDelete('business')"
+          >Delete</ion-button
+        >
+        <br />
+        <ion-button color="primary" (click)="selectMeetings()"
+          >All Meetings</ion-button
+        >
+      </section>
+
+      <div *ngIf="calendar else activeButton">
+        <h4 class="calendarName">Opening and Closing Hours</h4>
+        <h3 class="calendarName">Time Zone {{calendar.timeZone}}</h3>
+        <div *ngFor="let item of calendar.week" class="schedule">
+          <ion-row class="table">
+            <ion-col>
+              <div>{{item.day}}</div>
+            </ion-col>
+            <ion-col>
+              <div>{{item.openingHours}}</div>
+            </ion-col>
+            <ion-col>
+              <div>{{item.closingHours}}</div>
+            </ion-col>
+          </ion-row>
         </div>
 
-        <ng-template #noOpeningHours>
-            <ion-item  *ngIf="!isThisMyBusiness">
-                <p>Opening hours are not available.
-                    The reservation calendar is not available because
-                    opening hours haven't been created. Please contact the owner.
-                </p>
-            </ion-item>
-        </ng-template>
+        <section>
+          <ion-button color="warning" (click)="editCalendar()"
+            >Edit Calendar</ion-button
+          >
+          <ion-button color="danger" (click)="showAlertForDelete('')"
+            >Delete Calendar</ion-button
+          >
+        </section>
+      </div>
 
-
-        <div *ngIf="!isThisMyBusiness && calendar">
-
-            <br><br>
-            <section class="schedule create-meeting-button">
-                <ion-button expand="block" (click)="createMeeting()">Create Meeting</ion-button>
-            </section>
-        </div>
-
-
-        <div *ngIf="isThisMyBusiness">
-            <section><!-- take idUser and compare with localStorage -->
-                <ion-button color="warning" (click)="editBusiness()">Edit</ion-button>
-                <ion-button color="danger" (click)="showAlertForDelete('business')">Delete</ion-button>
-                <br>
-                <ion-button color="primary" (click)="selectMeetings()">All Meetings</ion-button>
-            </section>
-
-            <div *ngIf="calendar else activeButton">
-                <h4 class="calendarName"> Opening and Closing Hours </h4>
-                <h3 class="calendarName">Time Zone {{calendar.timeZone}}</h3>
-                <div *ngFor="let item of calendar.week" class="schedule ">
-                    <ion-row class="table">
-                        <ion-col>
-                            <div>{{item.day}}</div>
-                        </ion-col>
-                        <ion-col>
-                            <div>{{item.openingHours}}</div>
-                        </ion-col>
-                        <ion-col>
-                            <div>{{item.closingHours}}</div>
-                        </ion-col>
-                    </ion-row>
-                </div>
-
-                <section>
-                    <ion-button color="warning" (click)="editCalendar()">Edit Calendar</ion-button>
-                    <ion-button color="danger" (click)="showAlertForDelete('')">Delete Calendar</ion-button>
-                </section>
-
-            </div>
-
-            <ng-template #activeButton>
-                <section>
-                    <header>Calendar</header>
-                    <ion-button expand="block" (click)="createCalendar()">Create calendar</ion-button>
-                </section>
-            </ng-template>
-
-        </div>
-    </ion-card>
-
-
+      <ng-template #activeButton>
+        <section>
+          <header>Calendar</header>
+          <ion-button expand="block" (click)="createCalendar()"
+            >Create calendar</ion-button
+          >
+        </section>
+      </ng-template>
+    </div>
+  </ion-card>
 </ion-content>

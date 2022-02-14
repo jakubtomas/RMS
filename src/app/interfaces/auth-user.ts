@@ -3,3 +3,4 @@ export interface AuthUser {
     password: string;
     password2?: string;
 }
+

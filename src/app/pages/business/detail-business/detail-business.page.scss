@@ -1,4 +1,4 @@
-ion-card-header{
+ion-card-header {
   -ms-text-align-last: left;
   text-align-last: left;
 }
@@ -8,15 +8,39 @@ ion-card-header{
   display: grid;
   text-align: center;
 }
-.calendarName{
+.calendarName {
   text-align: center;
 }
-.table{
+.table {
   border-top: 1px solid #737373;
-
 }
-.create-meeting-button{
+.create-meeting-button {
   margin-bottom: 50px;
 }
+.item {
+  margin-top: 15px;
+}
+.item ion-icon {
+  display: inline-block;
+  font-size: 28px;
+}
 
+.item ion-card-subtitle {
+  margin-left: 15px;
+  display: inline-block;
+}
+.openingHoursBox{
+  margin-top: 15px;
+}
 
+.openingHours {
+  display: inline-block;
+  margin: 0px;
+  margin-left: 15px;
+}
+// .icon{
+//   font-size: 28px;
+// }
+// .dib{
+//   display: inline-block;
+// }

@@ -1,132 +1,135 @@
 <ion-app [class.dark-theme]="light">
-    <ion-split-pane contentId="main-content">
+  <ion-split-pane contentId="main-content">
+    <ion-menu contentId="main-content">
+      <ion-content>
+        <ion-list *ngIf="afAuth.user | async" lines="none">
+          <ion-list-header *ngIf="userDetails">
+            {{ userDetails.firstName }} {{ userDetails.lastName }}
+          </ion-list-header>
 
-        <ion-menu contentId="main-content">
-            <ion-content>
-                <ion-list  *ngIf="(afAuth.user | async)" lines="none">
-                    <ion-list-header>
-                        Customer
-                    </ion-list-header>
-                    <ion-menu-toggle autoHide="false" *ngFor="let p of appPages; let i = index">
-                        <ion-item [routerLink]="p.url" routerLinkActive="selected" routerDirection="root"
-                                  detail="false">
-                            <ion-icon slot="start" [name]="p.icon + '-outline'"></ion-icon>
-                            <ion-label>
-                                {{p.title}}
-                            </ion-label>
-                        </ion-item>
+          <ion-list-header> Customer </ion-list-header>
+          <ion-menu-toggle
+            autoHide="false"
+            *ngFor="let p of appPages; let i = index"
+          >
+            <ion-item
+              [routerLink]="p.url"
+              routerLinkActive="selected"
+              routerDirection="root"
+              detail="false"
+            >
+              <ion-icon slot="start" [name]="p.icon + '-outline'"></ion-icon>
+              <ion-label>
+                {{ p.title }}
+              </ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+        </ion-list>
 
-                    </ion-menu-toggle>
-                </ion-list>
+        <ion-list *ngIf="afAuth.user | async; else loggedOut" lines="none">
+          <ion-list-header> Business </ion-list-header>
 
-                <ion-list *ngIf="(afAuth.user | async); else loggedOut" lines="none">
-                    <ion-list-header>
-                        Business
-                    </ion-list-header>
+          <div *ngIf="businessMode | async">
+            <ion-menu-toggle autoHide="false">
+              <ion-item
+                routerLink="/list-business"
+                routerLinkActive="active"
+                routerDirection="root"
+                detail="false"
+              >
+                <ion-icon slot="start" name="business"></ion-icon>
+                <ion-label> My Businesses </ion-label>
+              </ion-item>
+            </ion-menu-toggle>
 
-                    <div *ngIf="(businessMode | async)">
+            <ion-menu-toggle autoHide="false">
+              <ion-item
+                routerLink="/support"
+                routerLinkActive="active"
+                routerDirection="root"
+                detail="false"
+              >
+                <ion-icon slot="start" name="help"></ion-icon>
+                <ion-label> Support </ion-label>
+              </ion-item>
+            </ion-menu-toggle>
+          </div>
 
-                        <ion-menu-toggle autoHide="false">
-                            <ion-item routerLink="/list-business" routerLinkActive="active" routerDirection="root" detail="false">
-                                <ion-icon slot="start" name="business"></ion-icon>
-                                <ion-label>
-                                    My Businesses
-                                </ion-label>
-                            </ion-item>
-                        </ion-menu-toggle>
+          <ion-menu-toggle autoHide="false" (ionChange)="clickToggle($event)">
+            <ion-item>
+              <ion-toggle slot="start" name="kiwi" color="success"></ion-toggle>
+              <ion-label>Business mode</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
 
-                        <ion-menu-toggle autoHide="false">
-                            <ion-item routerLink="/support" routerLinkActive="active" routerDirection="root" detail="false">
-                                <ion-icon slot="start" name="help"></ion-icon>
-                                <ion-label>
-                                    Support
-                                </ion-label>
-                            </ion-item>
-                        </ion-menu-toggle>
+          <ion-menu-toggle autoHide="false">
+            <ion-item button (click)="signOut()" detail="false">
+              <ion-icon slot="start" name="log-out"></ion-icon>
+              <ion-label> Logout </ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+        </ion-list>
 
-                    </div>
+        <ng-template #loggedOut>
+          <ion-list lines="none">
+            <ion-list-header> Account </ion-list-header>
 
-                    <ion-menu-toggle autoHide="false" (ionChange)="clickToggle($event)">
-                        <ion-item>
-                            <ion-toggle slot="start" name="kiwi" color="success" ></ion-toggle>
-                            <ion-label>Business mode</ion-label>
-                        </ion-item>
-                    </ion-menu-toggle>
+            <ion-menu-toggle autoHide="false">
+              <ion-item
+                routerLink="/login"
+                routerLinkActive="active"
+                routerDirection="root"
+                detail="false"
+              >
+                <ion-icon slot="start" name="log-in"></ion-icon>
+                <ion-label> Login </ion-label>
+              </ion-item>
+            </ion-menu-toggle>
 
-                    <ion-menu-toggle autoHide="false">
-                        <ion-item button (click)="signOut()" detail="false">
-                            <ion-icon slot="start" name="log-out"></ion-icon>
-                            <ion-label>
-                                Logout
-                            </ion-label>
-                        </ion-item>
-                    </ion-menu-toggle>
+            <ion-menu-toggle autoHide="false">
+              <ion-item
+                routerLink="/registration"
+                routerLinkActive="active"
+                routerDirection="root"
+                detail="false"
+              >
+                <ion-icon slot="start" name="person-add"></ion-icon>
+                <ion-label> Registration </ion-label>
+              </ion-item>
+            </ion-menu-toggle>
 
-                </ion-list>
+            <ion-menu-toggle autoHide="false">
+              <ion-item
+                routerLink="/registration"
+                routerLinkActive="active"
+                routerDirection="root"
+                detail="false"
+              >
+                <ion-icon slot="start" name="person-add"></ion-icon>
+                <ion-label> Signup </ion-label>
+              </ion-item>
+            </ion-menu-toggle>
 
-                <ng-template #loggedOut>
+            <ion-item>
+              <ion-icon slot="start" name="moon-outline"></ion-icon>
+              <ion-label> Dark Mode </ion-label>
+              <ion-toggle [(ngModel)]="dark"></ion-toggle>
+            </ion-item>
+          </ion-list>
+        </ng-template>
 
-                    <ion-list lines="none">
-                        <ion-list-header>
-                            Account
-                        </ion-list-header>
+        <ion-list lines="none">
+          <ion-list-header> Tutorial </ion-list-header>
+          <ion-menu-toggle autoHide="false">
+            <ion-item button (click)="openTutorial()" detail="false">
+              <ion-icon slot="start" name="hammer"></ion-icon>
+              <ion-label>Show Tutorial z</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+        </ion-list>
+      </ion-content>
+    </ion-menu>
 
-                        <ion-menu-toggle autoHide="false">
-                            <ion-item routerLink="/login" routerLinkActive="active" routerDirection="root"
-                                      detail="false">
-                                <ion-icon slot="start" name="log-in"></ion-icon>
-                                <ion-label>
-                                    Login
-                                </ion-label>
-                            </ion-item>
-                        </ion-menu-toggle>
-
-                        <ion-menu-toggle autoHide="false">
-                            <ion-item routerLink="/registration" routerLinkActive="active" routerDirection="root"
-                                      detail="false">
-                                <ion-icon slot="start" name="person-add"></ion-icon>
-                                <ion-label>
-                                    Registration
-                                </ion-label>
-                            </ion-item>
-                        </ion-menu-toggle>
-
-                        <ion-menu-toggle autoHide="false">
-                            <ion-item routerLink="/registration" routerLinkActive="active" routerDirection="root"
-                                      detail="false">
-                                <ion-icon slot="start" name="person-add"></ion-icon>
-                                <ion-label>
-                                    Signup
-                                </ion-label>
-                            </ion-item>
-                        </ion-menu-toggle>
-
-                        <ion-item>
-                            <ion-icon slot="start" name="moon-outline"></ion-icon>
-                            <ion-label>
-                                Dark Mode
-                            </ion-label>
-                            <ion-toggle [(ngModel)]="dark"></ion-toggle>
-                        </ion-item>
-                    </ion-list>
-                </ng-template>
-
-                <ion-list lines="none">
-                    <ion-list-header>
-                        Tutorial
-                    </ion-list-header>
-                    <ion-menu-toggle autoHide="false">
-                        <ion-item button (click)="openTutorial()" detail="false">
-                            <ion-icon slot="start" name="hammer"></ion-icon>
-                            <ion-label>Show Tutorial z</ion-label>
-                        </ion-item>
-                    </ion-menu-toggle>
-                </ion-list>
-            </ion-content>
-        </ion-menu>
-
-        <ion-router-outlet id="main-content"></ion-router-outlet>
-
-    </ion-split-pane>
-
+    <ion-router-outlet id="main-content"></ion-router-outlet>
+  </ion-split-pane>
 </ion-app>
