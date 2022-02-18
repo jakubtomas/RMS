@@ -52,7 +52,7 @@ export class AuthService {
 
 
   // string , validacia
-  createUser(email: string, password: string, firstName: string, lastName: string): Promise<null | { code: string; message: string }> {
+  createUser(email: string, password: string, firstName: string, lastName: string): Promise<null | any> {
     return this.afAuth.createUserWithEmailAndPassword(email, password)
       .then((userCredential: UserCredential) => {
 
@@ -61,28 +61,6 @@ export class AuthService {
         console.log(userCredential);
         console.log(userCredential.user);
         console.log(userCredential.user.uid);
-        //console.log(r);
-        /*this.afs.collection('users').doc(result.user.uid).set({displayName: 'mockString'}).then(
-         (value => {
-         console.log('ulozenie mena');
-         console.log(value);
-
-         })
-         );*/
-
-        //todo take data from Form firstName Second Name  na save to mock String
-        // eslint-disable-next-line @typescript-eslint/no-shadow
-
-
-        // this.afAuth.currentUser.then(user =>
-        // {
-        //   user.updateProfile({ displayName: firstName + lastName }).then(value =>
-        //   {
-        //     console.log(value);
-        //     console.log('profile information has been updated ');
-
-        //   });
-        // });
 
         console.log('moje idecko pre pridanie dat ' + userCredential.user.uid);
 
@@ -96,7 +74,10 @@ export class AuthService {
         console.log(user);
 
 
-        this.userService.addUser(user).then(data => {
+        userCredential.user.sendEmailVerification();
+
+
+       return this.userService.addUser(user).then(data => {
           console.log('detail information has been created ');
           console.log(data);
 
@@ -112,8 +93,6 @@ export class AuthService {
         // what happend when do not save this data
         // show message for again saving data in form
 
-
-        userCredential.user.sendEmailVerification();
 
         return null;
       }).catch((error) => {

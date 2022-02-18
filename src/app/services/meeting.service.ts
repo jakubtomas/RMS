@@ -5,7 +5,7 @@ import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from 
 import { Meeting } from '../interfaces/meeting';
 import { map, switchMap, tap } from 'rxjs/operators';
 
-import { forkJoin, Observable } from 'rxjs';
+import { forkJoin, Observable, zip } from 'rxjs';
 import * as moment from 'moment';
 import { BusinessService } from './business.service';
 import { UserService } from './user.service';
@@ -68,7 +68,7 @@ export class MeetingService {
   getMeetingByIdBusinessByDateWithUserDetails(idBusiness: string, dateForCalendar: string) {
     return this.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar).pipe(
       switchMap((arrayMeetings: Meeting[]) =>
-        forkJoin(arrayMeetings.map(meeting => {
+        zip(arrayMeetings.map(meeting => {
 
           console.log(meeting);
 

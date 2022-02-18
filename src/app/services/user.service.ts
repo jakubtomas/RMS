@@ -13,7 +13,6 @@ export class UserService {
   userCollection2: AngularFirestoreCollection<UserDetails>;
   myIdUser = localStorage.getItem('idUser');
 
-
   constructor(public afs: AngularFirestore) {
     this.userCollection = this.afs.collection('users');
   }

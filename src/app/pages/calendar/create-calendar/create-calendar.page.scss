@@ -1,4 +1,4 @@
-.day{
+.day {
   background-color: antiquewhite;
   text-align: center;
   padding: 5px 0;
@@ -20,26 +20,28 @@
   text-align: center;
 }
 
-.smallButton{
+.smallButton {
   max-width: 200px;
 }
 
-.label{
+.label {
   display: flex;
   justify-content: flex-start;
 }
-.label1{
-
+.label1 {
   max-width: 30%;
 }
-.dateTime1{
+.dateTime1 {
   margin-left: 10%;
 }
-ion-datetime{
+ion-datetime {
   background-color: #e3e3e3;
   border-radius: 7px;
   min-width: 80px;
 }
-sup{
+sup {
   color: red;
+}
+::ng-deep .datetime-text {
+  padding-right: 14px;
 }

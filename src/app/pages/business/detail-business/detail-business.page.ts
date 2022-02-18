@@ -1,10 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, Params, Router} from "@angular/router";
-import {BusinessService} from "../../../services/business.service";
-import {Business} from "../../../interfaces/business";
+import {ActivatedRoute, Params, Router} from '@angular/router';
+import {BusinessService} from '../../../services/business.service';
+import {Business} from '../../../interfaces/business';
 import {AlertController, ToastController} from '@ionic/angular';
-import {CalendarService} from "../../../services/calendar.service";
-import {Calendar} from "../../../interfaces/calendar";
+import {CalendarService} from '../../../services/calendar.service';
+import {Calendar} from '../../../interfaces/calendar';
 import * as moment from 'moment';
 
 @Component({
@@ -38,7 +38,7 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
 
         this.route.queryParams.subscribe((params: Params) => {
 
-            if (params['businessId'] != undefined) {
+            if (params['businessId'] !== undefined) {
                 this.selectedBusinessId = params['businessId'];
 
                 this.controlBusinessPermission(params['businessId']);
@@ -46,8 +46,8 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
                 this.getCalendars();
 
             }
-            if (params["updateDone"]) {
-                this.messageFirebase = "Business successfully updated"
+            if (params['updateDone']) {
+                this.messageFirebase = 'Business successfully updated'
             }
         });
     }
@@ -111,16 +111,16 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
             this.selectedBusinessId = null;
 
         }).catch((error) => {
-            console.log("error you got error ");
+            console.log('error you got error ');
             console.log(error);
-            this.messageFirebase = "Something is wrong";
+            this.messageFirebase = 'Something is wrong';
         });
     }
 
     async showAlertForDelete(input: string): Promise<any> {
 
         let deleteBusiness: boolean = null;
-        deleteBusiness = input === "business";
+        deleteBusiness = input === 'business';
 
         const alert = await this.alertController.create({
             cssClass: 'my-custom-class',
@@ -224,7 +224,7 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
 
             if (this.calendars.length > 0) {
                 this.calendars.forEach(calendar => {
-                    console.log(calendar.idBusiness + "  " + this.selectedBusinessId);
+                    console.log(calendar.idBusiness + '  ' + this.selectedBusinessId);
 
                     if (calendar.idBusiness === this.selectedBusinessId) {
                         console.log('your calendar data are ');
@@ -236,7 +236,7 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
                 });
             }
         }, error => {
-            console.log("you got error ");
+            console.log('you got error ');
             console.log(error);
         })
     }
@@ -252,13 +252,13 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
 
     deleteCalendar(): void {
         this.calendarService.deleteCalendar(this.calendar.id).then(() => {
-            this.showToast("Calendar has been deleted");
+            this.showToast('Calendar has been deleted');
             this.calendar = null;
 
         }).catch((error) => {
-            console.log("error you got error ");
+            console.log('error you got error ');
             console.log(error);
-            this.messageFirebase = "Something is wrong";
+            this.messageFirebase = 'Something is wrong';
         });
     }
 
