@@ -15,7 +15,6 @@ import DocumentReference = firebase.firestore.DocumentReference;
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { BusinessPermission } from '../interfaces/businessPermission';
 import { SearchBusiness } from '../interfaces/searchBusiness';
-import { getIdTokenResult } from '@angular/fire/auth';
 
 
 interface Item {
@@ -28,7 +27,6 @@ interface Item {
   providedIn: 'root'
 })
 export class BusinessService {
-
 
   itemsCollection: AngularFirestoreCollection<Item>;
   businessCollection: AngularFirestoreCollection<Business>;
@@ -86,11 +84,6 @@ export class BusinessService {
 
 
   }
-
-  // changeOrderBy(orderBy: string):void{
-  //     this.orderBy = orderBy;
-  // }
-
   //todo repeat the same code , create the function
   getItems(): Observable<Item[]> {
     return this.items = this.itemsCollection.snapshotChanges().pipe(
@@ -121,7 +114,6 @@ export class BusinessService {
         if (idBusiness) {
           query = query.where('idOrganization', '==', idBusiness);
         }
-
         return query;
       });
 
@@ -161,50 +153,9 @@ export class BusinessService {
 
   }
 
-
-  /// 1 create function set value , parameter
-  //todo reminder change orderBY ? because search page , set parameter
-
-  /* getAllMyBusinesses(orderBy: string): Observable<Business[]> {
-   const idOwner = localStorage.getItem('idUser');
-   this.businessCollection = this.afs.collection('business',
-   ref => ref.where('idOwner', '==', idOwner)
-   );
-
-
-   return this.businessCollection.snapshotChanges().pipe(
-   map(changes => {
-   return changes.map(a => {
-   const data = a.payload.doc.data() as Business;
-   data.id = a.payload.doc.id;
-   return data;
-   });
-   }));
-   }*/
-
-  /*getIdsOfMyBusinesses() {
-   const userId = localStorage.getItem('idUser');
-   console.log('show my my ide ' + userId);
-
-   let myBusinesses: BusinessPermission[];
-   let idMyBusinesses: string[] = [];
-
-   // BUSINESS PERMISSIONS
-   this.getBusinessPermissions().subscribe(permissions => {
-
-   myBusinesses = permissions.filter(permission => permission.idUser == userId);
-   myBusinesses.forEach((value) => {
-   idMyBusinesses.push(value.idOrganization);
-   });
-
-   });
-
-   return idMyBusinesses;
-   }*/
   getBusinessPermissions(): Observable<BusinessPermission[]> { //Id user id organization
     return this.businessPermissionCollection.valueChanges();
   }
-
 
   getIdsOfMyBusinesses(): Observable<string[]> {
     const userId = localStorage.getItem('idUser');
@@ -228,61 +179,12 @@ export class BusinessService {
 
         console.log('////////////////// ', response))
     );
-
-    /*
-     return this.getIdsOfMyBusinesses().pipe(
-
-     switchMap(value =>
-     this.afs.collection('business',
-     ref => ref.where(firebase.firestore.FieldPath.documentId(), 'in', value)).snapshotChanges()),
-     map(changes => {
-     return changes.map(a => {
-     const data = a.payload.doc.data() as Business;
-     data.id = a.payload.doc.id;
-     return data;
-     });
-     })
-
-
-     );
-     */
-
-    /*this.businessCollection = this.afs.collection('business',
-     ref => ref.where(firebase.firestore.FieldPath.documentId(), 'in', idsMyBusinesses));
-
-     return   this.businessCollection.snapshotChanges().pipe(
-     map(changes => {
-     return changes.map(a => {
-     const data = a.payload.doc.data() as Business;
-     data.id = a.payload.doc.id;
-     return data;meetign
-     });
-     }));*/
-    // return this.businessCollection.snapshotChanges().pipe(
-    //     map(changes => {
-    //         return changes.map(a => {
-    //             const data = a.payload.doc.data() as Business;
-    //             data.id = a.payload.doc.id;
-    //             return data;
-    //         });
-    //     }));
-
-    /*return this.businessCollection.snapshotChanges().pipe(
-     map(changes => {
-     return changes.map(a => {
-     const data = a.payload.doc.data() as Business;
-     data.id = a.payload.doc.id;
-     return data;
-     });
-     }));*/
-
   }
+
   getOneBusiness(documentId: string): Observable<Business | undefined> {
     //  console.log('function getOneBusiness document  ' +  documentId);
     if (documentId === undefined) {
       return undefined;
-    } else {
-
     }
 
     return this.businessCollection2.doc(documentId).get().pipe(
@@ -298,20 +200,13 @@ export class BusinessService {
             zipCode: '',
             city: '',
             nameStreetWithNumber: '',
-
             typeOfOrganization: '',
           };
           return mockObject;
         } else {
-
-
           data.id = documentId;
           return data;
-
-
-
         }
-
       }));
 
   }
@@ -319,7 +214,6 @@ export class BusinessService {
 
   // create collection for permission businesse write condition where businesses is
   // create function and
-
 
   getOneBusinessDemo()/*: Observable<Business>*/ {
 

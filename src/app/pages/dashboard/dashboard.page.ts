@@ -15,10 +15,12 @@ import { BusinessService } from '../../services/business.service';
 export class DashboardPage implements OnInit {
 
   user: Observable<any>;
+  userId;
   emailVerified = false;
   email = ' ';
   isActiveMode = false;
   businessMode = this.businessService.businessMode$;
+  userDetails: UserDetails;
 
 
   constructor(
@@ -32,12 +34,23 @@ export class DashboardPage implements OnInit {
     this.user = null;
   }
 
+
+  //  ionViewWillEnter  ionViewWillLeave
+  ionViewWillEnter() {
+    console.log('ionViewWillENter');
+    console.log('-----------------------------');
+
+    this.getUserDetails();
+  }
   ngOnInit() {
     console.log('all details');
+    // this.getUserDetails();
 
-    this.userService.getAllUsersDetails().subscribe((value) => {
-      console.log(value);
-    });
+    // this.userService.getAllUsersDetails().subscribe((value) => {
+    //   console.log(value);
+    // });
+
+
 
     // this.userService.getUserDetailsInformation().subscribe((value) => {
     //   console.log('user information ');
@@ -51,34 +64,64 @@ export class DashboardPage implements OnInit {
       if (user) {
         this.email = user.email.toLowerCase();
         this.emailVerified = user.emailVerified;
+        this.userId = user.uid;
+
       } else {
         this.email = null;
         this.emailVerified = null;
+        this.userId = null;
       }
     });
 
+  }
 
+  getUserDetails(): void {
+    this.userService.getUserDetailsInformation().subscribe((userDetails) => {
+      console.log('userDetails');
 
+      console.log(userDetails);
 
-    /*
-            if (this.route.snapshot.paramMap.get('createdBusiness')) {
-                this.messageFirebase = 'Business successfully created'
-            }*///todo how to do with subscribe caching parameter
-    /*this.route.params.subscribe((params: Params) => {
-                console.log('Parameter  ' + params);
-                console.log('Parameter  ' + params['createdBusiness']);
-            });*/
+      this.userDetails = userDetails[0];
+      console.log(this.userDetails);
+
+    });
   }
 
 
   logout(): void {
     console.log('function logout dashbouard.page .ts ');
-    this.authService.signOut();
+    // this.authService.signOut();
+    // const idUserStorage = localStorage.getItem('idUser');
+    // console.log('id pred odhlasen    ' + idUserStorage);
+
+
+    this.authService.signOut().then((result) => {
+      if (result == null) {// null is success, false means there was an error
+        this.userDetails = null;
+        console.log('user successfully  singOut/odhlaseny ');
+
+        // const podOdhlaseni = localStorage.getItem('idUser');
+        // console.log('id po odhlaseny   ' + podOdhlaseni);
+
+        //todo message successfully signOut
+        // this.router.navigate(['/login']);
+
+      } else {
+        console.log('user unsuccessfully singOut');
+        console.log(result);
+      }
+    });
   }
 
   doRedirect(address: string) {
     console.log('clikc');
     console.log(address);
+
+  }
+
+  ionViewDidLeave() {
+    console.log('ionViewWIll leave -------------------------------------');
+    this.userDetails = null;
 
   }
 

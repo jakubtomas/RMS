@@ -1,6 +1,16 @@
 <script src="../../../app.component.ts"></script>
 <ion-header>
   <ion-toolbar>
+
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="#"></ion-back-button>
+    </ion-buttons>
+
+
     <ion-title *ngIf="!business">My Calendar </ion-title>
     <ion-title *ngIf="business"
       >Business Calendar {{business.nameOrganization}}</ion-title

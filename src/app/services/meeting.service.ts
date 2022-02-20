@@ -5,7 +5,7 @@ import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from 
 import { Meeting } from '../interfaces/meeting';
 import { map, switchMap, tap } from 'rxjs/operators';
 
-import { forkJoin, Observable, zip } from 'rxjs';
+import { forkJoin, Observable, of, zip } from 'rxjs';
 import * as moment from 'moment';
 import { BusinessService } from './business.service';
 import { UserService } from './user.service';
@@ -45,7 +45,7 @@ export class MeetingService {
     return this.meetingCollection.add(meetingData);
   }
 
-
+  // return meeting by bussines and date
   getMeetingsByIdBusinessByDate(idBusiness: string, dateForCalendar: string): Observable<Meeting[]> {
 
     const helpTime = moment(dateForCalendar).format('YYYY-MM-DDT00:00:00+00:00');
@@ -67,77 +67,50 @@ export class MeetingService {
 
   getMeetingByIdBusinessByDateWithUserDetails(idBusiness: string, dateForCalendar: string) {
     return this.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar).pipe(
-      switchMap((arrayMeetings: Meeting[]) =>
-        zip(arrayMeetings.map(meeting => {
+      switchMap((arrayMeetings: Meeting[]) => {
 
+        arrayMeetings.map((meeting) => {
           console.log(meeting);
+          console.log(meeting.idUser);
 
-          return this.userService.getUserDetailsInformation(meeting.idUser).pipe(
-            map((userDetails) => {
-              return { userDetails, meeting};
-            })).pipe(
-              tap(x =>
-                  console.log('x value ' + JSON.stringify(x) )
-              )
-          );
-        }))
-      )
-    );
+          this.userService.getUserDetailsInformation(meeting.idUser).subscribe(value => {
+            console.log('value');
+            console.log(value);
+
+           });
+
+        });
+
+        console.log(arrayMeetings);
+        return of(1);
+      }
+
+      ));
   }
 
-  xxx(idUser: string, currentDay?: string) {
-    return this.getMeetingsByIdUserOrderByDate(idUser, currentDay).pipe(
-      switchMap((arrayMeetings: Meeting[]) =>
-        forkJoin(arrayMeetings.map(meeting => {
-          return this.businessService.getOneBusiness(meeting.idBusiness).pipe(
-            map(business => {
-              return {
-                business,
-                meeting
-              };
-            })
-          ).pipe(
-            // tap(x =>
-            //     console.log('x value ' + JSON.stringify(x) )
-            // )
-          );
-        }))
-      ),
-      tap((response) => {
-        console.log(' response');
-        console.log(response);
+  // getMeetingByIdBusinessByDateWithUserDetails(idBusiness: string, dateForCalendar: string) {
+  //   return this.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar).pipe(
+  //     switchMap((arrayMeetings: Meeting[]) =>
+  //       zip(arrayMeetings.map(meeting => {
 
-      })
-    );
-  }
+  //         console.log('---');
+  //         console.log(meeting);
 
+  //         return this.userService.getUserDetailsInformation(meeting.idUser).pipe(
+  //           map((userDetails) => {
+  //             console.log(userDetails);
 
-
-  /*
-
-   getMeetingsByIdUserByDate(idUser: string, dateForCalendar: string): Observable<Meeting[]> {
-
-   // todo change default  Time Zone
-   const helpTime = moment(dateForCalendar).format('YYYY-MM-DDT00:00:00+02:00');
-
-   this.meetingCollection3 = this.afs.collection('meetings',
-   ref => ref.where('dateForCalendar', '==', dateForCalendar)
-   .where('idUser', '==', idUser)
-   .where('date', '>', helpTime)
-   );
-
-   return this.meetingCollection3.snapshotChanges().pipe(
-   map(changes => {
-   return changes.map(a => {
-   const data = a.payload.doc.data() as Meeting;
-   data.id = a.payload.doc.id;
-   return data;
-   });
-   }));
-
-
-   }
-   */
+  //             return { userDetails, meeting };
+  //           }
+  //           )).pipe(
+  //             tap(x =>
+  //               console.log('x value ' + JSON.stringify(x))
+  //             )
+  //           );
+  //       }))
+  //     )
+  //   );
+  // }
 
   getMeetingsByIdUserOrderByDate(idUser: string, currentDay?: string): Observable<Meeting[]> {
 
@@ -152,7 +125,6 @@ export class MeetingService {
         data.id = a.payload.doc.id;
         return data;
       })));
-
   }
 
   getMeetingsAndDetailsBusinessByIdUser(idUser: string, currentDay?: string) {

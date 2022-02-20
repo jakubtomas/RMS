@@ -55,7 +55,7 @@ export class AppComponent implements OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.getUserDetails();
+    //this.getUserDetails();
   }
 
   getUserDetails(): void {
@@ -68,7 +68,9 @@ export class AppComponent implements OnDestroy {
     });
   }
 
-  signOut() {
+
+
+  signOut(): void {
     console.log('logout function run');
 
     this.authService.signOut().then((result) => {

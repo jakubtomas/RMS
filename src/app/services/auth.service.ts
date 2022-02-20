@@ -14,7 +14,7 @@ import { UserDetails } from '../interfaces/userDetails';
 })
 export class AuthService {
 
-  user: any;
+  userId: any;
 
   constructor(
     private afAuth: AngularFireAuth,
@@ -33,23 +33,38 @@ export class AuthService {
       if (user) {
         console.log('priradenie localStorage ');
         console.log(user.emailVerified);
-        console.log(user.uid);
+        console.log('prihlasovacie id  ' + user.uid);
 
         console.log(user.toJSON());
 
 
-        this.user = user;
-        localStorage.setItem('idUser', user.uid);
-        localStorage.setItem('email', user.email);
-        localStorage.setItem('emailVerified', user.emailVerified + '');
+        // this.user = user;
+        // localStorage.setItem('idUser', user.uid);
+        // localStorage.setItem('email', user.email);
+        // localStorage.setItem('emailVerified', user.emailVerified + '');
 
       } else {
-        localStorage.setItem('idUser', null);
-        localStorage.setItem('email', null);
+        this.setNullLocalStorage();
       }
     });
   }
+  setUser(user: UserCredential): void {
+    if (user.user.uid) {
+      console.log('nastavujem idecko ' + user.user.uid);
 
+      this.userId = user.user.uid;
+    }
+  }
+
+  getUser(): string {
+    return this.userId;
+  }
+
+  setNullLocalStorage(): void {
+    localStorage.setItem('idUser', null);
+    localStorage.setItem('email', null);
+    localStorage.setItem('emailVerified', null);
+  }
 
   // string , validacia
   createUser(email: string, password: string, firstName: string, lastName: string): Promise<null | any> {
@@ -77,7 +92,7 @@ export class AuthService {
         userCredential.user.sendEmailVerification();
 
 
-       return this.userService.addUser(user).then(data => {
+        return this.userService.addUser(user).then(data => {
           console.log('detail information has been created ');
           console.log(data);
 
@@ -127,10 +142,28 @@ export class AuthService {
 
   //Login
   login(email: string, password: string): Promise<any> {//observable
+
+    const myIdUser = localStorage.getItem('idUser');
+    console.log('localStorage pred prihlasenim  ' + myIdUser);
+
     return this.afAuth.signInWithEmailAndPassword(email, password)
-      .then((result) => {
+      .then((userCredential: UserCredential) => {
         console.log('Auth Service: loginUser: success');
-        console.log(result);
+        console.log('----------------------------');
+        console.log(userCredential.user);
+        console.log(userCredential.user.email);
+        console.log(userCredential.user.emailVerified);
+        console.log(userCredential.user.uid);
+        console.log('----------------------------');
+
+        this.setUser(userCredential);
+        this.userService.setUserId(userCredential.user.uid);
+
+        localStorage.setItem('idUser', userCredential.user.uid);
+        localStorage.setItem('email', userCredential.user.email);
+        localStorage.setItem('emailVerified', userCredential.user.emailVerified + '');
+
+
 
         // localStorage.setItem("",,JSON.stringify(result.user))
         // this.router.navigate(['dashboard']);
@@ -172,8 +205,10 @@ export class AuthService {
         // localStorage.removeItem('user');
         //    this.router.navigate(['/login']);
         console.log('user logout successfully ');
+        this.setNullLocalStorage();
         // todo create message user has benn successfully log out ci ako
         this.businessService.updateBusinessMode(false);
+
       }).catch(error => {
         console.log('Auth service Logout , error');
         console.log('error code ,', error.code);
@@ -183,7 +218,6 @@ export class AuthService {
           return error;
         }
       });
-
   }
 
   userDetails() {

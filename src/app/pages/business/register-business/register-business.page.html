@@ -1,94 +1,101 @@
 <ion-header>
-    <ion-toolbar color="">
-        <ion-buttons slot="start">
-            <ion-menu-button></ion-menu-button>
-        </ion-buttons>
+  <ion-toolbar color="">
 
-        <ion-title>{{ionTitle}}</ion-title>
-    </ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="#"></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>{{ionTitle}}</ion-title>
+  </ion-toolbar>
 </ion-header>
 
-
 <ion-content class="ion-padding">
+  <ion-card *ngIf="firebaseErrorMessage">
+    <ion-item color="warning">
+      <label class="ion-text-center">{{firebaseErrorMessage}}</label>
+    </ion-item>
+  </ion-card>
 
-    <ion-card *ngIf="firebaseErrorMessage">
-        <ion-item color="warning">
-            <label class="ion-text-center">{{firebaseErrorMessage}}</label>
-        </ion-item>
-    </ion-card>
+  <form class="form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <ion-item>
+      <ion-label position="floating">Name organization</ion-label>
+      <ion-input type="text" formControlName="nameOrganization"></ion-input>
+    </ion-item>
 
-    <form class="form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-        <ion-item>
-            <ion-label position="floating">Name organization</ion-label>
-            <ion-input type="text" formControlName="nameOrganization"></ion-input>
-        </ion-item>
+    <!--TODO  set error minimum -->
+    <div *ngIf="nameOrganization.errors?.required && nameOrganization.touched">
+      <em> Name organization is required.</em>
+    </div>
 
-        <!--TODO  set error minimum -->
-        <div *ngIf="nameOrganization.errors?.required && nameOrganization.touched">
-            <em> Name organization is required.</em>
-        </div>
+    <ion-item>
+      <ion-label position="floating">Phone number from organization</ion-label>
+      <ion-input type="text" formControlName="phoneNumber"></ion-input>
+    </ion-item>
 
-        <ion-item>
-            <ion-label position="floating">Phone number from organization</ion-label>
-            <ion-input type="text" formControlName="phoneNumber"></ion-input>
-        </ion-item>
+    <div *ngIf="phoneNumber.errors?.required && phoneNumber.touched">
+      <em> Phone number is required.</em>
+    </div>
 
-        <div *ngIf="phoneNumber.errors?.required && phoneNumber.touched">
-            <em> Phone number is required.</em>
-        </div>
+    <ion-item
+      ><!-- todo check minimum size of zip code -->
+      <ion-label position="floating">Zip Code</ion-label>
+      <ion-input type="number" formControlName="zipCode"></ion-input>
+    </ion-item>
 
+    <div *ngIf="zipCode.errors?.required && zipCode.touched">
+      <em> Zip code is required.</em>
+    </div>
 
-        <ion-item><!-- todo check minimum size of zip code -->
-            <ion-label position="floating">Zip Code</ion-label>
-            <ion-input type="number" formControlName="zipCode"></ion-input>
-        </ion-item>
+    <ion-item>
+      <!--todo input only number-->
+      <ion-label position="floating">City</ion-label>
+      <ion-input type="text" formControlName="city"></ion-input>
+    </ion-item>
 
-        <div *ngIf="zipCode.errors?.required && zipCode.touched">
-            <em> Zip code is required.</em>
-        </div>
+    <div *ngIf="city.errors?.required && city.touched">
+      <em> City is required.</em>
+    </div>
 
+    <ion-item>
+      <ion-label position="floating">Street with number</ion-label>
+      <ion-input type="text" formControlName="street"></ion-input>
+    </ion-item>
 
-        <ion-item> <!--todo input only number-->
-            <ion-label position="floating">City</ion-label>
-            <ion-input type="text" formControlName="city"></ion-input>
-        </ion-item>
+    <div *ngIf="street.errors?.required && street.touched">
+      <em> City is required.</em>
+    </div>
 
-        <div *ngIf="city.errors?.required && city.touched">
-            <em> City is required.</em>
-        </div>
+    <ion-item>
+      <ion-label>Type of organization</ion-label>
+      <ion-select
+        interface="popover"
+        formControlName="typeOrganization"
+        placeholder="Select One"
+        mode="md"
+      >
+        <ion-select-option
+          *ngFor="let type of typesOrganization"
+          [value]="type.name"
+        >
+          {{ type.name }}
+        </ion-select-option>
 
-        <ion-item>
-            <ion-label position="floating">Street with number</ion-label>
-            <ion-input type="text" formControlName="street"></ion-input>
-        </ion-item>
-
-        <div *ngIf="street.errors?.required && street.touched">
-            <em> City is required.</em>
-        </div>
-
-        <ion-item>
-            <ion-label>Type of organization</ion-label>
-            <ion-select interface="popover" formControlName="typeOrganization" placeholder="Select One"
-                        mode="md">
-                <ion-select-option *ngFor="let type of typesOrganization" [value]="type.name">
-                    {{ type.name }}
-                </ion-select-option>
-
-                <!--<div *ngFor="let field of countries">
+        <!--<div *ngFor="let field of countries">
                     <ion-select-option value="{{field.name}}">{{field.name}}</ion-select-option>
                 </div>-->
-            </ion-select>
-        </ion-item>
+      </ion-select>
+    </ion-item>
 
-        <div *ngIf="typeOrganization.errors?.required && typeOrganization.touched">
-            <em> Type of organization is required.</em>
-        </div>
+    <div *ngIf="typeOrganization.errors?.required && typeOrganization.touched">
+      <em> Type of organization is required.</em>
+    </div>
 
-        <ion-button
-                type="submit" expand="block"
-                [disabled]="!registerForm.valid">{{ionButton}}
-        </ion-button>
-    </form>
-
-
+    <ion-button type="submit" expand="block" [disabled]="!registerForm.valid"
+      >{{ionButton}}
+    </ion-button>
+  </form>
 </ion-content>

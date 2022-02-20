@@ -10,7 +10,7 @@ import { CalendarComponent } from 'ionic2-calendar';
 import { Business } from '../../../interfaces/business';
 import { BusinessService } from '../../../services/business.service';
 import { Subscription } from 'rxjs';
-
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-calendar-meetings',
@@ -45,7 +45,8 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
     private router: Router,
     private meetingService: MeetingService,
     private route: ActivatedRoute,
-    private businessService: BusinessService
+    private businessService: BusinessService,
+    private userService: UserService,
   ) { }
 
   ngOnInit() {
@@ -57,6 +58,7 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
       this.business = null;
 
       this.meetingWithBusiness = [];
+
       if (params.businessId !== undefined) {
         this.selectedBusinessId = params.businessId;
         console.log('I got business id ' + this.selectedBusinessId);
@@ -147,18 +149,20 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
   private getMeetingsByIdBusinessByDate(idBusiness: string, dateForCalendar: string): void {
     console.log('11111111111111111111111111111111111111111');
 
-    this.meetingService.getMeetingByIdBusinessByDateWithUserDetails(idBusiness, dateForCalendar).subscribe(meetings => {
+    this.meetingService.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar).subscribe(meetings => {
+      //this.meetingService.getMeetingByIdBusinessByDateWithUserDetails(idBusiness, dateForCalendar).subscribe(meetings => {
+      //this.userService.getUserDetailsInformation('Rd6uOzjsi6X3hHQISa2zS7T90mt2').subscribe(meetings => {
 
       console.log('Meeting');
       console.log(meetings);
 
-      //this.timeMeeting = meetings;
+      this.timeMeeting = meetings;
 
       const helpArray = [];
-      /*this.meetingsByDateBusiness =*/
-      // meetings.map(meeting => {
-      //   helpArray.push({ meeting });
-      // });
+
+      meetings.map(meeting => {
+        helpArray.push({ meeting });
+      });
 
       this.meetingWithBusiness = helpArray;
 
@@ -174,12 +178,11 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
     });
   }
 
-
   selectMeeting(meeting: Meeting): void {
     this.router.navigate(['/detail-meeting'], {
       queryParams: {
         docIdMeeting: meeting.id,
-        idBusiness: meeting.idBusiness
+        idBusiness: meeting.idBusiness,
         //todo add parametaer calendar link after delete and change should redirect to back
         // on this url calendar meetints
       }
@@ -195,7 +198,6 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
     }
     );
   }
-
 
   ngOnDestroy(): void {
     this.selectedBusinessId = null;

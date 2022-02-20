@@ -1,190 +1,261 @@
 <ion-header>
-    <ion-toolbar>
-        <ion-title>{{ionTitle}}</ion-title>
-    </ion-toolbar>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="#"></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>{{ionTitle}}</ion-title>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content>
-    <div class="ion-content">
-        <ion-card *ngIf="messageFirebase">
-            <ion-item color="success">
-                <label class="ion-text-center">{{messageFirebase}}</label>
-            </ion-item>
-        </ion-card>
+  <div class="ion-content">
+    <ion-card *ngIf="messageFirebase">
+      <ion-item color="success">
+        <label class="ion-text-center">{{messageFirebase}}</label>
+      </ion-item>
+    </ion-card>
 
-        <ion-card>
-            <ion-item>
-                <h3>Let's create calendar with opening hours </h3>
-            </ion-item>
-            <h5>Reminder your opening hours will be save according to your time zone {{timeZone}}</h5>
+    <ion-card>
+      <ion-item>
+        <h3>Let's create calendar with opening hours</h3>
+      </ion-item>
+      <h5>
+        Reminder your opening hours will be save according to your time zone
+        {{timeZone}}
+      </h5>
 
-            <p>* require parameter</p>
-            <br>
+      <p>* require parameter</p>
+      <br />
 
-        <form [formGroup]="contactForm" novalidate>
+      <form [formGroup]="contactForm" novalidate>
+        <ion-item>
+          <ion-label class="label">Day</ion-label>
+          <ion-label class="label">Opening/Closing</ion-label>
+        </ion-item>
 
-              <ion-item>
-                  <ion-label class="label">Day</ion-label>
-                  <ion-label class="label">Opening/Closing</ion-label>
+        <div>
+          <ion-item class="item">
+            <ion-label class="label1">Monday</ion-label>
 
-              </ion-item>
+            <ion-datetime
+              display-format="h:mm A"
+              picker-format="h:mm A"
+              formControlName="MondayOpening"
+              class="dateTime"
+            ></ion-datetime>
 
-            <div>
-                <ion-item class="item">
-                    <ion-label class="label1">Monday</ion-label>
+            <ion-datetime
+              display-format="h:mm A"
+              picker-format="h:mm A"
+              formControlName="MondayClosing"
+              class="dateTime1"
+            ></ion-datetime>
+            <ion-icon
+              name="backspace"
+              (click)="resetHours($event, 0)"
+            ></ion-icon>
+          </ion-item>
 
-                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
-                                  formControlName="MondayOpening"
-                                  class="dateTime"
-                                  ></ion-datetime>
+          <ion-item class="item">
+            <ion-label class="label1">Tuesday</ion-label>
 
-                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
-                                  formControlName="MondayClosing"
-                                  class="dateTime1"
-                                  ></ion-datetime>
-                    <ion-icon name="backspace" (click)="resetHours($event, 0)"></ion-icon>
-                </ion-item>
+            <ion-datetime
+              display-format="h:mm A"
+              picker-format="h:mm A"
+              formControlName="TuesdayOpening"
+              class="dateTime"
+            ></ion-datetime>
 
-                <ion-item class="item">
-                    <ion-label class="label1">Tuesday</ion-label>
+            <ion-datetime
+              display-format="h:mm A"
+              picker-format="h:mm A"
+              formControlName="TuesdayClosing"
+              class="dateTime1"
+            ></ion-datetime>
+            <ion-icon
+              name="backspace"
+              (click)="resetHours($event, 1)"
+            ></ion-icon>
+          </ion-item>
 
-                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
-                                  formControlName="TuesdayOpening"
-                                  class="dateTime"
-                                  ></ion-datetime>
+          <ion-item class="item">
+            <ion-label class="label1">Wednesday</ion-label>
 
-                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
-                                  formControlName="TuesdayClosing"
-                                  class="dateTime1"
-                                  ></ion-datetime>
-                    <ion-icon name="backspace" (click)="resetHours($event, 1)"></ion-icon>
-                </ion-item>
+            <ion-datetime
+              display-format="h:mm A"
+              picker-format="h:mm A"
+              formControlName="WednesdayOpening"
+              class="dateTime"
+            ></ion-datetime>
 
+            <ion-datetime
+              display-format="h:mm A"
+              picker-format="h:mm A"
+              formControlName="WednesdayClosing"
+              class="dateTime1"
+            ></ion-datetime>
+            <ion-icon
+              name="backspace"
+              (click)="resetHours($event, 2)"
+            ></ion-icon>
+          </ion-item>
 
-                <ion-item class="item">
-                    <ion-label class="label1">Wednesday</ion-label>
+          <ion-item class="item">
+            <ion-label class="label1">Thursday</ion-label>
 
-                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
-                                  formControlName="WednesdayOpening"
-                                  class="dateTime"
-                                  ></ion-datetime>
+            <ion-datetime
+              display-format="h:mm A"
+              picker-format="h:mm A"
+              formControlName="ThursdayOpening"
+              class="dateTime"
+            ></ion-datetime>
 
-                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
-                                  formControlName="WednesdayClosing"
-                                  class="dateTime1"
-                                  ></ion-datetime>
-                     <ion-icon name="backspace" (click)="resetHours($event, 2)"></ion-icon>
-                </ion-item>
+            <ion-datetime
+              display-format="h:mm A"
+              picker-format="h:mm A"
+              formControlName="ThursdayClosing"
+              class="dateTime1"
+            ></ion-datetime>
+            <ion-icon
+              name="backspace"
+              (click)="resetHours($event, 3)"
+            ></ion-icon>
+          </ion-item>
 
+          <ion-item class="item">
+            <ion-label class="label1">Friday</ion-label>
 
-                <ion-item class="item">
-                    <ion-label class="label1">Thursday</ion-label>
+            <ion-datetime
+              display-format="h:mm A"
+              picker-format="h:mm A"
+              formControlName="FridayOpening"
+              class="dateTime"
+            ></ion-datetime>
 
-                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
-                                  formControlName="ThursdayOpening"
-                                  class="dateTime"
-                                  ></ion-datetime>
+            <ion-datetime
+              display-format="h:mm A"
+              picker-format="h:mm A"
+              formControlName="FridayClosing"
+              class="dateTime1"
+            ></ion-datetime>
+            <ion-icon
+              name="backspace"
+              (click)="resetHours($event, 4)"
+            ></ion-icon>
+          </ion-item>
 
-                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
-                                  formControlName="ThursdayClosing"
-                                  class="dateTime1"
-                                  ></ion-datetime>
-                     <ion-icon name="backspace" (click)="resetHours($event, 3)"></ion-icon>
-                </ion-item>
+          <ion-item class="item">
+            <ion-label class="label1">Saturday</ion-label>
 
-                <ion-item class="item">
-                    <ion-label class="label1">Friday</ion-label>
+            <ion-datetime
+              display-format="h:mm A"
+              picker-format="h:mm A"
+              formControlName="SaturdayOpening"
+              class="dateTime"
+            ></ion-datetime>
 
-                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
-                                  formControlName="FridayOpening"
-                                  class="dateTime"
-                                  ></ion-datetime>
+            <ion-datetime
+              display-format="h:mm A"
+              picker-format="h:mm A"
+              formControlName="SaturdayClosing"
+              class="dateTime1"
+            ></ion-datetime>
+            <ion-icon
+              name="backspace"
+              (click)="resetHours($event, 5)"
+            ></ion-icon>
+          </ion-item>
 
-                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
-                                  formControlName="FridayClosing"
-                                  class="dateTime1"
-                                  ></ion-datetime>
-                     <ion-icon name="backspace" (click)="resetHours($event, 4)"></ion-icon>
-                </ion-item>
+          <ion-item class="item">
+            <ion-label class="label1">Sunday</ion-label>
 
-                <ion-item class="item">
-                    <ion-label class="label1">Saturday</ion-label>
+            <ion-datetime
+              display-format="h:mm A"
+              picker-format="h:mm A"
+              formControlName="SundayOpening"
+              class="dateTime"
+            ></ion-datetime>
 
-                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
-                                  formControlName="SaturdayOpening"
-                                  class="dateTime"
-                                  ></ion-datetime>
+            <ion-datetime
+              display-format="h:mm A"
+              picker-format="h:mm A"
+              formControlName="SundayClosing"
+              class="dateTime1"
+            ></ion-datetime>
+            <ion-icon
+              name="backspace"
+              (click)="resetHours($event, 6)"
+            ></ion-icon>
+          </ion-item>
 
-                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
-                                  formControlName="SaturdayClosing"
-                                  class="dateTime1"
-                                  ></ion-datetime>
-                     <ion-icon name="backspace" (click)="resetHours($event, 5)"></ion-icon>
-                </ion-item>
+          <ion-item class="item">
+            <ion-label><sup>*</sup> Time of meeting in minutes </ion-label>
+            <ion-input
+              type="number"
+              formControlName="MinutesForMeeting"
+            ></ion-input>
+            <!--<ion-datetime formControlName="MinutesForMeeting"-->
+            <!--displayFormat="mm" minuteValues="5,10,15,20,25,30,35,40,45,50,55,60"></ion-datetime>-->
+            <!---->
+          </ion-item>
 
-                <ion-item class="item">
-                    <ion-label class="label1">Sunday</ion-label>
+          <div
+            *ngIf="MinutesForMeeting.errors?.required && MinutesForMeeting.touched"
+          >
+            <em> Minutes for meeting required.</em>
+          </div>
+        </div>
+      </form>
 
-                    <ion-datetime display-format="h:mm A" picker-format="h:mm A"
-                                  formControlName="SundayOpening"
-                                  class="dateTime"
-                                  ></ion-datetime>
+      <ion-card *ngIf="errorsFromHours.length >0 ">
+        <h2>Warning</h2>
+        <ion-item
+          color="danger"
+          *ngFor="let error of errorsFromHours; let i = index"
+        >
+          <label class="ion-text-center">{{error}} </label>
+        </ion-item>
+      </ion-card>
 
-                    <ion-datetime
-                            display-format="h:mm A" picker-format="h:mm A"
-                                  formControlName="SundayClosing"
-                                  class="dateTime1"
-                                  ></ion-datetime>
-                     <ion-icon name="backspace" (click)="resetHours($event, 6)"></ion-icon>
-                </ion-item>
+      <ion-card *ngIf="firebaseErrorMessage">
+        <ion-item color="warning">
+          <label class="ion-text-center">{{firebaseErrorMessage}}</label>
+        </ion-item>
+      </ion-card>
 
-                <ion-item class="item">
+      <ion-button
+        color="warning"
+        *ngIf="true"
+        type="submit"
+        expand="block"
+        (click)="resetForm()"
+        >Reset Form
+      </ion-button>
 
-                    <ion-label><sup>*</sup> Time of meeting in minutes </ion-label>
-                    <ion-input type="number"  formControlName="MinutesForMeeting" ></ion-input>
-                    <!--<ion-datetime formControlName="MinutesForMeeting"-->
-                                  <!--displayFormat="mm" minuteValues="5,10,15,20,25,30,35,40,45,50,55,60"></ion-datetime>-->
-                <!---->
-                </ion-item>
+      <ion-button
+        *ngIf="!isUpdateCalendar else updateButton "
+        type="submit"
+        expand="block"
+        (click)="saveData()"
+        [disabled]="!contactForm.valid"
+        >Save calendar data
+      </ion-button>
 
-                <div *ngIf="MinutesForMeeting.errors?.required && MinutesForMeeting.touched">
-                    <em> Minutes for meeting  required.</em>
-                </div>
-
-            </div>
-    </form>
-
-        <ion-card *ngIf="errorsFromHours.length >0 ">
-            <h2>Warning</h2>
-            <ion-item color="danger" *ngFor="let error of errorsFromHours; let i = index">
-                <label class="ion-text-center">{{error}} </label>
-            </ion-item>
-        </ion-card>
-
-
-        <ion-card *ngIf="firebaseErrorMessage">
-            <ion-item color="warning">
-                <label class="ion-text-center">{{firebaseErrorMessage}}</label>
-            </ion-item>
-        </ion-card>
-
-        <ion-button  color="warning" *ngIf="true" type="submit" expand="block" (click)="resetForm()"
-                    >Reset Form
-        </ion-button>
-
-        <ion-button *ngIf="!isUpdateCalendar else updateButton " type="submit" expand="block" (click)="saveData()"
-                    [disabled]="!contactForm.valid">Save calendar data
-        </ion-button>
-
-        <ng-template #updateButton>
-
-            <section>
-                <ion-button expand="block" (click)="updateCalendars()" [disabled]="!contactForm.valid">{{ionButton}}
-                </ion-button>
-            </section>
-        </ng-template>
-
-        </ion-card>
-    </div>
-
+      <ng-template #updateButton>
+        <section>
+          <ion-button
+            expand="block"
+            (click)="updateCalendars()"
+            [disabled]="!contactForm.valid"
+            >{{ionButton}}
+          </ion-button>
+        </section>
+      </ng-template>
+    </ion-card>
+  </div>
 </ion-content>
