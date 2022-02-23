@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from '@angular/fire/compat/firestore';
-import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { UserDetails } from '../interfaces/userDetails';
 import { AuthService } from './auth.service';
 
@@ -14,9 +14,11 @@ export class UserService {
   userCollection2: AngularFirestoreCollection<UserDetails>;
   //myIdUser = localStorage.getItem('idUser');
   myIdUser;
+  idUserSubject = new BehaviorSubject(null);
+
 
   constructor(public afs: AngularFirestore,
-) {
+  ) {
     this.userCollection = this.afs.collection('users');
   }
 
@@ -32,12 +34,23 @@ export class UserService {
     return this.userCollection.snapshotChanges().pipe(
       map(changes => changes.map(a => {
         const data = a.payload.doc.data() as UserDetails;
-        data.id = a.payload.doc.id;
+        data.idDocument = a.payload.doc.id;
         return data;
       })));
   }
 
   getUserDetailsInformation(idUser?: string): Observable<any> {
+
+
+    //  return this.idUserSubject.pipe(
+    //   switchMap((idUserSubject) => {
+    //     console.log('userSubject');
+
+    //     console.log(idUserSubject);
+
+    //     return of(1);
+    //   })
+    // );
 
     if (idUser == null) {
       console.log('moje idecko ' + this.myIdUser);
@@ -46,16 +59,19 @@ export class UserService {
     }
 
     this.userCollection2 = this.afs.collection('users',
-      ref => ref.where('id', '==', idUser)
+      ref => ref.where('idUser', '==', idUser)
     );
 
     idUser = null;
 
-    // return this.userCollection2.doc(idUser).get().pipe(
-    //   map(changes => {
-    //     const data = changes.data();
-    //   })
-    // );
+
+    //this  working
+    return this.userCollection2.snapshotChanges().pipe(
+      map(changes => changes.map(a => {
+        const data = a.payload.doc.data() as UserDetails;
+        data.idUser = a.payload.doc.id;
+        return data;
+      })));
 
 
 
@@ -72,14 +88,6 @@ export class UserService {
     //       console.log('////////////////// ', response))
     //   );
 
-
-    //this is working
-    return this.userCollection2.snapshotChanges().pipe(
-      map(changes => changes.map(a => {
-        const data = a.payload.doc.data() as UserDetails;
-        data.id = a.payload.doc.id;
-        return data;
-      })));
   }
 
   // getMeetingsByIdBusiness(idBusiness: string): Observable<Meeting[]> {

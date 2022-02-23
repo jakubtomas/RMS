@@ -10,7 +10,6 @@
       <ion-back-button defaultHref="#"></ion-back-button>
     </ion-buttons>
 
-
     <ion-title *ngIf="!business">My Calendar </ion-title>
     <ion-title *ngIf="business"
       >Business Calendar {{business.nameOrganization}}</ion-title
@@ -19,9 +18,26 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-card-header *ngIf="business">
-    <p>Address {{business.nameStreetWithNumber}}</p>
-    <p>City {{business.city}}</p>
+
+
+  <ion-card-header class="information" *ngIf="business">
+
+    <div class="item">
+      <ion-icon name="information-circle-outline"></ion-icon>
+      <p>Organization {{business.nameOrganization}}</p>
+    </div>
+
+    <div class="item">
+      <ion-icon name="business"></ion-icon>
+      <p>City {{business.city}}</p>
+    </div>
+
+    <div class="item">
+      <ion-icon name="location-outline"></ion-icon>
+      <p>Address {{business.nameStreetWithNumber}}</p>
+    </div>
+
+
   </ion-card-header>
 
   <div class="calendar">

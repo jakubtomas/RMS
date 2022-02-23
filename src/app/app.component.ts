@@ -55,7 +55,7 @@ export class AppComponent implements OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    //this.getUserDetails();
+    this.getUserDetails();
   }
 
   getUserDetails(): void {

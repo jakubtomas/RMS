@@ -50,6 +50,10 @@ export class DashboardPage implements OnInit {
     //   console.log(value);
     // });
 
+    this.authService.subject.subscribe(value => {
+      console.log('subject');
+      console.log(value);
+    });
 
 
     // this.userService.getUserDetailsInformation().subscribe((value) => {
@@ -73,6 +77,9 @@ export class DashboardPage implements OnInit {
       }
     });
 
+  }
+  resetUserDetails(): void{
+    this.userDetails = null;
   }
 
   getUserDetails(): void {
@@ -122,7 +129,8 @@ export class DashboardPage implements OnInit {
   ionViewDidLeave() {
     console.log('ionViewWIll leave -------------------------------------');
     this.userDetails = null;
-
   }
+
+
 
 }

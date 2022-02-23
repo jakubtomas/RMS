@@ -1,84 +1,91 @@
 <script src="create-meeting.module.ts"></script>
 <ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
 
-    <ion-toolbar>
-        <ion-buttons slot="start">
-            <ion-menu-button></ion-menu-button>
-        </ion-buttons>
-        <ion-title>Create meeting </ion-title>
-    </ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="#"></ion-back-button>
+    </ion-buttons>
+    
+    <ion-title>Create meeting </ion-title>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <ion-row>
+    <!-- Move back one screen of the slides -->
+    <ion-col size="2">
+      <ion-button fill="clear" (click)="back()">
+        <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-col>
 
+    <ion-col size="8" class="ion-text-center">
+      <h2>{{ viewTitle }}</h2>
+    </ion-col>
 
-    <ion-row>
-        <!-- Move back one screen of the slides -->
-        <ion-col size="2">
-            <ion-button fill="clear" (click)="back()">
-                <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
-            </ion-button>
-        </ion-col>
+    <!-- Move forward one screen of the slides -->
+    <ion-col size="2">
+      <ion-button fill="clear" (click)="next()">
+        <ion-icon name="arrow-forward" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-col>
+  </ion-row>
 
-        <ion-col size="8" class="ion-text-center">
-            <h2>{{ viewTitle }}</h2>
-        </ion-col>
+  <calendar
+    [eventSource]="eventSource"
+    [calendarMode]="calendar.mode"
+    [currentDate]="calendar.currentDate"
+    (onCurrentDateChanged)="onCurrentDateChanged($event)"
+    (onTitleChanged)="onViewTittleChanged($event)"
+  >
+  </calendar>
 
-        <!-- Move forward one screen of the slides -->
-        <ion-col size="2">
-            <ion-button fill="clear" (click)="next()">
-                <ion-icon name="arrow-forward" slot="icon-only"></ion-icon>
-            </ion-button>
-        </ion-col>
-    </ion-row>
-
-    <calendar [eventSource]="eventSource"
-              [calendarMode]="calendar.mode"
-              [currentDate]="calendar.currentDate"
-              (onCurrentDateChanged)="onCurrentDateChanged($event)"
-              (onTitleChanged)="onViewTittleChanged($event)"
-    >
-    </calendar>
-
-    <ion-card>
-
-
-        <ion-list *ngIf="timeMeeting.length > 0 && !pastDay ; else closedDay">
-            <ion-item>
-                <ion-label class="orderBy" style="cursor:pointer"
-                           (click)="reverseTimeList()"> <!--todo hover color and mouse type change-->
-                    Time &#x25B2; &#x25BC;
-                </ion-label>
-
-
-            </ion-item>
-            <ion-item-sliding *ngFor="let item of timeMeeting ">
-                <ion-item *ngIf="item.isAvailable; else isNotAvailable" (click)="selectTime(item)" class="item">
-
-                    <ion-label class="isAvailable" style="cursor:pointer">{{item.start}} {{item.end}} </ion-label>
-
-                </ion-item>
-                <ng-template #isNotAvailable >
-                    <ion-item >
-                        <a>
-                            <!--<div class="ng-binding">{{item.start}} {{item.end}}</div>-->
-                            <ion-label>{{item.start}} {{item.end}} </ion-label>
-                        </a>
-                    </ion-item>
-                </ng-template>
-
-
-            </ion-item-sliding>
-
-        </ion-list>
-
-        <ng-template #closedDay  >
-            <h2 *ngIf="businessCalendar " class="closedDay">For this day opening hours are not available. </h2>
-            <h2 *ngIf="!businessCalendar  " class="closedDay"> For this business do not exist opening hours. Please contact Owner.</h2>
-            <h2 *ngIf="pastDay " class="closedDay">  You can not create appointment for past.</h2>
+  <ion-card>
+    <ion-list *ngIf="timeMeeting.length > 0 && !pastDay ; else closedDay">
+      <ion-item>
+        <ion-label
+          class="orderBy"
+          style="cursor: pointer"
+          (click)="reverseTimeList()"
+        >
+          <!--todo hover color and mouse type change-->
+          Time &#x25B2; &#x25BC;
+        </ion-label>
+      </ion-item>
+      <ion-item-sliding *ngFor="let item of timeMeeting ">
+        <ion-item
+          *ngIf="item.isAvailable; else isNotAvailable"
+          (click)="selectTime(item)"
+          class="item"
+        >
+          <ion-label class="isAvailable" style="cursor: pointer"
+            >{{item.start}} {{item.end}}
+          </ion-label>
+        </ion-item>
+        <ng-template #isNotAvailable>
+          <ion-item>
+            <a>
+              <!--<div class="ng-binding">{{item.start}} {{item.end}}</div>-->
+              <ion-label>{{item.start}} {{item.end}} </ion-label>
+            </a>
+          </ion-item>
         </ng-template>
+      </ion-item-sliding>
+    </ion-list>
 
-
-
-    </ion-card>
+    <ng-template #closedDay>
+      <h2 *ngIf="businessCalendar " class="closedDay">
+        For this day opening hours are not available.
+      </h2>
+      <h2 *ngIf="!businessCalendar  " class="closedDay">
+        For this business do not exist opening hours. Please contact Owner.
+      </h2>
+      <h2 *ngIf="pastDay " class="closedDay">
+        You can not create appointment for past.
+      </h2>
+    </ng-template>
+  </ion-card>
 </ion-content>

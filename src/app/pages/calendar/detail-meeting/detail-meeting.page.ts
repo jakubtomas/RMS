@@ -18,6 +18,7 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
   docIdMeeting;
   meetingDetails: Meeting;
   userDetails: UserDetails;
+  ownerPermissionBusiness = false;
 
   constructor(private route: ActivatedRoute,
     private router: Router,
@@ -29,6 +30,15 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.route.queryParams.subscribe((params: Params) => {
+
+      if (params.ownerPermissionBusiness) {
+        console.log('priradenie true ');
+
+        this.ownerPermissionBusiness = true;
+      } else {
+        console.log('priradenie false  ');
+        this.ownerPermissionBusiness = false;
+      }
 
       if (params.docIdMeeting !== undefined) {
         this.docIdMeeting = params.docIdMeeting;
@@ -134,6 +144,15 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
     if (docIdMeeting) {
       this.meetingService.deleteMeeting(docIdMeeting).then(value => {
 
+
+        if (this.ownerPermissionBusiness) {
+
+          this.router.navigate(['/calendar-meetings'], {
+            queryParams: {
+              businessId: this.business.id,
+            }
+          });
+        }
         this.router.navigate(['/meetings']);
         this.showToast('Meeting have been successfully deleted ');
 

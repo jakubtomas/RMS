@@ -1,5 +1,6 @@
 export interface UserDetails{
-  id: string;
+  idUser: string;
+  idDocument?: string;
   firstName: string;
   lastName: string;
 }

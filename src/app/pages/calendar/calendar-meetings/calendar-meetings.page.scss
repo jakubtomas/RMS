@@ -8,11 +8,9 @@
   .event-detail-container {
     display: none;
   }
-
   .monthview-container {
     display: contents;
   }
-
 }
 
 .event-detail-container[_ngcontent-meq-c141] {
@@ -37,13 +35,28 @@ ion-item.item a ion-label {
 }
 
 .calendar {
-
   max-width: 370px;
   margin: 0 auto;
-
 }
 h3{
   text-align: center;
   width: 100%;
  margin-top: 45px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+}
+.item ion-icon {
+  display: inline-block;
+  font-size: 28px;
+}
+.item p {
+  display: inline-block;
+  //font-size: 28px;
+  margin-left: 15px;
+}
+.information{
+  text-align: center;
 }

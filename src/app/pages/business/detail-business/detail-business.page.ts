@@ -18,7 +18,7 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
     selectedBusinessId: string;
     calendar: Calendar;
     calendars: Calendar[];
-    isThisMyBusiness: boolean = false;
+    isThisMyBusiness = false;
     subscription;
 
     timeZone = moment().format().toString().substring(19, 25);
@@ -34,26 +34,26 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
     }
 
 
-    ngOnInit() {
+    ngOnInit(): void {
 
         this.route.queryParams.subscribe((params: Params) => {
 
-            if (params['businessId'] !== undefined) {
-                this.selectedBusinessId = params['businessId'];
+            if (params.businessId !== undefined) {
+                this.selectedBusinessId = params.businessId;
 
-                this.controlBusinessPermission(params['businessId']);
-                this.getOneBusiness(params['businessId']);
+                this.controlBusinessPermission(params.businessId);
+                this.getOneBusiness(params.businessId);
                 this.getCalendars();
 
             }
-            if (params['updateDone']) {
-                this.messageFirebase = 'Business successfully updated'
+            if (params.updateDone) {
+              this.messageFirebase = 'Business successfully updated';
             }
         });
     }
 
     async showToast(msg: string) {
-        let toast = await this.toastCtrl.create({
+        const toast = await this.toastCtrl.create({
             message: msg,
             duration: 3000,
             position: 'middle'
@@ -77,10 +77,8 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
     controlBusinessPermission(documentID: string): void {
 
         this.businessService.getBusinessPermission(documentID).subscribe((permissions) => {
-
                 const myId = localStorage.getItem('idUser');
                 if (permissions.idUser === myId) {
-
                     this.isThisMyBusiness = true;
                 }
 
@@ -92,12 +90,12 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
 
     selectMeetings(): void {
         //this.router.navigate(['/register-business', {businessId: this.selectedBusinessId}]);
-        this.router.navigate(['/calendar-meetings'], {queryParams: {businessId: this.selectedBusinessId}})
+      this.router.navigate(['/calendar-meetings'], { queryParams: { businessId: this.selectedBusinessId } });
 
     }
     editBusiness(): void {
         //this.router.navigate(['/register-business', {businessId: this.selectedBusinessId}]);
-        this.router.navigate(['/register-business'], {queryParams: {businessId: this.selectedBusinessId}})
+      this.router.navigate(['/register-business'], { queryParams: { businessId: this.selectedBusinessId } });
 
     }
 
@@ -155,56 +153,11 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
 
     changeDateFormat(): void {
 
-        const newWeek = this.calendar.week.map((item) => {
-           /* if (index == 6) {
-
-
-                const basicTime = '10:25 AM';
-                const date = moment();
-
-                console.log(' what is date ');
-                console.log(date);
-
-                console.log(' what is date ');
-                console.log('hello' + moment().format() + '    ' + this.timeZone);
-
-
-                const newTime = moment('Mon 03-Jul-2017, 11:00 AM', 'ddd DD-MMM-YYYY, hh:mm A');
-                console.log('newtime  ' + newTime);
-
-
-                // const stringForFun = 'Mon 03-Jul-2017, ' + basicTime;
-                const newTime2 = moment('Mon 03-Jul-2017, ' + basicTime, 'ddd DD-MMM-YYYY, hh:mm A');
-
-                console.log('newtime 2  ' + newTime2);
-
-
-/!*
-                this.currentTime = moment
-                    .duration(moment(item.closingHours, 'HH:mm').add("70","minutes")
-                        .diff(moment(item.openingHours, 'HH:mm'))
-                    ).asMinutes();
-*!/
-
-                return {
-                    day: item.day,
-                    openingHours: item.openingHours ,
-                    closingHours: item.closingHours
-                };
-            } else {
-                return {
-                    day: item.day,
-                    openingHours: item.openingHours ,
-                    closingHours: item.closingHours
-                };
-            }*/
-
-            return {
+        const newWeek = this.calendar.week.map((item) => ({
                 day: item.day,
                 openingHours: item.openingHours ,
                 closingHours: item.closingHours
-            };
-        });
+            }));
 
         this.calendar = {
             id: this.calendar.id,
@@ -217,37 +170,37 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
     }
 
     getCalendars(): void {
-        this.calendarService.getCalendars().subscribe(calendars => {
-            this.calendars = calendars;
+      this.calendarService.getCalendars().subscribe(calendars => {
+        this.calendars = calendars;
 
-            console.log(calendars.length);
+        console.log(calendars.length);
 
-            if (this.calendars.length > 0) {
-                this.calendars.forEach(calendar => {
-                    console.log(calendar.idBusiness + '  ' + this.selectedBusinessId);
+        if (this.calendars.length > 0) {
+          this.calendars.forEach(calendar => {
+            console.log(calendar.idBusiness + '  ' + this.selectedBusinessId);
 
-                    if (calendar.idBusiness === this.selectedBusinessId) {
-                        console.log('your calendar data are ');
-                        console.log(calendar);
-                        this.calendar = calendar;
-                        //call function fore format date
-                        this.changeDateFormat();
-                    }
-                });
+            if (calendar.idBusiness === this.selectedBusinessId) {
+              console.log('your calendar data are ');
+              console.log(calendar);
+              this.calendar = calendar;
+              //call function fore format date
+              this.changeDateFormat();
             }
-        }, error => {
-            console.log('you got error ');
-            console.log(error);
-        })
+          });
+        }
+      }, error => {
+        console.log('you got error ');
+        console.log(error);
+      });
     }
 
     createCalendar(): void {
-        this.router.navigate(['/create-calendar'],
-            {queryParams: {businessId: this.selectedBusinessId}})
+      this.router.navigate(['/create-calendar'],
+        { queryParams: { businessId: this.selectedBusinessId } });
     }
 
     editCalendar(): void {
-        this.router.navigate(['/create-calendar'], {queryParams: {docCalendarId: this.calendar.id}})
+      this.router.navigate(['/create-calendar'], { queryParams: { docCalendarId: this.calendar.id } });
     }
 
     deleteCalendar(): void {
@@ -263,11 +216,11 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
     }
 
     createMeeting(): void {
-        this.router.navigate(['/create-meeting'],
-            {queryParams: {businessId: this.selectedBusinessId}})
+      this.router.navigate(['/create-meeting'],
+        { queryParams: { businessId: this.selectedBusinessId } });
     }
 
-    ngOnDestroy():void {
+    ngOnDestroy(): void {
       //  this.subscription.unsubscribe();
     }
 

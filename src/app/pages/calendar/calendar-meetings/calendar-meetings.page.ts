@@ -25,6 +25,7 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
   selectedDateByCalendar: Date;
   selectedBusinessId: string;
   meetingWithBusiness = [];
+  ownerPermissionBusiness = false;
 
 
   private idUser = localStorage.getItem('idUser');
@@ -61,6 +62,7 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
 
       if (params.businessId !== undefined) {
         this.selectedBusinessId = params.businessId;
+        this.controlBusinessPermission(params.businessId);
         console.log('I got business id ' + this.selectedBusinessId);
 
         this.getOneBusiness(this.selectedBusinessId);
@@ -70,6 +72,22 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
 
       }
     });
+  }
+
+  controlBusinessPermission(documentID: string): void {
+
+    this.businessService.getBusinessPermission(documentID).subscribe((permissions) => {
+      const myId = localStorage.getItem('idUser');
+      if (permissions.idUser === myId) {
+        console.log('business Permissions true ');
+
+        this.ownerPermissionBusiness = true;
+      }
+
+    }, error => {
+      console.log(error);
+    }
+    );
   }
 
   next(): void {
@@ -99,11 +117,12 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
     this.meetingWithBusiness = [];
 
     if (this.selectedBusinessId && dateForFirestore) {
+      this.ownerPermissionBusiness = true;
       this.getMeetingsByIdBusinessByDate(this.selectedBusinessId, dateForFirestore);
     } else {
+      this.ownerPermissionBusiness = false;
       this.getMeetingsByIdUserByDate(this.idUser, dateForFirestore);
       console.log('here we are mnau ');
-
     }
 
   }
@@ -149,22 +168,22 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
   private getMeetingsByIdBusinessByDate(idBusiness: string, dateForCalendar: string): void {
     console.log('11111111111111111111111111111111111111111');
 
-    this.meetingService.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar).subscribe(meetings => {
-      //this.meetingService.getMeetingByIdBusinessByDateWithUserDetails(idBusiness, dateForCalendar).subscribe(meetings => {
+    //this.meetingService.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar).subscribe(meetings => {
+    this.meetingService.getMeetingByIdBusinessByDateWithUserDetails(idBusiness, dateForCalendar).subscribe(meetings => {
       //this.userService.getUserDetailsInformation('Rd6uOzjsi6X3hHQISa2zS7T90mt2').subscribe(meetings => {
 
       console.log('Meeting');
       console.log(meetings);
 
-      this.timeMeeting = meetings;
+      // this.timeMeeting = meetings;
 
-      const helpArray = [];
+      // const helpArray = [];
 
-      meetings.map(meeting => {
-        helpArray.push({ meeting });
-      });
+      // meetings.map(meeting => {
+      //   helpArray.push({ meeting });
+      // });
 
-      this.meetingWithBusiness = helpArray;
+      // this.meetingWithBusiness = helpArray;
 
       console.log('????????????');
       console.log(this.meetingWithBusiness);
@@ -179,10 +198,12 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
   }
 
   selectMeeting(meeting: Meeting): void {
+
     this.router.navigate(['/detail-meeting'], {
       queryParams: {
         docIdMeeting: meeting.id,
         idBusiness: meeting.idBusiness,
+        ownerPermissionBusiness: this.ownerPermissionBusiness,
         //todo add parametaer calendar link after delete and change should redirect to back
         // on this url calendar meetints
       }

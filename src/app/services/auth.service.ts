@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import firebase from 'firebase/compat';
 import UserCredential = firebase.auth.UserCredential;
 import { getAuth, updateProfile, User } from 'firebase/auth';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { BusinessService } from './business.service';
@@ -15,6 +15,7 @@ import { UserDetails } from '../interfaces/userDetails';
 export class AuthService {
 
   userId: any;
+   subject = new BehaviorSubject(null);
 
   constructor(
     private afAuth: AngularFireAuth,
@@ -22,6 +23,7 @@ export class AuthService {
     private userService: UserService
     // private User: User
   ) {//todo maybe is better use localStorage
+    this.subject.next('hello');
 
     console.log(this.afAuth.authState);
     console.log('chekc this ');
@@ -81,33 +83,19 @@ export class AuthService {
 
 
         const user: UserDetails = {
-          id: userCredential.user.uid,
+          idUser: userCredential.user.uid,
           firstName,
           lastName,
         };
 
         console.log(user);
-
-
         userCredential.user.sendEmailVerification();
-
 
         return this.userService.addUser(user).then(data => {
           console.log('detail information has been created ');
           console.log(data);
 
         });
-
-
-        // todo create collection for saving FirstName LastName with id User ,
-        // Try is possible to take displayName from user by id ??
-        // this will be very good
-        // than create function which send request for save this data
-        // response maybe create message or something like this
-
-        // what happend when do not save this data
-        // show message for again saving data in form
-
 
         return null;
       }).catch((error) => {

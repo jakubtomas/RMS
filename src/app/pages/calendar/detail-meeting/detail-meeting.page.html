@@ -1,7 +1,12 @@
 <ion-header>
   <ion-toolbar color="">
-    <ion-buttons slot="start">
+
+    <ion-buttons slot="end">
       <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="#"></ion-back-button>
     </ion-buttons>
 
     <ion-title>Information about meeting</ion-title>
@@ -12,26 +17,50 @@
 <ion-content class="ion-padding">
   <ion-card *ngIf="business">
     <ion-card-header>
-      <ion-card-title>Organization {{business.nameOrganization}}</ion-card-title>
-      <ion-card-subtitle>Address {{business.nameStreetWithNumber}}</ion-card-subtitle>
-      <ion-card-subtitle>City {{business.city}}</ion-card-subtitle>
-      <ion-card-subtitle>Zip Code {{business.zipCode}}</ion-card-subtitle>
+      <div class="item">
+        <ion-icon name="information-circle-outline"></ion-icon>
+        <ion-card-subtitle
+          ><b>Organization</b> {{business.nameOrganization}}
+        </ion-card-subtitle>
+      </div>
+
+      <div class="item">
+        <ion-icon name="location-outline"></ion-icon>
+        <ion-card-subtitle><b>Address</b> {{business.nameStreetWithNumber}}</ion-card-subtitle>
+      </div>
+
+      <div class="item">
+        <ion-icon name="business"></ion-icon>
+        <ion-card-subtitle><b>City</b> {{business.city}}</ion-card-subtitle>
+      </div>
+
+      <div class="item">
+        <ion-icon name="mail"></ion-icon>
+        <ion-card-subtitle><b>Zip Code</b> {{business.zipCode}}</ion-card-subtitle>
+      </div>
+
+      <div class="item">
+        <ion-icon name="calendar-sharp"></ion-icon>
+        <ion-card-subtitle><b>Date</b> {{meetingDetails.date }}</ion-card-subtitle>
+      </div>
+
+      <div class="item">
+        <ion-icon name="time-sharp"></ion-icon>
+        <ion-card-subtitle><b>Time </b> {{meetingDetails.time.start + '  ' + meetingDetails.time.end}}</ion-card-subtitle>
+      </div>
+
+      <div class="item">
+        <ion-icon name="person-circle"></ion-icon>
+        <ion-card-subtitle><b>Customer</b> {{userDetails.firstName }}   {{userDetails.lastName }}</ion-card-subtitle>
+      </div>
+
     </ion-card-header>
 
-    <ion-card-header>
-      <ion-card-subtitle><b>Date</b> {{meetingDetails.date }}</ion-card-subtitle>
+    <!-- <ion-card-header>
       <ion-card-subtitle><b>ID Business</b>   {{meetingDetails.idBusiness }}</ion-card-subtitle>
       <ion-card-subtitle><b>ID User</b> {{meetingDetails.idUser }}</ion-card-subtitle>
-      <ion-card-subtitle>{{meetingDetails.time.start + '  ' + meetingDetails.time.end}}</ion-card-subtitle>
       <ion-card-subtitle>{{meetingDetails.time.startMinutes}}</ion-card-subtitle>
-    </ion-card-header>
-
-    <ion-card-header>
-      <ion-card-subtitle><b>FirstName</b> {{userDetails.firstName }}</ion-card-subtitle>
-      <ion-card-subtitle><b>LastName</b> {{userDetails.lastName }}</ion-card-subtitle>
-    </ion-card-header>
-
-
+    </ion-card-header> -->
 
     <section class="buttons">
       <ion-button color="danger" (click)="showAlertForDeleteMeeting(docIdMeeting)">Delete Meeting</ion-button>

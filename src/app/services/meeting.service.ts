@@ -65,52 +65,52 @@ export class MeetingService {
       })));
   }
 
-  getMeetingByIdBusinessByDateWithUserDetails(idBusiness: string, dateForCalendar: string) {
-    return this.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar).pipe(
-      switchMap((arrayMeetings: Meeting[]) => {
-
-        arrayMeetings.map((meeting) => {
-          console.log(meeting);
-          console.log(meeting.idUser);
-
-          this.userService.getUserDetailsInformation(meeting.idUser).subscribe(value => {
-            console.log('value');
-            console.log(value);
-
-           });
-
-        });
-
-        console.log(arrayMeetings);
-        return of(1);
-      }
-
-      ));
-  }
-
   // getMeetingByIdBusinessByDateWithUserDetails(idBusiness: string, dateForCalendar: string) {
   //   return this.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar).pipe(
-  //     switchMap((arrayMeetings: Meeting[]) =>
-  //       zip(arrayMeetings.map(meeting => {
+  //     switchMap((arrayMeetings: Meeting[]) => {
 
-  //         console.log('---');
+  //       arrayMeetings.map((meeting) => {
   //         console.log(meeting);
+  //         console.log(meeting.idUser);
 
-  //         return this.userService.getUserDetailsInformation(meeting.idUser).pipe(
-  //           map((userDetails) => {
-  //             console.log(userDetails);
+  //         this.userService.getUserDetailsInformation(meeting.idUser).subscribe(value => {
+  //           console.log('value');
+  //           console.log(value);
 
-  //             return { userDetails, meeting };
-  //           }
-  //           )).pipe(
-  //             tap(x =>
-  //               console.log('x value ' + JSON.stringify(x))
-  //             )
-  //           );
-  //       }))
-  //     )
-  //   );
+  //          });
+
+  //       });
+
+  //       console.log(arrayMeetings);
+  //       return of(1);
+  //     }
+
+  //     ));
   // }
+
+  getMeetingByIdBusinessByDateWithUserDetails(idBusiness: string, dateForCalendar: string) {
+    return this.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar).pipe(
+      switchMap((arrayMeetings: Meeting[]) =>
+        zip(arrayMeetings.map(meeting => {
+
+          console.log('---');
+          console.log(meeting);
+
+          return this.userService.getUserDetailsInformation(meeting.idUser).pipe(
+            map((userDetails) => {
+              console.log(userDetails);
+
+              return { userDetails, meeting };
+            }
+            )).pipe(
+              tap(x =>
+                console.log('x value ' + JSON.stringify(x))
+              )
+            );
+        }))
+      )
+    );
+  }
 
   getMeetingsByIdUserOrderByDate(idUser: string, currentDay?: string): Observable<Meeting[]> {
 
