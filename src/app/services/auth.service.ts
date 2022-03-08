@@ -117,6 +117,7 @@ export class AuthService {
       { code: 'auth/user-disabled', message: 'The user corresponding to the given email has been disabled.' },
       { code: 'auth/user-not-found', message: 'User/Email not found ' },
       { code: 'auth/wrong-password', message: 'The password is invalid ' },
+      { code: 'auth/too-many-requests', message: 'Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later' },
     ]; /*todo osetrit moznu result a pozri dalsie dokumentaciu
          auth/too-many-requests*/
     //return the array only with one object

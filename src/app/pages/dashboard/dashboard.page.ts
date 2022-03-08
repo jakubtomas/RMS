@@ -44,6 +44,7 @@ export class DashboardPage implements OnInit, OnDestroy {
     this.getUserId();
 
   }
+
   ngOnInit() {
     console.log('all details');
     // this.getUserDetails();
