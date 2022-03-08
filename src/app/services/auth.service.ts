@@ -15,7 +15,7 @@ import { UserDetails } from '../interfaces/userDetails';
 export class AuthService {
 
   userId: any;
-   subject = new BehaviorSubject(null);
+  userId$ = new BehaviorSubject(null);
 
   constructor(
     private afAuth: AngularFireAuth,
@@ -23,7 +23,7 @@ export class AuthService {
     private userService: UserService
     // private User: User
   ) {//todo maybe is better use localStorage
-    this.subject.next('hello');
+
 
     console.log(this.afAuth.authState);
     console.log('chekc this ');
@@ -37,24 +37,21 @@ export class AuthService {
         console.log(user.emailVerified);
         console.log('prihlasovacie id  ' + user.uid);
 
+        this.userId$.next(user.uid);
         console.log(user.toJSON());
-
-
-        // this.user = user;
-        // localStorage.setItem('idUser', user.uid);
-        // localStorage.setItem('email', user.email);
-        // localStorage.setItem('emailVerified', user.emailVerified + '');
 
       } else {
         this.setNullLocalStorage();
       }
     });
   }
-  setUser(user: UserCredential): void {
-    if (user.user.uid) {
-      console.log('nastavujem idecko ' + user.user.uid);
+  setUser(userCredential: UserCredential): void {
+    if (userCredential.user.uid) {
+      console.log('nastavujem idecko ' + userCredential.user.uid);
+      localStorage.setItem('idUser', userCredential.user.uid);
 
-      this.userId = user.user.uid;
+      this.userId$.next(userCredential.user.uid);
+      this.userId = userCredential.user.uid;
     }
   }
 
@@ -81,7 +78,7 @@ export class AuthService {
 
         console.log('moje idecko pre pridanie dat ' + userCredential.user.uid);
 
-
+        this.setUser(userCredential);
         const user: UserDetails = {
           idUser: userCredential.user.uid,
           firstName,

@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { map, mergeMap, tap } from 'rxjs/operators';
 import { UserDetails } from 'src/app/interfaces/userDetails';
 import { UserService } from 'src/app/services/user.service';
 import { AuthService } from '../../services/auth.service';
@@ -12,7 +13,7 @@ import { BusinessService } from '../../services/business.service';
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
 })
-export class DashboardPage implements OnInit {
+export class DashboardPage implements OnInit, OnDestroy {
 
   user: Observable<any>;
   userId;
@@ -22,6 +23,7 @@ export class DashboardPage implements OnInit {
   businessMode = this.businessService.businessMode$;
   userDetails: UserDetails;
 
+  subscription: Subscription;
 
   constructor(
     private route: ActivatedRoute,
@@ -38,22 +40,21 @@ export class DashboardPage implements OnInit {
   //  ionViewWillEnter  ionViewWillLeave
   ionViewWillEnter() {
     console.log('ionViewWillENter');
-    console.log('-----------------------------');
+    console.log('-----------1--------------------');
+    this.getUserId();
 
-    this.getUserDetails();
   }
   ngOnInit() {
     console.log('all details');
     // this.getUserDetails();
 
+
     // this.userService.getAllUsersDetails().subscribe((value) => {
     //   console.log(value);
     // });
 
-    this.authService.subject.subscribe(value => {
-      console.log('subject');
-      console.log(value);
-    });
+
+
 
 
     // this.userService.getUserDetailsInformation().subscribe((value) => {
@@ -61,29 +62,29 @@ export class DashboardPage implements OnInit {
     //   console.log(value);
     // });
 
-    this.isActiveMode = this.businessService.isActiveMode;
-    this.afAuth.authState.subscribe(user => {
-      console.log('Dashboard: user', user);
-
-      if (user) {
-        this.email = user.email.toLowerCase();
-        this.emailVerified = user.emailVerified;
-        this.userId = user.uid;
-
-      } else {
-        this.email = null;
-        this.emailVerified = null;
-        this.userId = null;
-      }
-    });
-
   }
-  resetUserDetails(): void{
+  resetUserDetails(): void {
     this.userDetails = null;
   }
 
-  getUserDetails(): void {
-    this.userService.getUserDetailsInformation().subscribe((userDetails) => {
+  getUserId(): void {
+
+    this.authService.userId$.subscribe(userId => {
+      console.log('subject');
+      console.log(userId);
+      if (userId) {
+        this.getUserDetails(userId);
+      }
+    });
+
+    // this.authService.userId$.pipe(
+    //   mergeMap(async (value) => this.getUserDetails(value))
+    // );
+  }
+
+  getUserDetails(idUser: string): void {
+
+    this.subscription = this.userService.getUserDetailsInformation(idUser).subscribe((userDetails) => {
       console.log('userDetails');
 
       console.log(userDetails);
@@ -131,6 +132,8 @@ export class DashboardPage implements OnInit {
     this.userDetails = null;
   }
 
-
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
 
 }

@@ -18,8 +18,10 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
   docIdMeeting;
   meetingDetails: Meeting;
   userDetails: UserDetails;
-  ownerPermissionBusiness = false;
-
+  public ownerPermissionBusiness = false;
+  redirectFromCalendar = false;
+  myMeeting = false;
+  private idUser = localStorage.getItem('idUser');
   constructor(private route: ActivatedRoute,
     private router: Router,
     private toastCtrl: ToastController,
@@ -31,13 +33,14 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.route.queryParams.subscribe((params: Params) => {
 
-      if (params.ownerPermissionBusiness) {
-        console.log('priradenie true ');
 
-        this.ownerPermissionBusiness = true;
+
+      if (params.redirectFromCalendar) {
+        console.log('idem s kalendara');
+
+        this.redirectFromCalendar = true;
       } else {
-        console.log('priradenie false  ');
-        this.ownerPermissionBusiness = false;
+        console.log('neidem s kalendara  ');
       }
 
       if (params.docIdMeeting !== undefined) {
@@ -49,6 +52,7 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
       }
 
       if (params.idBusiness) {
+        this.controlBusinessPermission(params.idBusiness);
         this.getOneBusiness(params.idBusiness);
       }
     });
@@ -114,6 +118,26 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
     await toast.present();
   }
 
+  private controlBusinessPermission(documentID: string): void {
+
+    this.businessService.getBusinessPermission(documentID).subscribe((permissions) => {
+
+      const myId = localStorage.getItem('idUser');
+      if (permissions.idUser === myId) {
+        console.log('this is my business ');
+
+        this.ownerPermissionBusiness = true;
+      } else {
+        console.log('this is not your business ');
+        this.ownerPermissionBusiness = false;
+      }
+
+    }, error => {
+      console.log(error);
+    }
+    );
+  }
+
 
   private getOneMeeting(docIdMeeting: string) {
     if (docIdMeeting) {
@@ -135,12 +159,36 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
         if (meetingData.userDetails !== null) {
           this.userDetails = meetingData.userDetails[0];
         }
+
+
+        console.log(meetingData);
+        console.log(meetingData.meeting.idUser);
+        console.log('-----');
+        console.log(this.idUser);
+
+        if (meetingData.meeting.idUser === this.idUser) {
+          this.myMeeting = true;
+          console.log('toto je moj meeting');
+
+        } else {
+          console.log('toto nieje moj meeting');
+
+        }
+
+
+
       });
     }
   }
 
 
   private deleteMeeting(docIdMeeting: string): void {
+
+    if (!this.ownerPermissionBusiness && !this.myMeeting) {
+      this.showToast('You can not delete this meeting ');
+      return;
+    }
+
     if (docIdMeeting) {
       this.meetingService.deleteMeeting(docIdMeeting).then(value => {
 
@@ -152,8 +200,14 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
               businessId: this.business.id,
             }
           });
+        } else {
+
+          if (this.redirectFromCalendar) {
+            this.router.navigate(['/calendar-meetings']);
+          } else {
+            this.router.navigate(['/meetings']);
+          }
         }
-        this.router.navigate(['/meetings']);
         this.showToast('Meeting have been successfully deleted ');
 
       }).catch((error) => {

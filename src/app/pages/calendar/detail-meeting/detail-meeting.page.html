@@ -1,6 +1,5 @@
 <ion-header>
   <ion-toolbar color="">
-
     <ion-buttons slot="end">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
@@ -12,7 +11,6 @@
     <ion-title>Information about meeting</ion-title>
   </ion-toolbar>
 </ion-header>
-
 
 <ion-content class="ion-padding">
   <ion-card *ngIf="business">
@@ -26,7 +24,9 @@
 
       <div class="item">
         <ion-icon name="location-outline"></ion-icon>
-        <ion-card-subtitle><b>Address</b> {{business.nameStreetWithNumber}}</ion-card-subtitle>
+        <ion-card-subtitle
+          ><b>Address</b> {{business.nameStreetWithNumber}}</ion-card-subtitle
+        >
       </div>
 
       <div class="item">
@@ -36,24 +36,33 @@
 
       <div class="item">
         <ion-icon name="mail"></ion-icon>
-        <ion-card-subtitle><b>Zip Code</b> {{business.zipCode}}</ion-card-subtitle>
+        <ion-card-subtitle
+          ><b>Zip Code</b> {{business.zipCode}}</ion-card-subtitle
+        >
       </div>
 
       <div class="item">
         <ion-icon name="calendar-sharp"></ion-icon>
-        <ion-card-subtitle><b>Date</b> {{meetingDetails.date }}</ion-card-subtitle>
+        <ion-card-subtitle
+          ><b>Date</b> {{meetingDetails.date }}</ion-card-subtitle
+        >
       </div>
 
       <div class="item">
         <ion-icon name="time-sharp"></ion-icon>
-        <ion-card-subtitle><b>Time </b> {{meetingDetails.time.start + '  ' + meetingDetails.time.end}}</ion-card-subtitle>
+        <ion-card-subtitle
+          ><b>Time </b> {{meetingDetails.time.start + ' ' +
+          meetingDetails.time.end}}</ion-card-subtitle
+        >
       </div>
 
       <div class="item">
         <ion-icon name="person-circle"></ion-icon>
-        <ion-card-subtitle><b>Customer</b> {{userDetails.firstName }}   {{userDetails.lastName }}</ion-card-subtitle>
+        <ion-card-subtitle
+          ><b>Customer</b> {{userDetails.firstName }} {{userDetails.lastName
+          }}</ion-card-subtitle
+        >
       </div>
-
     </ion-card-header>
 
     <!-- <ion-card-header>
@@ -63,8 +72,11 @@
     </ion-card-header> -->
 
     <section class="buttons">
-      <ion-button color="danger" (click)="showAlertForDeleteMeeting(docIdMeeting)">Delete Meeting</ion-button>
+      <ion-button
+        color="danger"
+        (click)="showAlertForDeleteMeeting(docIdMeeting)"
+        >Delete Meeting</ion-button
+      >
     </section>
   </ion-card>
-
 </ion-content>

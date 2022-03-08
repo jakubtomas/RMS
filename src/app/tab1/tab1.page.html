@@ -1,44 +1,87 @@
 <ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
 
-
-    <ion-toolbar>
-
-        <ion-buttons slot="start">
-            <ion-menu-button></ion-menu-button>
-        </ion-buttons>
-
-        <ion-title>
-            Tab 1 a tak
-        </ion-title>
-    </ion-toolbar>
+    <ion-title> Welcome</ion-title>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <div class="grid-item main">
+    <!-- <div class="icon">
+      <ion-icon class="ion-1x" name="calendar"></ion-icon>
+      <div>Text Hello</div>
+    </div>
 
-    <ion-card>
-        <h1>hello</h1>
+    <div class="icon">
+      <ion-icon class="ion-1x" name="calendar"></ion-icon>
+      <div>Text Hello</div>
+    </div> -->
 
-        <a routerLink="/registration">registration</a>
-        <br>
-        <p>
-            <a routerLink="/register-business">register-business</a>
-        </p>
+    <!-- <div class="searchElement">
+      <ion-icon class="ion-1x" name="calendar"></ion-icon>
+      <p>My Meetings</p>
+    </div>
 
-        <a routerLink="/create-calendar">Create Calendar</a>
+    <div class="searchElement">
+      <ion-icon class="ion-1x" name="calendar"></ion-icon>
+      <p>My Meetings</p>
+    </div>
 
+    <div class="searchElement">
+      <ion-icon class="ion-1x" name="calendar"></ion-icon>
+      <p>My Meetings</p>
+    </div> -->
+  </div>
 
-    </ion-card>
-    <!-- <ion-header collapse="condense">
+  <h1>Reservation Management system</h1>
+
+  <ion-grid fixed class="icons">
+    <ion-row>
+      <ion-col>
+        <div class="searchElement" routerLink="/meetings">
+          <ion-icon class="ion-1x" name="calendar"></ion-icon>
+          <p>Calendar</p>
+        </div>
+      </ion-col>
+
+      <ion-col>
+        <div class="searchElement" routerLink="/meetings">
+          <ion-icon class="ion-1x" name="time-sharp"></ion-icon>
+          <p>24/7</p>
+        </div>
+      </ion-col>
+
+      <ion-col>
+        <div class="searchElement" routerLink="/meetings">
+          <ion-icon class="ion-1x" name="list-circle-outline"></ion-icon>
+          <p>Meetings</p>
+        </div>
+      </ion-col>
+
+      <ion-col>
+        <div class="searchElement" routerLink="/meetings">
+          <ion-icon class="ion-1x" name="settings-outline"></ion-icon>
+          <p>settings-outline</p>
+        </div>
+      </ion-col>
+
+      <ion-col>
+        <div class="searchElement" routerLink="/meetings">
+          <ion-icon class="ion-1x" name="information-circle-outline"></ion-icon>
+          <p>Information</p>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <!-- <app-explore-container name="Tab 1 page"></app-explore-container> -->
+
+  <!-- <ion-header collapse="condense">
       <h2>hello2</h2>
-       <ion-toolbar>
+      <ion-toolbar>
          <ion-title size="large">Tab 1</ion-title>
        </ion-toolbar>
      </ion-header>-->
-
-    <app-explore-container name="Tab 1 page"></app-explore-container>
-
-
 </ion-content>
-
-
-
