@@ -6,9 +6,8 @@ import * as moment from 'moment';
 })
 export class FormatMeetingPipe implements PipeTransform {
 
-  transform(value: unknown, ...args: unknown[]): unknown {
-  return moment(value).format('LL');
-  //  return value;
+  transform(date: unknown, ...args: unknown[]): string {
+    return moment(date).format('LL');
   }
 
 }

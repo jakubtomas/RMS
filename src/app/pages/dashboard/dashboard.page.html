@@ -9,7 +9,6 @@
 </ion-header>
 
 <ion-content>
-
   <ion-card *ngIf="!emailVerified">
     <ion-item color="warning">
       <label class="ion-text-center"
@@ -19,8 +18,8 @@
   </ion-card>
 
   <ion-card *ngIf="userDetails">
-    <ion-item >
-      <label class="ion-text-start "
+    <ion-item>
+      <label class="ion-text-start"
         >Welcome {{userDetails.firstName}} {{userDetails.lastName}}
       </label>
     </ion-item>
@@ -33,7 +32,7 @@
       <ion-col col-3>
         <div class="searchElement" routerLink="/meetings">
           <ion-icon class="ion-1x" name="calendar"></ion-icon>
-          <p>My Meetings</p>
+          <p class="meetings">My Meetings</p>
         </div>
       </ion-col>
 

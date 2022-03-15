@@ -42,7 +42,7 @@
               </ion-item>
             </ion-menu-toggle>
 
-            <ion-menu-toggle autoHide="false">
+            <!-- <ion-menu-toggle autoHide="false">
               <ion-item
                 routerLink="/support"
                 routerLinkActive="active"
@@ -52,7 +52,7 @@
                 <ion-icon slot="start" name="help"></ion-icon>
                 <ion-label> Support </ion-label>
               </ion-item>
-            </ion-menu-toggle>
+            </ion-menu-toggle> -->
           </div>
 
           <ion-menu-toggle autoHide="false" (ionChange)="clickToggle($event)">
@@ -73,6 +73,18 @@
         <ng-template #loggedOut>
           <ion-list lines="none">
             <ion-list-header> Account </ion-list-header>
+
+            <ion-menu-toggle autoHide="false">
+              <ion-item
+                routerLink="/"
+                routerLinkActive="active"
+                routerDirection="root"
+                detail="false"
+              >
+                <ion-icon slot="start" name="home"></ion-icon>
+                <ion-label> Home </ion-label>
+              </ion-item>
+            </ion-menu-toggle>
 
             <ion-menu-toggle autoHide="false">
               <ion-item
@@ -98,7 +110,7 @@
               </ion-item>
             </ion-menu-toggle>
 
-            <ion-menu-toggle autoHide="false">
+            <!-- <ion-menu-toggle autoHide="false">
               <ion-item
                 routerLink="/registration"
                 routerLinkActive="active"
@@ -108,17 +120,17 @@
                 <ion-icon slot="start" name="person-add"></ion-icon>
                 <ion-label> Signup </ion-label>
               </ion-item>
-            </ion-menu-toggle>
+            </ion-menu-toggle> -->
 
-            <ion-item>
+            <!-- <ion-item>
               <ion-icon slot="start" name="moon-outline"></ion-icon>
               <ion-label> Dark Mode </ion-label>
               <ion-toggle [(ngModel)]="dark"></ion-toggle>
-            </ion-item>
+            </ion-item> -->
           </ion-list>
         </ng-template>
 
-        <ion-list lines="none">
+        <!-- <ion-list lines="none">
           <ion-list-header> Tutorial </ion-list-header>
           <ion-menu-toggle autoHide="false">
             <ion-item button (click)="openTutorial()" detail="false">
@@ -126,7 +138,7 @@
               <ion-label>Show Tutorial z</ion-label>
             </ion-item>
           </ion-menu-toggle>
-        </ion-list>
+        </ion-list> -->
       </ion-content>
     </ion-menu>
 

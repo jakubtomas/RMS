@@ -9,6 +9,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { BusinessService } from './business.service';
 import { UserService } from './user.service';
 import { UserDetails } from '../interfaces/userDetails';
+import { ToastController } from '@ionic/angular';
 @Injectable({
   providedIn: 'root'
 })
@@ -20,7 +21,9 @@ export class AuthService {
   constructor(
     private afAuth: AngularFireAuth,
     private businessService: BusinessService,
-    private userService: UserService
+    private userService: UserService,
+    private toastCtrl: ToastController,
+
     // private User: User
   ) {//todo maybe is better use localStorage
 
@@ -92,6 +95,7 @@ export class AuthService {
           console.log('detail information has been created ');
           console.log(data);
 
+
         });
 
         return null;
@@ -117,6 +121,7 @@ export class AuthService {
       { code: 'auth/user-disabled', message: 'The user corresponding to the given email has been disabled.' },
       { code: 'auth/user-not-found', message: 'User/Email not found ' },
       { code: 'auth/wrong-password', message: 'The password is invalid ' },
+      // eslint-disable-next-line max-len
       { code: 'auth/too-many-requests', message: 'Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later' },
     ]; /*todo osetrit moznu result a pozri dalsie dokumentaciu
          auth/too-many-requests*/
@@ -208,6 +213,18 @@ export class AuthService {
 
   userDetails() {
     return this.afAuth.user;
+  }
+
+  private async showToast(msg: string) {
+    const toast = await this.toastCtrl.create({
+      message: msg,
+      duration: 3000,
+      position: 'middle',
+      cssClass: 'alertMsg'
+    });
+
+    toast.onDidDismiss();
+    await toast.present();
   }
 }
 

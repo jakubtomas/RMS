@@ -208,12 +208,12 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
             this.router.navigate(['/meetings']);
           }
         }
-        this.showToast('Meeting have been successfully deleted ');
+        this.showToast('Meeting has been successfully deleted ');
 
       }).catch((error) => {
         console.log('error you got error ');
 
-        this.showToast('Meeting have been unsuccessfully deleted ');
+        this.showToast('Meeting has been unsuccessfully deleted ');
         console.log(error);
         //todo Error Message something is wronh
       });

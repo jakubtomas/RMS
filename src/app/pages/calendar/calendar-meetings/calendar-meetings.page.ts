@@ -131,6 +131,7 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
     this.selectedDayByCalendar = event.toString().substring(0, 3);
 
     const dateForFirestore = moment(this.selectedDateByCalendar).format('L');
+
     this.meetingWithBusiness = [];
 
 

@@ -1,70 +1,70 @@
-import {NgModule} from '@angular/core';
-import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
-import {AuthGuard} from "./guards/auth.guard";
-import {OwnerBusinessGuard} from "./guards/owner-business.guard";
+import { NgModule } from '@angular/core';
+import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from "./guards/auth.guard";
+import { OwnerBusinessGuard } from "./guards/owner-business.guard";
 //import {canActivate} from "@angular/fire/compat/auth-guard";
 
 const routes: Routes = [
 
-    {
-        path: '',
-        redirectTo: '/tabs/tab1',
-        // redirectTo: 'signup',
-        pathMatch: 'full'
-    },
+  {
+    path: '',
+    redirectTo: '/tabs/tab1',
+    // redirectTo: 'signup',
+    pathMatch: 'full'
+  },
 
-    {
-        path: '',
-        loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
-    },
-    {
-        path: 'login',
-        loadChildren: () => import('./pages/login/login.module').then(m => m.LoginPageModule)
-    },
-    /*{
-     path: 'signup',
-     loadChildren: () => import('./pages/signup/signup.module').then( m => m.SignupPageModule)
-     },*/
-    {
-        path: 'dashboard',
-        loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardPageModule),
-        canActivate: [AuthGuard]
-    },
-    {
-        path: 'registration',
-        loadChildren: () => import('./pages/registration/registration.module').then(m => m.RegistrationPageModule)
-    },
-    {
-        path: 'list-business',
-        loadChildren: () => import('./pages/business/list-business/list-business.module').then(m => m.ListBusinessPageModule),
-        canActivate: [AuthGuard]
-    },
-    {
-        path: 'register-business',
-        loadChildren: () => import('./pages/business/register-business/register-business.module').then(m => m.RegisterBusinessPageModule),
+  {
+    path: '',
+    loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
+  },
+  {
+    path: 'login',
+    loadChildren: () => import('./pages/login/login.module').then(m => m.LoginPageModule)
+  },
+  /*{
+   path: 'signup',
+   loadChildren: () => import('./pages/signup/signup.module').then( m => m.SignupPageModule)
+   },*/
+  {
+    path: 'dashboard',
+    loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardPageModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'registration',
+    loadChildren: () => import('./pages/registration/registration.module').then(m => m.RegistrationPageModule)
+  },
+  {
+    path: 'list-business',
+    loadChildren: () => import('./pages/business/list-business/list-business.module').then(m => m.ListBusinessPageModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'register-business',
+    loadChildren: () => import('./pages/business/register-business/register-business.module').then(m => m.RegisterBusinessPageModule),
 
-        canActivate: [AuthGuard,OwnerBusinessGuard]
-    },
-    {
-        path: 'detail-business',
-        loadChildren: () => import('./pages/business/detail-business/detail-business.module').then(m => m.DetailBusinessPageModule),
-        canActivate: [AuthGuard]
-    },
+    canActivate: [AuthGuard, OwnerBusinessGuard]
+  },
+  {
+    path: 'detail-business',
+    loadChildren: () => import('./pages/business/detail-business/detail-business.module').then(m => m.DetailBusinessPageModule),
+    canActivate: [AuthGuard]
+  },
 
   {
     path: 'create-calendar',
-    loadChildren: () => import('./pages/calendar/create-calendar/create-calendar.module').then( m => m.CreateCalendarPageModule),
-      canActivate: [AuthGuard]
+    loadChildren: () => import('./pages/calendar/create-calendar/create-calendar.module').then(m => m.CreateCalendarPageModule),
+    canActivate: [AuthGuard]
   },
   {
     path: 'search-business',
-    loadChildren: () => import('./pages/business/search-business/search-business.module').then( m => m.SearchBusinessPageModule),
-      canActivate: [AuthGuard]
+    loadChildren: () => import('./pages/business/search-business/search-business.module').then(m => m.SearchBusinessPageModule),
+    canActivate: [AuthGuard]
   },
   {
     path: 'create-meeting',
-    loadChildren: () => import('./pages/calendar/create-meeting/create-meeting.module').then( m => m.CreateMeetingPageModule),
-      canActivate: [AuthGuard]
+    loadChildren: () => import('./pages/calendar/create-meeting/create-meeting.module').then(m => m.CreateMeetingPageModule),
+    canActivate: [AuthGuard]
   },
   /*{
     path: 'meetings',
@@ -72,18 +72,18 @@ const routes: Routes = [
   },*/
   {
     path: 'meetings',
-    loadChildren: () => import('./pages/calendar/meetings/meetings.module').then( m => m.MeetingsPageModule),
-      canActivate: [AuthGuard]
+    loadChildren: () => import('./pages/calendar/meetings/meetings.module').then(m => m.MeetingsPageModule),
+    canActivate: [AuthGuard]
   },
   {
     path: 'detail-meeting',
-    loadChildren: () => import('./pages/calendar/detail-meeting/detail-meeting.module').then( m => m.DetailMeetingPageModule),
-      canActivate: [AuthGuard]
+    loadChildren: () => import('./pages/calendar/detail-meeting/detail-meeting.module').then(m => m.DetailMeetingPageModule),
+    canActivate: [AuthGuard]
   },
   {
     path: 'calendar-meetings',
-    loadChildren: () => import('./pages/calendar/calendar-meetings/calendar-meetings.module').then( m => m.CalendarMeetingsPageModule),
-      canActivate: [AuthGuard]
+    loadChildren: () => import('./pages/calendar/calendar-meetings/calendar-meetings.module').then(m => m.CalendarMeetingsPageModule),
+    canActivate: [AuthGuard]
   },
 
 
@@ -94,10 +94,10 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [
-        RouterModule.forRoot(routes, {preloadingStrategy: PreloadAllModules})
-    ],
-    exports: [RouterModule]
+  imports: [
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
+  ],
+  exports: [RouterModule]
 })
 export class AppRoutingModule {
 }

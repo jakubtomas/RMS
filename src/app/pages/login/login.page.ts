@@ -4,6 +4,7 @@ import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms'
 import { user } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ToastController } from '@ionic/angular';
 //import {AuthService} from "../../services/auth.service";
 
 
@@ -44,6 +45,7 @@ export class LoginPage implements OnInit {
   constructor(
     private router: Router,/*
         private authService: AuthService,*/
+    private toastCtrl: ToastController,
     private authService: AuthService,
     private fb: FormBuilder
   ) {
@@ -68,7 +70,9 @@ export class LoginPage implements OnInit {
     this.userForm.setValue({ email: 'macka@gmail.com', password: '465489' });
   }
 
-  loginUser(userFormObject: { email; password }) {
+
+
+  loginUser(userFormObject: { email: string; password: string }) {
     this.authService.login(userFormObject.email, userFormObject.password).then((result) => {
       if (result == null) {// null is success
         console.log('login successfully login.page');
@@ -78,8 +82,23 @@ export class LoginPage implements OnInit {
         console.log('neprihalsesnz ');
         console.log(result);
 
+
+        // todo cdr change for new message
         this.firebaseErrorMessage = result.message;
+        this.showToast(result.message);
       }
     });
+  }
+
+  private async showToast(msg: string) {
+    const toast = await this.toastCtrl.create({
+      message: msg,
+      duration: 3000,
+      position: 'middle',
+      cssClass: 'alertMsg'
+    });
+
+    toast.onDidDismiss();
+    await toast.present();
   }
 }

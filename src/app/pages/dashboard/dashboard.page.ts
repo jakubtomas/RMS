@@ -38,7 +38,7 @@ export class DashboardPage implements OnInit, OnDestroy {
 
 
   //  ionViewWillEnter  ionViewWillLeave
-  ionViewWillEnter() {
+  ionViewWillEnter(): void {
     console.log('ionViewWillENter');
     console.log('-----------1--------------------');
     this.getUserId();

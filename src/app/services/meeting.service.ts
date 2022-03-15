@@ -3,7 +3,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from '@angular/fire/compat/firestore';
 import { Meeting } from '../interfaces/meeting';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { map, switchMap, take, tap } from 'rxjs/operators';
 
 import { forkJoin, Observable, of, zip } from 'rxjs';
 import * as moment from 'moment';
@@ -206,12 +206,28 @@ export class MeetingService {
         console.log(meeting);
         return this.userService.getUserDetailsInformation(meeting.idUser).pipe(
           map((userDetails) => {
-            return { meeting, userDetails};
+            return { meeting, userDetails };
           })
         );
       })
     );
   }
+
+
+  getExistMeeting(idBusiness: string, minutes: number, dateForCalendar: string): Observable<boolean> {
+    this.meetingCollection3 = this.afs.collection('meetings',
+      ref => ref.where('idBusiness', '==', idBusiness)
+        .where('minutes', '==', minutes)
+        .where('dateForCalendar', '==', dateForCalendar)
+    );
+
+    return this.meetingCollection3.valueChanges().pipe(
+      take(1),
+      map((arrayMeeting) => arrayMeeting.length > 0 ? true : false)
+    );
+
+  }
+
 
 
   getMeetingsByIdBusiness(idBusiness: string): Observable<Meeting[]> {

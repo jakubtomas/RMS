@@ -43,15 +43,16 @@
 
       <div class="item">
         <ion-icon name="calendar-sharp"></ion-icon>
-        <ion-card-subtitle
-          ><b>Date</b> {{meetingDetails.date }}</ion-card-subtitle
-        >
+        <ion-card-subtitle *ngIf="meetingDetails.date !== undefined">
+          <!-- <b>Date</b> {{meetingDetails.date }} -->
+          <b>Date</b> {{meetingDetails.date | formatMeeting }}
+        </ion-card-subtitle>
       </div>
 
       <div class="item">
         <ion-icon name="time-sharp"></ion-icon>
-        <ion-card-subtitle
-          ><b>Time </b> {{meetingDetails.time.start + ' ' +
+        <ion-card-subtitle *ngIf="meetingDetails !== undefined ">
+          <b>Time </b> {{meetingDetails.time.start + ' ' +
           meetingDetails.time.end}}</ion-card-subtitle
         >
       </div>
@@ -72,7 +73,7 @@
     </ion-card-header> -->
 
     <section class="buttons">
-      <ion-button
+      <ion-button *ngIf="ownerPermissionBusiness || myMeeting"
         color="danger"
         (click)="showAlertForDeleteMeeting(docIdMeeting)"
         >Delete Meeting</ion-button

@@ -10,6 +10,7 @@ import { TimeMeeting } from '../../../interfaces/timeMeeting';
 import { CalendarComponent } from 'ionic2-calendar';
 import { MeetingService } from '../../../services/meeting.service';
 import { Meeting } from '../../../interfaces/meeting';
+import { mergeMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-create-meeting',
@@ -257,6 +258,28 @@ export class CreateMeetingPage implements OnInit {
     await alert.present();
   }
 
+  private async showAlertMessage(alertMessage: string): Promise<any> {
+
+    const alert = await this.alertController.create({
+      cssClass: 'alertForm',
+      header: 'Warning',
+
+      message: alertMessage,
+      buttons: [
+        {
+          text: 'OK',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => { }
+        },
+        // {
+        //   text: 'OK',
+        //   handler: () => {}
+        // }
+      ]
+    });
+    await alert.present();
+  }
 
   private saveMeeting(time, modifyDate): void {
     const userId = localStorage.getItem('idUser');
@@ -288,14 +311,39 @@ export class CreateMeetingPage implements OnInit {
       idBusiness: this.selectedBusinessId,
       idUser: userId
     };
-    this.meetingService.addMeeting(meetingData).then(() => {
-      this.showToast('Meeting have been successfully created');
 
-    }).catch((error) => {
-      console.log('error');
-      console.log(error);
-      this.showToast('Meeting have been not created');
-    });
+
+    this.meetingService
+      .getExistMeeting(meetingData.idBusiness, meetingData.minutes, meetingData.dateForCalendar)
+      .subscribe((existMeeting) => {
+
+        if (!existMeeting) {
+
+          //create Meeting
+          this.meetingService.addMeeting(meetingData).then(() => {
+            this.showToast('A meeting has been created successfully.');
+
+          }).catch((error) => {
+            console.error(error);
+            //this.showToast('A meeting has not been created');
+            this.showAlertMessage('A meeting has not been created. Try again. Something is wrong');
+          });
+
+        } else {// its not available termin
+          this.showAlertMessage('Please select another time, because this time has been used by another customer.');
+        }
+
+      }, error => {
+        this.showAlertMessage('A meeting has not been created. Try again. Something is wrong');
+        console.error(error);
+      });
+
+
+    // this.meetingService
+    //   .getExistMeeting(meetingData.idBusiness, meetingData.minutes, meetingData.dateForCalendar)
+    //   .pipe(
+    //     mergeMap((existMeeting) => )
+    // )
   }
 
   private getMeetingsByIdBusinessByDate(idBusiness: string, dateForCalendar: string): void {

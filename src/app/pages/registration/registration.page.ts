@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { ToastController } from '@ionic/angular';
 //import {error} from "selenium-webdriver";
 //import {register} from "ts-node";
 
@@ -67,6 +68,7 @@ export class RegistrationPage implements OnInit {
   };
 
   constructor(private authService: AuthService,
+    private toastCtrl: ToastController,
     private router: Router) { }
 
   ngOnInit() {
@@ -142,12 +144,27 @@ export class RegistrationPage implements OnInit {
         console.log('successful registration createUser.ts');
         //todo send arlso message successfully
         this.router.navigate(['/dashboard']);
+        this.showToast('The account has been created successfully.');
+
 
       } else {
+        this.showToast(response.message);
         this.firebaseErrorMessage = response.message;
       }
     });
   }
 
+
+  private async showToast(msg: string) {
+    const toast = await this.toastCtrl.create({
+      message: msg,
+      duration: 3000,
+      position: 'middle',
+      cssClass: 'alertMsg'
+    });
+
+    toast.onDidDismiss();
+    await toast.present();
+  }
 
 }
