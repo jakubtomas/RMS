@@ -5,10 +5,11 @@ import { Business } from '../interfaces/business';
 import { BehaviorSubject, forkJoin, Observable, of, Subject, Subscriber } from 'rxjs';
 import { filter, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
 import {
-AngularFirestore,
-AngularFirestoreCollection,
-AngularFirestoreDocument,
-DocumentChangeAction,
+  AngularFirestore,
+  AngularFirestoreCollection,
+  AngularFirestoreDocument,
+  DocumentChangeAction,
+  Query,
 } from '@angular/fire/compat/firestore';
 import firebase from 'firebase/compat/app';
 import DocumentReference = firebase.firestore.DocumentReference;
@@ -122,32 +123,65 @@ export class BusinessService {
 
   getSearchedBusinesses(searchValues: SearchBusiness): Observable<Business[]> {
 
+
+
+    // this.meetingCollection3 = this.afs.collection('meetings',
+    //   ref => ref.where('dateForCalendar', '==', dateForCalendar)
+    //     .where('idUser', '==', idUser)
+    //     .where('date', '>', helpTime)
+    // );
+
     this.businessCollection = this.afs.collection('business',
       ref => {
-        let query: firebase.firestore.CollectionReference | firebase.firestore.Query = ref.orderBy('nameOrganization', 'asc');
+
+        // let query: firebase.firestore.CollectionReference | firebase.firestore.Query = ref.orderBy('zipCode', 'asc');
+        //let query: Query<firebase.firestore.DocumentData>;
+        //let query: Query<firebase.firestore.DocumentData>;
+
+        //         * const query = ref.where('type', '==', 'Book').
+        //  *                  .where('price', '>' 18.00)
+        //           *                  .where('price', '<' 100.00)
+        //           *                  .where('category', '==', 'Fiction')
+        //           *                  .where('publisher', '==', 'BigPublisher')
+        //           *
+
+
+        let query = ref.where('typeOfOrganization', '==', searchValues.typeOfOrganization);
+
+        if (searchValues.city) { //todo >= start with
+          query = ref.where('city', '==', searchValues.city);
+        }
+
         if (searchValues.nameOrganization) {
           query = query.where('nameOrganization', '==', searchValues.nameOrganization);
-        }
-        if (searchValues.city) { //todo >= start with
-          query = query.where('city', '==', searchValues.city);
         }
 
         if (searchValues.zipCode) {
           query = query.where('zipCode', '==', searchValues.zipCode);
         }
 
-        if (searchValues.typeOfOrganization) {
-          query = query.where('typeOfOrganization', '==', searchValues.typeOfOrganization);
-        }
+        // if (searchValues.typeOfOrganization) {
+        //   query = query.where('typeOfOrganization', '==', searchValues.typeOfOrganization);
+        // }
 
         //return query.orderBy('city', 'asc');
+        console.log(query);
+
         return query;
       });
+
+    //1 vyskusat vsetky mozne pozicie
+
+
+    // kontrolovat orderBy
 
     return this.businessCollection.snapshotChanges().pipe(
       map(changes => changes.map(a => {
         const data = a.payload.doc.data() as Business;
         data.id = a.payload.doc.id;
+        console.log(' spracovane data');
+        console.log(data);
+
         return data;
       })));
 

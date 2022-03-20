@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/member-ordering */
 import { Component, OnInit } from '@angular/core';
 import { Observable } from "rxjs";
 import { Meeting } from "../../../interfaces/meeting";
@@ -62,9 +63,9 @@ export class MeetingsPage implements OnInit {
         }
 
       }, error => {
-        console.log("you got error ");
+        console.log('you got error ');
         console.log(error);
-      })
+      });
 
   }
 
@@ -94,9 +95,9 @@ export class MeetingsPage implements OnInit {
       }
 
     }, error => {
-      console.log("you got error ");
+      console.log('you got error');
       console.log(error);
-    })
+    });
     /* this.currentTime = moment
      .duration(moment(this.playTime, 'HH:mm').add("70","minutes")
      .diff(moment(this.playTime, 'HH:mm'))

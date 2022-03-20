@@ -3,7 +3,6 @@ import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from 
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { UserDetails } from '../interfaces/userDetails';
-import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'

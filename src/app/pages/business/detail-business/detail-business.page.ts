@@ -176,15 +176,15 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
     this.calendarService.getCalendars().subscribe(calendars => {
       this.calendars = calendars;
 
-      console.log(calendars.length);
+      //console.log(calendars.length);
 
       if (this.calendars.length > 0) {
         this.calendars.forEach(calendar => {
-          console.log(calendar.idBusiness + '  ' + this.selectedBusinessId);
+          // console.log(calendar.idBusiness + '  ' + this.selectedBusinessId);
 
           if (calendar.idBusiness === this.selectedBusinessId) {
-            console.log('your calendar data are ');
-            console.log(calendar);
+            //    console.log('your calendar data are ');
+            //  console.log(calendar);
             this.calendar = calendar;
             //call function fore format date
             this.changeDateFormat();

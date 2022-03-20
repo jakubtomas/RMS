@@ -225,10 +225,7 @@ export class MeetingService {
       take(1),
       map((arrayMeeting) => arrayMeeting.length > 0 ? true : false)
     );
-
   }
-
-
 
   getMeetingsByIdBusiness(idBusiness: string): Observable<Meeting[]> {
     this.meetingCollection3 = this.afs.collection('meetings',

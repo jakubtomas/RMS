@@ -34,6 +34,7 @@ export class CreateCalendarPage implements OnInit {
   timeZone: string = moment().format().toString().substring(19, 25);//25
   todayDate = moment().format('L');
   timeMeeting: TimeMeeting[] = [];
+  formatOpeningHours = false;
 
 
   //data for component
@@ -95,11 +96,11 @@ export class CreateCalendarPage implements OnInit {
 
         this.controlBusinessPermission(params.businessId, params.docCalendarId);
 
-        this.getCountOfMeetingsForBusiness(params.businessId, this.todayDate);
+        //this.getCountOfMeetingsForBusiness(params.businessId, this.todayDate);
         this.isUpdateCalendar = true;
       } else {
         this.isUpdateCalendar = false;
-        console.log('nemam id');
+        console.log('We are creating calendar ');
       }
       this.setValuesForPage();
     });
@@ -108,14 +109,13 @@ export class CreateCalendarPage implements OnInit {
     //  this.messageFirebase = null;
   }
 
-  getCountOfMeetingsForBusiness(idBusiness: string, dateForCalendar: string) {
-    this.meetingService.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar)
-      .subscribe((value) => {
-        console.log('vsetky meeting od dnesneho dna');
-        console.log(value);
-      });
-  }
-
+  // getCountOfMeetingsForBusiness(idBusiness: string, dateForCalendar: string) {
+  //   this.meetingService.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar)
+  //     .subscribe((value) => {
+  //       console.log('vsetky meeting od dnesneho dna');
+  //       console.log(value);
+  //     });
+  // }
 
   setValuesForPage(): void {
     if (this.isUpdateCalendar) {
@@ -158,15 +158,12 @@ export class CreateCalendarPage implements OnInit {
   }
 
 
-  saveData() {
-
+  saveData(): void {
     console.log(moment().format());
-
     console.log(' calendar');
     console.log(this.contactForm.value);
     console.log(this.contactForm.value.MondayOpening);
     console.log(this.contactForm.value.ClosingOpening);
-
 
     //todo logaritmus  count all opening , closing Hours
     // porovnanie can not be empty opening and also closing if yes show error message
@@ -174,11 +171,9 @@ export class CreateCalendarPage implements OnInit {
     console.log(this.contactForm.value.MinutesForMeeting);
     console.log(this.MinutesForMeeting);
 
-
-
     const calendar: Calendar = {
       idBusiness: this.selectedBusinessId,
-      timeMeeting: 15,
+      timeMeeting: this.contactForm.value.MinutesForMeeting,
       week: this.mapOpeningClosingHours(),
       break: 'hello',
       timeZone: this.timeZone
@@ -187,9 +182,6 @@ export class CreateCalendarPage implements OnInit {
 
     //todo pri nacitany stranky create meeting s calendarom
     // ked nemam otvaracie hodiny show message lebo inak error in console
-
-
-
 
     // todo prestavky niesu nastavene
     // todo typovanie v interface
@@ -218,12 +210,6 @@ export class CreateCalendarPage implements OnInit {
 
   updateCalendars(): void {
 
-
-    console.log(this.contactForm.value.MinutesForMeeting);
-    console.log(this.MinutesForMeeting);
-    console.log(4888);
-
-
     console.log('click update calendars ');
     console.log(moment().format());
 
@@ -243,14 +229,12 @@ export class CreateCalendarPage implements OnInit {
 
       this.calendarService.updateCalendar(this.docIdCalendar, updateCalendar).then(() => {
 
-        console.log('uspesny update ');
         this.router.navigate(['/detail-business'], { queryParams: { businessId: updateCalendar.idBusiness } });
         this.showToast('Calendar has been updated');
 
       }).catch((error) => {
         console.log('error you got error ');
         console.log(error);
-        // this.messageFirebase = "Something is wrong";
       });
     }
   }
@@ -263,6 +247,8 @@ export class CreateCalendarPage implements OnInit {
 
     console.log(sundayO + ' -- ' + sundayC);
     console.log('we are here ');
+    console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++ ');
+    console.log(formData);
 
     // let duration =
 
@@ -278,15 +264,15 @@ export class CreateCalendarPage implements OnInit {
     const withoutFormatDate = formData.MondayOpening;
     console.log('pred upravou');
     console.log(withoutFormatDate);
-
     console.log('po uprave ');
     const value = moment(formData.MondayOpening).format('HH:mm');
+    console.log(value);
 
-    // save data into databas pomocou moment(formData.SundayOpening).format('HH:mm');
+    // if (!this.formatOpeningHours) {
+    //   return
+    // }
 
-    //fetch data from database and and set opening and closing hours in create calendar page and detail page
-
-    // ternarny operator                     closingHours: (moment(item.closingHours).format('LT') == 'Invalid date') ? '---' : moment(item.closingHours).format('LT')
+    // ternarny operator closingHours: (moment(item.closingHours).format('LT') == 'Invalid date') ? '---' : moment(item.closingHours).format('LT')
     const hours = [
       {
         day: 'Monday', // todo create ternar operater if formData.MondayOpening is empty string use '' else use
@@ -326,11 +312,18 @@ export class CreateCalendarPage implements OnInit {
       },
 
     ];
+
+    this.formatOpeningHours = true;
     // todo function which control result of opening and closing and check that is minus value ,
     // otvaranie nieje skor ako zatvaranie a nieje to nahodou malo casu
     console.log('///////////////////////////////////////');
     console.log(hours[0].openingHours);
     console.log(hours[0].closingHours);
+    console.log(hours[1].openingHours);
+    console.log(hours[1].closingHours);
+    console.log('///////////////////////////////////////');
+    console.log('po uprave ');
+    console.log(hours);
 
 
     // const hours = [
@@ -386,6 +379,7 @@ export class CreateCalendarPage implements OnInit {
 
 
   getOneCalendar(docCalendarId: string): void {
+
     this.calendarService.getOneCalendar(docCalendarId).subscribe(calendar => {
 
 
@@ -395,13 +389,13 @@ export class CreateCalendarPage implements OnInit {
       // const attemptValue =
       this.calendar = calendar;
 
-      console.log('your data from Firestore ');
-      console.log(calendar);
-      console.log(calendar.timeMeeting);
-      console.log(' show me this album ');
+      // console.log('your data from Firestore ');
+      // console.log(calendar);
+      // console.log(calendar.timeMeeting);
+      // console.log(' show me this album ');
 
-      console.log(calendar.week[0]?.openingHours);
-      console.log(calendar.week[1]?.openingHours);
+      // console.log(calendar.week[0]?.openingHours);
+      // console.log(calendar.week[1]?.openingHours);
 
       const defaultInterval = '15';
 
@@ -409,9 +403,9 @@ export class CreateCalendarPage implements OnInit {
       const close = calendar.week[0]?.closingHours;
 
       const openTime = moment(open, 'HH:mm');
-      console.log('default openTime ' + openTime.format('HH:mm'));
+      // console.log('default openTime ' + openTime.format('HH:mm'));
       openTime.add('10', 'minutes');
-      console.log('after change  ' + openTime.format('HH:mm'));
+      //  console.log('after change  ' + openTime.format('HH:mm'));
 
       const realEnd = moment(close, 'HH:mm');
 
@@ -436,36 +430,30 @@ export class CreateCalendarPage implements OnInit {
 
       }
 
-
+      this.transformOpeningHoursDataForForm(calendar);
       // todo I am saving time zone in last value of string
       // const time = "2021-12-20T" + basicTime + ':56.702+01:00';
 
-      this.contactForm.setValue({ // todo create function and refactoring
-        MondayOpening: calendar.week[0]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[0]?.openingHours + ':00.000' + this.calendar.timeZone,
-        MondayClosing: calendar.week[0]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[0]?.closingHours + ':00.000' + this.calendar.timeZone,
-        TuesdayOpening: calendar.week[1]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[1]?.openingHours + ':00.000' + this.calendar.timeZone,
-        TuesdayClosing: calendar.week[1]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[1]?.closingHours + ':00.000' + this.calendar.timeZone,
-        WednesdayOpening: calendar.week[2]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[2]?.openingHours + ':00.000' + this.calendar.timeZone,
-        WednesdayClosing: calendar.week[2]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[2]?.closingHours + ':00.000' + this.calendar.timeZone,
-        ThursdayOpening: calendar.week[3]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[3]?.openingHours + ':00.000' + this.calendar.timeZone,
-        ThursdayClosing: calendar.week[3]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[3]?.closingHours + ':00.000' + this.calendar.timeZone,
-        FridayOpening: calendar.week[4]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[4]?.openingHours + ':00.000' + this.calendar.timeZone,
-        FridayClosing: calendar.week[4]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[4]?.closingHours + ':00.000' + this.calendar.timeZone,
-        SaturdayOpening: calendar.week[5]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[5]?.openingHours + ':00.000' + this.calendar.timeZone,
-        SaturdayClosing: calendar.week[5]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[5]?.closingHours + ':00.000' + this.calendar.timeZone,
-        SundayOpening: calendar.week[6]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[6]?.openingHours + ':00.000' + this.calendar.timeZone,
-        SundayClosing: calendar.week[6]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[6]?.closingHours + ':00.000' + this.calendar.timeZone,
-        // show data for update
+      // this.contactForm.setValue({ // todo create function and refactoring
+      //   MondayOpening: calendar.week[0]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[0]?.openingHours + ':00.000' + this.calendar.timeZone,
+      //   MondayClosing: calendar.week[0]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[0]?.closingHours + ':00.000' + this.calendar.timeZone,
+      //   TuesdayOpening: calendar.week[1]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[1]?.openingHours + ':00.000' + this.calendar.timeZone,
+      //   TuesdayClosing: calendar.week[1]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[1]?.closingHours + ':00.000' + this.calendar.timeZone,
+      //   WednesdayOpening: calendar.week[2]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[2]?.openingHours + ':00.000' + this.calendar.timeZone,
+      //   WednesdayClosing: calendar.week[2]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[2]?.closingHours + ':00.000' + this.calendar.timeZone,
+      //   ThursdayOpening: calendar.week[3]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[3]?.openingHours + ':00.000' + this.calendar.timeZone,
+      //   ThursdayClosing: calendar.week[3]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[3]?.closingHours + ':00.000' + this.calendar.timeZone,
+      //   FridayOpening: calendar.week[4]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[4]?.openingHours + ':00.000' + this.calendar.timeZone,
+      //   FridayClosing: calendar.week[4]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[4]?.closingHours + ':00.000' + this.calendar.timeZone,
+      //   SaturdayOpening: calendar.week[5]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[5]?.openingHours + ':00.000' + this.calendar.timeZone,
+      //   SaturdayClosing: calendar.week[5]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[5]?.closingHours + ':00.000' + this.calendar.timeZone,
+      //   SundayOpening: calendar.week[6]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[6]?.openingHours + ':00.000' + this.calendar.timeZone,
+      //   SundayClosing: calendar.week[6]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[6]?.closingHours + ':00.000' + this.calendar.timeZone,
+      //   // show data for update
 
-        MinutesForMeeting: calendar.timeMeeting == null ? null : calendar.timeMeeting
-        // MinutesForMeeting: 20
+      //   MinutesForMeeting: calendar.timeMeeting == null ? null : calendar.timeMeeting
 
-        // todo ukladanie casu do UTC , cas prekonvertovat do UTC , skonvertuje cas do toho pouzivatela
-
-        //SundayOpening: calendar.week[6]?.openingHours,
-        //SundayClosing: calendar.week[6]?.closingHours
-
-      });
+      // });
 
     }, error => {
       console.log('you got error ');
@@ -473,43 +461,132 @@ export class CreateCalendarPage implements OnInit {
     });
   }
 
+  private transformOpeningHoursDataForForm(calendar: Calendar): void {
+
+    console.log('transformOpeningHours');
+    console.log(calendar);
+    console.log(calendar.week);
+    console.log(calendar.week[0]?.openingHours);
+    console.log(calendar.week[0]?.openingHours);
+    console.log('-----------------------');
+    console.log(calendar);
+    console.log('-----------------------');
+
+    this.contactForm.setValue({ // todo create function and refactoring
+      MondayOpening:
+        calendar.week[0]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[0]?.openingHours + ':00.000' + this.calendar.timeZone,
+      MondayClosing:
+        calendar.week[0]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[0]?.closingHours + ':00.000' + this.calendar.timeZone,
+      TuesdayOpening:
+        calendar.week[1]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[1]?.openingHours + ':00.000' + this.calendar.timeZone,
+      TuesdayClosing:
+        calendar.week[1]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[1]?.closingHours + ':00.000' + this.calendar.timeZone,
+      WednesdayOpening:
+        calendar.week[2]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[2]?.openingHours + ':00.000' + this.calendar.timeZone,
+      WednesdayClosing:
+        calendar.week[2]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[2]?.closingHours + ':00.000' + this.calendar.timeZone,
+      ThursdayOpening:
+        calendar.week[3]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[3]?.openingHours + ':00.000' + this.calendar.timeZone,
+      ThursdayClosing:
+        calendar.week[3]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[3]?.closingHours + ':00.000' + this.calendar.timeZone,
+      FridayOpening:
+        calendar.week[4]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[4]?.openingHours + ':00.000' + this.calendar.timeZone,
+      FridayClosing:
+        calendar.week[4]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[4]?.closingHours + ':00.000' + this.calendar.timeZone,
+      SaturdayOpening:
+        calendar.week[5]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[5]?.openingHours + ':00.000' + this.calendar.timeZone,
+      SaturdayClosing:
+        calendar.week[5]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[5]?.closingHours + ':00.000' + this.calendar.timeZone,
+      SundayOpening:
+        calendar.week[6]?.openingHours == '' ? '' : '2021-12-20T' + calendar.week[6]?.openingHours + ':00.000' + this.calendar.timeZone,
+      SundayClosing:
+        calendar.week[6]?.closingHours == '' ? '' : '2021-12-20T' + calendar.week[6]?.closingHours + ':00.000' + this.calendar.timeZone,
+      // show data for update
+
+      MinutesForMeeting: calendar.timeMeeting == null ? null : calendar.timeMeeting
+
+    });
+  }
+
+  private changeFormatTime(time: string, timeZone: string) {
+    return time == '' ? '' : '2021-12-20T' + time + ':00.000' + timeZone;
+
+  }
 
 
-  resetHours(event, item): void {
+  resetHours(event: any, item: string | number): void {
 
     console.log(event);
     console.log('------');
     console.log(item);
     console.log('------');
 
-    /// dostanem vsetky hodnoty a vymazem svoj riadok , svoje udaje
-    const week = this.mapOpeningClosingHours();
+    /// namapujem vsetky hodnoty
+    const weekData = this.mapOpeningClosingHours();
+    console.log(weekData);
 
-    week[item].openingHours = '';
-    week[item].closingHours = '';
+
+    // delete line time
+    weekData[item].openingHours = '';
+    weekData[item].closingHours = '';
+
+    console.log('po upravou');
+    console.log('po upravou');
+    console.log(weekData);
+
+    const changeCalendar: Calendar = {
+      idBusiness: '44',
+      week: weekData,
+      //timeMeeting: this.contactForm.value.MinutesForMeeting,
+      timeMeeting: 15,
+      break: 'no break',
+      timeZone: this.timeZone
+
+    };
+
+    // idBusiness: this.calendar.idBusiness,
+    //   week: this.mapOpeningClosingHours(),
+    //     timeMeeting: this.contactForm.value.MinutesForMeeting,
+    //   break: 'no break',
+    //   timeZone: this.timeZone
+
 
     console.log('-----');
-    console.log(week);
+    console.log(changeCalendar);
+    console.log('-----');
+    console.log(changeCalendar.week);
     console.log('dosiel som tu ');
+    // set back to form
+    this.transformOpeningHoursDataForForm(changeCalendar);
+    console.log('nastavil som ');
 
-    this.contactForm.setValue({
-      MondayOpening: week[0]?.openingHours,
-      MondayClosing: week[0]?.closingHours,
-      TuesdayOpening: week[1]?.openingHours,
-      TuesdayClosing: week[1]?.closingHours,
-      WednesdayOpening: week[2]?.openingHours,
-      WednesdayClosing: week[2]?.closingHours,
-      ThursdayOpening: week[3]?.openingHours,
-      ThursdayClosing: week[3]?.closingHours,
-      FridayOpening: week[4]?.openingHours,
-      FridayClosing: week[4]?.closingHours,
-      SaturdayOpening: week[5]?.openingHours,
-      SaturdayClosing: week[5]?.closingHours,
-      SundayOpening: week[6]?.openingHours,
-      SundayClosing: week[6]?.closingHours,
-      MinutesForMeeting: this.contactForm.value.MinutesForMeeting
-    });
 
+
+
+
+
+    // this.contactForm.setValue({
+    //   MondayOpening: weekData[0]?.openingHours,
+    //   MondayClosing: weekData[0]?.closingHours,
+    //   TuesdayOpening: weekData[1]?.openingHours,
+    //   TuesdayClosing: weekData[1]?.closingHours,
+    //   WednesdayOpening: weekData[2]?.openingHours,
+    //   WednesdayClosing: weekData[2]?.closingHours,
+    //   ThursdayOpening: weekData[3]?.openingHours,
+    //   ThursdayClosing: weekData[3]?.closingHours,
+    //   FridayOpening: weekData[4]?.openingHours,
+    //   FridayClosing: weekData[4]?.closingHours,
+    //   SaturdayOpening: weekData[5]?.openingHours,
+    //   SaturdayClosing: weekData[5]?.closingHours,
+    //   SundayOpening: weekData[6]?.openingHours,
+    //   SundayClosing: weekData[6]?.closingHours,
+    //   MinutesForMeeting: this.contactForm.value.MinutesForMeeting
+    // });
+
+
+
+    // pridat podmienku ze bol minimalne raz upravovany
+    // pri ulozeny a update vynulovat danu hodnotu
   }
 
 
