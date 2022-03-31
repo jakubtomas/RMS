@@ -72,19 +72,13 @@ export class BusinessService {
 
     this.itemsCollection = this.afs.collection('items',
       ref => ref.orderBy('name', 'asc'));
-    // this.businessCollection = this.afs.collection('business', ref => ref.orderBy('name','asc'));
-    //citiesRef.where('population', '>', 2500000).orderBy('population');
 
     this.businessCollection = this.afs.collection('business');
 
     this.businessCollection2 = this.afs.collection('business');
-    //this.businessPermissionCollection= this.afs.collection('businessPermission', ref => ref.orderBy('idUser','asc'));
     this.businessPermissionCollection = this.afs.collection('businessPermission');
-
-    //afs.collection('items', ref => ref.where('size', '==', 'large'))
-
-
   }
+
   //todo repeat the same code , create the function
   getItems(): Observable<Item[]> {
     return this.items = this.itemsCollection.snapshotChanges().pipe(
@@ -123,14 +117,6 @@ export class BusinessService {
 
   getSearchedBusinesses(searchValues: SearchBusiness): Observable<Business[]> {
 
-
-
-    // this.meetingCollection3 = this.afs.collection('meetings',
-    //   ref => ref.where('dateForCalendar', '==', dateForCalendar)
-    //     .where('idUser', '==', idUser)
-    //     .where('date', '>', helpTime)
-    // );
-
     this.businessCollection = this.afs.collection('business',
       ref => {
 
@@ -160,9 +146,6 @@ export class BusinessService {
           query = query.where('zipCode', '==', searchValues.zipCode);
         }
 
-        // if (searchValues.typeOfOrganization) {
-        //   query = query.where('typeOfOrganization', '==', searchValues.typeOfOrganization);
-        // }
 
         //return query.orderBy('city', 'asc');
         console.log(query);
@@ -170,11 +153,6 @@ export class BusinessService {
         // return query.orderBy('zipCode', 'asc');
         return query;
       });
-
-    //1 vyskusat vsetky mozne pozicie
-
-
-    // kontrolovat orderBy
 
     return this.businessCollection.snapshotChanges().pipe(
       map(changes => changes.map(a => {
@@ -300,23 +278,6 @@ export class BusinessService {
 
   addBusinessPermission(businessPermissionObject: BusinessPermission): Promise<DocumentReference<BusinessPermission>> {
     return this.businessPermissionCollection.add(businessPermissionObject);
-  }
-
-  getAllOwnerBusinesses(): void {
-    /* const userId = localStorage.getItem('idUser');
-
-     this.getBusinessPermissions().subscribe(permissions => {
-
-     // console.log(permissions);
-     const myBusinesses = permissions.filter(permission => permission.idUser == userId);
-     console.log(' permissions');
-
-     console.log(myBusinesses);
-
-     this.oneUserBusinesses = myBusinesses;
-     // console.log(myBusinesses);
-
-     });*/
   }
 
   getBusinessList(): Observable<DocumentChangeAction<unknown>[]> {

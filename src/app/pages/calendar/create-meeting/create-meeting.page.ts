@@ -10,7 +10,6 @@ import { TimeMeeting } from '../../../interfaces/timeMeeting';
 import { CalendarComponent } from 'ionic2-calendar';
 import { MeetingService } from '../../../services/meeting.service';
 import { Meeting } from '../../../interfaces/meeting';
-import { mergeMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-create-meeting',
@@ -28,11 +27,7 @@ export class CreateMeetingPage implements OnInit {
   businessCalendar = true;
   selectedBusinessId: string;
   pastDay = false;
-
-  //todo set correct date month number
-  //todo nastavenie kalendar kolko dni vpred sa moze registrovat
-  // kazda pobocka si to moze  urcit sama
-
+  calendarTimeZone;
 
   viewTitle: string;
   eventSource = [];
@@ -57,14 +52,11 @@ export class CreateMeetingPage implements OnInit {
 
       if (params.businessId !== undefined) {
         this.selectedBusinessId = params.businessId;
-        console.log('---------------');
-        console.log('I got business id ' + this.selectedBusinessId);
-        console.log('---------------');
       }
     });
   }
 
-  private async showToast(msg: string) {
+  private async showToast(msg: string): Promise<void> {
     const toast = await this.toastCtrl.create({
       message: msg,
       duration: 3000,
@@ -87,16 +79,13 @@ export class CreateMeetingPage implements OnInit {
     this.viewTitle = title;
   }
 
+  // click on the date in calendar
   onCurrentDateChanged(event: Date): void {
+
     console.log('--------');
-    const today = moment().format();
     const yesterday = moment().subtract(1, 'day').format();
     const selectedDay = moment(event).format();
 
-
-    console.log('===============');
-
-    console.log(today + ' --+---- ' + selectedDay + ' -----  ' + event);
 
     if (selectedDay > yesterday) {
       this.pastDay = false;
@@ -106,13 +95,14 @@ export class CreateMeetingPage implements OnInit {
 
     this.selectedDateByCalendar = event;
     this.selectedDayByCalendar = event.toString().substring(0, 3);
+
+    console.log(' ------------');
+    console.log('------------');
+    console.log(this.selectedDayByCalendar);
+
     this.selectedDay = 'hello';
 
-    console.log('checko hours ' + moment(this.selectedDateByCalendar).format('L'));
-    console.log('checko hours ' + moment(this.selectedDateByCalendar).format());
-
     this.getOpeningHoursByIdBusiness(this.selectedBusinessId);
-
   }
 
   private getOpeningHoursByIdBusiness(idBusiness: string): void {
@@ -122,6 +112,7 @@ export class CreateMeetingPage implements OnInit {
         this.businessCalendar = false;
         return;
       }
+      this.calendarTimeZone = calendar[0].timeZone;
 
       let open;
       let close;
@@ -195,27 +186,19 @@ export class CreateMeetingPage implements OnInit {
         }
       }
 
-
       this.timeMeeting = [];
 
-
       if (this.defaultOpeningHours.length > 0) {
-
         const dateForFirestore = moment(this.selectedDateByCalendar).format('L');
+
+        console.log('datum pred hladanim ');
+        console.log(this.selectedDateByCalendar);
+        console.log('+++++');
+        console.log(dateForFirestore);
 
         this.getMeetingsByIdBusinessByDate(idBusiness, dateForFirestore);
       }
-      // when I have data in help Array I will call function for data
-      // for meeting in this day , this Business
-      // And just do filter according to conditions
-
-
-      //// after push we have to filter which opening are okey and no
-      //// take data from firestore collection meetings according to idBusiness
-      //// this.timeMeeting = helpArray;
-
     }, error => {
-      // todo set ErrorMessage Something is wrong
       console.log('you got error ');
       console.log(error);
     });
@@ -230,7 +213,6 @@ export class CreateMeetingPage implements OnInit {
 
   private async showAlertForConfirmMeeting(date: Date, time): Promise<any> {
     const confirmDay = moment(date).format('D.M.YYYY');
-    // 2022-01-06T14:24:36+01:00
     let upravenyCas = moment(date).format('YYYY-MM-DD');
     upravenyCas = upravenyCas + 'T00:00:00';
 
@@ -287,17 +269,30 @@ export class CreateMeetingPage implements OnInit {
     // try new Date ('2017-01-01')
     // modifyDate = moment(modifyDate).add(startInMinutes, 'minutes').format();
 
-    const beforeSave = moment(modifyDate).add(startInMinutes, 'minutes').format();
+    console.log(modifyDate);
+    const meetingDate = moment(modifyDate).add(startInMinutes, 'minutes').format();
+
+    let meetingDateWithCalendarTimeZone = meetingDate.substring(0, 19);
+
+    meetingDateWithCalendarTimeZone = meetingDateWithCalendarTimeZone + this.calendarTimeZone;
+
+
     console.log('before save');
-    console.log(beforeSave);
-    console.log(beforeSave.substring(0, 16));
+    console.log(meetingDate);
+    console.log(meetingDate.substring(0, 19));
+    console.log(meetingDateWithCalendarTimeZone);
+    console.log('----------');
+    console.log(this.selectedDayByCalendar);
+    console.log(moment(this.selectedDateByCalendar).format('L'));
+
 
     const meetingData: Meeting = {
 
-      // here is this
       dateForCalendar: moment(this.selectedDateByCalendar).format('L'),
-      //date: beforeSave.substring(0, 16),
-      date: beforeSave,
+      //date: meetingDate.substring(0, 16),
+      //date: meetingDate,
+      date: meetingDateWithCalendarTimeZone,
+      nameDay: moment(this.selectedDateByCalendar).format('dddd'),
       time: {
         end: time.end,
         start: time.start
@@ -308,13 +303,12 @@ export class CreateMeetingPage implements OnInit {
       idUser: userId
     };
 
-
+    //control again its free this termin for meeting
     this.meetingService
       .getExistMeeting(meetingData.idBusiness, meetingData.minutes, meetingData.dateForCalendar)
       .subscribe((existMeeting) => {
 
         if (!existMeeting) {
-
           //create Meeting
           this.meetingService.addMeeting(meetingData).then(() => {
             this.showToast('A meeting has been created successfully.');
@@ -334,28 +328,21 @@ export class CreateMeetingPage implements OnInit {
         console.error(error);
       });
 
-
-    // this.meetingService
-    //   .getExistMeeting(meetingData.idBusiness, meetingData.minutes, meetingData.dateForCalendar)
-    //   .pipe(
-    //     mergeMap((existMeeting) => )
-    // )
   }
 
   private getMeetingsByIdBusinessByDate(idBusiness: string, dateForCalendar: string): void {
-    this.meetingService.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar)
+    this.meetingService.getMeetingsByIdBusinessByOneDay(idBusiness, dateForCalendar)
       .subscribe(meetings => {
         this.timeMeeting = [];
         this.meetingsByDateBusiness = meetings;
         this.filterReservedHours(this.defaultOpeningHours, meetings);
+
       }, error => {
         // todo set ErrorMessage Something is wrong
         console.log('you got error ');
         console.error(error);
       });
-
   }
-
 
   private filterReservedHours(openingHour: TimeMeeting[], reservedHours: Meeting[]): void {
 

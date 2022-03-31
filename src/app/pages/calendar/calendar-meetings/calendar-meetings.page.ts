@@ -65,7 +65,6 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
       if (params.businessId !== undefined) {
         this.selectedBusinessId = params.businessId;
         this.controlBusinessPermission(params.businessId);
-        console.log('I got business id ' + this.selectedBusinessId);
 
         // information about business address
         this.getOneBusiness(this.selectedBusinessId);
@@ -73,9 +72,6 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
 
       } else {
         this.selectedBusinessId = null;
-
-        console.log('i dont have businessID');
-
       }
 
       if (this.selectedDateEvent !== null) {
@@ -180,7 +176,7 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
 
       }, error => {
         // todo set ErrorMessage Something is wrong
-        console.log('you got error '); git
+        console.log('you got error ');
         console.log(error);
       });
   }
@@ -189,7 +185,7 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
   private getMeetingsByIdBusinessByDate(idBusiness: string, dateForCalendar: string): void {
     console.log('11111111111111111111111111111111111111111');
 
-    this.meetingService.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar).subscribe(meetings => {
+    this.meetingService.getMeetingsByIdBusinessByOneDay(idBusiness, dateForCalendar).subscribe(meetings => {
       //this.meetingService.getMeetingByIdBusinessByDateWithUserDetails(idBusiness, dateForCalendar).subscribe(meetings => {
       //this.userService.getUserDetailsInformation('Rd6uOzjsi6X3hHQISa2zS7T90mt2').subscribe(meetings => {
 

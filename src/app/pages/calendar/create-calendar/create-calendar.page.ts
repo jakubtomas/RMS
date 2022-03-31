@@ -2,9 +2,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { CalendarService } from '../../../services/calendar.service';
-//import { ToastController } from 'ionic-angular';
 import { Calendar } from '../../../interfaces/calendar';
 import { AlertController, ToastController } from '@ionic/angular';
 
@@ -14,8 +13,9 @@ import * as moment from 'moment';
 import { TimeMeeting } from '../../../interfaces/timeMeeting';
 import { MeetingService } from '../../../services/meeting.service';
 import { BusinessService } from 'src/app/services/business.service';
-
-// import * as moment from 'moment';
+import { Meeting } from 'src/app/interfaces/meeting';
+import { BehaviorSubject, forkJoin, Observable } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-create-calendar',
@@ -37,9 +37,15 @@ export class CreateCalendarPage implements OnInit {
   formatOpeningHours = false;
   countOfMeetings = 0;
   permissionUpdate = false;
+  private allMeetingsFromDb: Meeting[] = [];
+  private deleteDay = false;
+  private dateForDelete = [];
+  private allDatesForDelete = [];
+  private allIdsMeetingsForDelete = [];
+  private daysForDelete = [];
 
 
-  //data for component
+  //data for UI component
   ionTitle: string;
   ionButton: string;
 
@@ -47,7 +53,6 @@ export class CreateCalendarPage implements OnInit {
   get MinutesForMeeting(): FormControl {
     return this.contactForm.get('MinutesForMeeting') as FormControl;
   }
-
 
   contactForm = new FormGroup(
     {
@@ -72,7 +77,6 @@ export class CreateCalendarPage implements OnInit {
       SundayOpening: new FormControl('',),
       SundayClosing: new FormControl('',),
 
-
       MinutesForMeeting: new FormControl('', [Validators.required,
       Validators.min(10),
       Validators.max(360)]),
@@ -88,10 +92,6 @@ export class CreateCalendarPage implements OnInit {
     private businessService: BusinessService,
   ) { }
 
-  ionViewWillEnter(): void {
-    //  this.messageFirebase = null;
-
-  }
   ngOnInit() {
     this.messageFirebase = null;
     this.isUpdateCalendar = false;
@@ -104,26 +104,17 @@ export class CreateCalendarPage implements OnInit {
         this.docIdCalendar = params.docCalendarId;
 
         this.controlBusinessPermission(params.businessId, params.docCalendarId);
-
-        // this.getCountOfMeetingsForBusiness(params.businessId, this.todayDate);
         this.isUpdateCalendar = true;
+
       } else {
-        this.isUpdateCalendar = false;
-        console.log('We are creating calendar ');
+        this.isUpdateCalendar = false; //We are creating calendar
       }
       this.setValuesForPage();
     });
   }
 
 
-  getCountOfMeetingsForBusiness(idBusiness: string, dateForCalendar: string) {
-    this.meetingService.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar)
-      .subscribe((meetings) => {
-        console.log('vsetky meeting od dnesneho dna');
-        console.log(meetings);
-        this.countOfMeetings = meetings.length;
-      });
-  }
+
 
   setValuesForPage(): void {
     if (this.isUpdateCalendar) {
@@ -135,32 +126,37 @@ export class CreateCalendarPage implements OnInit {
     }
   }
 
-  private async showToast(msg: string) {
-    const toast = await this.toastCtrl.create({
-      message: msg,
-      duration: 3000,
-      position: 'middle'
-    });
 
-    toast.onDidDismiss();
-    await toast.present();
-  }
 
   controlBusinessPermission(businessId: string, docCalendarId: string): void {
 
     this.businessService.getBusinessPermission(businessId)
       .subscribe((permissions) => {
         const myId = localStorage.getItem('idUser');
+
         if (permissions.idUser === myId) {
           this.getOneCalendar(docCalendarId);
-          this.getCountOfMeetingsForBusiness(businessId, this.todayDate);
+          console.log('this todaydate');
+          console.log(this.todayDate);
 
+          this.getCountOfMeetingsForBusiness(businessId, this.todayDate);
         } else {
           this.router.navigate(['/dashboard']);
         }
 
       }, error => {
         console.error(error);
+      });
+  }
+
+  getCountOfMeetingsForBusiness(idBusiness: string, dateForCalendar: string): void {
+    this.meetingService.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar)
+      .subscribe((meetings: Meeting[]) => {
+        console.log('vsetky meeting od dnesneho dna');
+        console.log(meetings);
+        console.log(' ');
+        this.allMeetingsFromDb = meetings;
+        this.countOfMeetings = meetings.length;
       });
   }
 
@@ -175,9 +171,9 @@ export class CreateCalendarPage implements OnInit {
       timeZone: this.timeZone
     };
 
-    if (this.errorsFromHours.length === 0) {// when we do not have errors
+    if (this.errorsFromHours.length === 0) { // when we do not have errors
       this.calendarService.addCalendar(calendar).then(() => {
-        this.showToast('Calendar successfully created');
+        this.showToast('Calendar has been created successfully');
         this.router.navigate(['/detail-business'],
           { queryParams: { businessId: this.selectedBusinessId } });
 
@@ -190,6 +186,8 @@ export class CreateCalendarPage implements OnInit {
   }
 
   prepareUpdate(): void {
+    this.dateForDelete = [];
+    this.daysForDelete = [];
 
     let readyTimeZone = this.timeZone;
     if (this.docIdCalendar !== undefined) {
@@ -205,28 +203,191 @@ export class CreateCalendarPage implements OnInit {
       timeZone: readyTimeZone
     };
 
-    // skontrolovat pocet sprav
+    // control error messages from OH
     if (this.errorsFromHours.length > 0) {
       return;
     }
 
+    // this.calendar.week
+    // compare
+    // newCalendar
 
+    // ist array , for or foreach
+    // 2 array compare values and if
+
+    // 1 case  change old value  // should delete all metting in better case delete only this date
+    //2 case change empty value to new  // should not delete any meeting
+    //3  ak sa zmenil hodnota na  prazdny string
+    // v pripade ze sa zmeni otvaranie hodin nastavit vymazanie stretnuti
+
+    // pripad iba rozsiri otvaracie hodiny nevymazavat
+    // pripda ked zmeni iba jeden den preco vymyzat vsetky
+    // in case that delete one day or more day just for closing // empty you should not delete any
+    // or should delete only this day
+    // v pripade ze sa zmenia minutes for meeting , asi vymazat vsetko mozno prepocitat
+
+    // v pripade vymazania calendara pomocou delete calendar
+    // potrebne osetrit ked sa meni s prazdneho stringu na new aby sa nevymazal kalendar
+
+
+
+    const lengthArray = this.calendar.week.length;
+    let counter = 0;
+    let counterNoChange = 0;
+
+    // go across every day/line and control that we have different value
+    while (counter < lengthArray) {
+
+      // compare old calendar with new calendar
+      if (this.calendar.week[counter].openingHours !== updateCalendar.week[counter].openingHours
+        || this.calendar.week[counter].closingHours !== updateCalendar.week[counter].closingHours) {
+
+        this.deleteDay = true;
+        this.daysForDelete.push(updateCalendar.week[counter].day);
+
+        // in case that new value is empty string just for closing day
+        // todo control that calendar is showing posibility create meeting according to value, opening and closingHours
+
+        // if (updateCalendar.week[counter].openingHours === '' && updateCalendar.week[counter].closingHours === '') {
+        //   this.deleteDay = false; // todo change I think we should also delete this
+        // }
+
+        // in case when hours are empty string, we won't delete any meeting
+        if (this.calendar.week[counter].openingHours === ''
+          && this.calendar.week[counter].closingHours === '') {
+          this.daysForDelete.pop();
+        }
+      } else {
+        counterNoChange++;
+      }
+      ++counter;
+    }
+
+    let deleteWithoutCalculate = false;
+    // in case that user change minutes for meeting , app have delete all meetings
+    if (this.calendar.timeMeeting !== updateCalendar.timeMeeting) {
+      this.deleteDay = true;// todo use old function for deleting all meetings
+      deleteWithoutCalculate = true;
+    }
+
+    // no change counter for 7 days , no different timeMeeting value
+    if (counterNoChange === 7 && this.calendar.timeMeeting === updateCalendar.timeMeeting) {
+      this.showToast('You did not change any value. Nothing for update.');
+      return;
+    }
+
+    // count of meeting for this calendar from Firestore
     if (this.countOfMeetings > 0) {
+
+      console.log(this.daysForDelete);
+
+      //daysForDelete.forEach((day) => this.calculateDateByName0fDate(day));
+      // this.getMeetingsByBusinessAndDay(this.calendar.idBusiness);
       const newLocal = 'Warning are you sure with updating this calendar. This calendar has ' + this.countOfMeetings + ' meetings ';
-      this.showAlertMessage(newLocal, updateCalendar); // todo change this message counf of meetings
+      this.showAlertMessage(newLocal, updateCalendar, deleteWithoutCalculate); // todo change this message counf of meetings
     } else {
       this.updateCalendar(updateCalendar);
     }
-
   }
 
+
+  // For day set last date which is for this day . Monday result last Monday 04/11/2022
+  private calculateDateByName0fDate(day: string) {
+    let count = 0;
+    while (count < 8) {
+
+      const nameDayFromWeek = moment().subtract(count, 'days').format('dddd');
+      const dateDayFromWeek = moment().subtract(count, 'days').format('L');
+
+      // parameter
+      if (day === nameDayFromWeek) {
+        this.dateForDelete.push(dateDayFromWeek);
+        count = 8;
+      } else {
+        count++;
+      }
+    }
+    this.calculateAllPossibleDateForDelete();
+  }
+
+  //
+  private calculateAllPossibleDateForDelete(): void {
+    if (this.dateForDelete.length > 0) {
+      this.dateForDelete.forEach((date) => this.calculateDatesForNext6Months(date));
+    }
+    this.filterMeetingsForDelete();
+
+    console.log('this is end');
+    console.log('----------');
+    console.log(this.allDatesForDelete);
+  }
+
+  // Calculate  next 25 week dates since input date ,and push into array
+  private calculateDatesForNext6Months(date: string): void {
+    let counter = 0;
+    let addDays = 0;
+    let newDate: string;
+    while (counter < 25) {
+      addDays = counter * 7;
+
+      newDate = moment(date).add(addDays, 'days').format('L');
+      this.allDatesForDelete.push(newDate);
+      ++counter;
+    }
+  }
+  // filter meetings fore delete
+  private filterMeetingsForDelete(): void {
+
+    console.log(this.allMeetingsFromDb);
+    console.log('------');
+    console.log(this.allDatesForDelete);
+    this.allIdsMeetingsForDelete = [];
+    console.log('before filter');
+    console.log(this.allIdsMeetingsForDelete.length);
+    console.log(this.allIdsMeetingsForDelete);
+
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
+    for (let i = 0; i < this.allMeetingsFromDb.length; i++) {
+      // eslint-disable-next-line @typescript-eslint/prefer-for-of
+      for (let counter = 0; counter < this.allDatesForDelete.length; counter++) {
+        if (this.allDatesForDelete[counter] === this.allMeetingsFromDb[i].dateForCalendar) {
+          //resultArray.push(this.allMeetingsFromDb[i].id);
+          this.allIdsMeetingsForDelete.push(this.allMeetingsFromDb[i].id);
+        }
+      }
+    }
+
+    this.allIdsMeetingsForDelete = // remove duplicate values in array
+      this.allIdsMeetingsForDelete.filter((id, index) => this.allIdsMeetingsForDelete.indexOf(id) === index);
+    console.log('                ');
+    console.log('                ');
+    console.log('show after filter ');
+    console.log(this.allIdsMeetingsForDelete.length);
+    console.log(this.allIdsMeetingsForDelete);
+
+    // remove meetings
+    this.allIdsMeetingsForDelete.forEach((id) => this.meetingService.deleteMeeting(id));
+  }
   // todo opravit
-  private updateCalendar(newCalendar: Calendar) {
+  private updateCalendar(newCalendar: Calendar, deleteWithoutCalculate?: boolean): void {
 
     if (this.errorsFromHours.length === 0) {
       this.calendarService.updateCalendar(this.docIdCalendar, newCalendar).then(() => {
+
+        if (this.deleteDay) {
+
+          if (deleteWithoutCalculate) {
+            this.deleteMeetingsForUpdateCalendar();
+
+          } else {
+            this.daysForDelete.forEach((day) => this.calculateDateByName0fDate(day));
+
+          }
+        }
+
         this.router.navigate(['/detail-business'], { queryParams: { businessId: newCalendar.idBusiness } });
         this.showToast('Calendar has been updated');
+
 
       }).catch((error) => {
         console.log('error you got error ');
@@ -235,9 +396,22 @@ export class CreateCalendarPage implements OnInit {
     }
   }
 
+  private deleteMeetingsForUpdateCalendar() {
 
+    this.meetingService.deleteMeetingsByIdBusiness(this.selectedBusinessId, this.todayDate)
+      .toPromise().then(() => {
+        console.log('Meetings have been deleted succesfully');
+        console.log('Meetings have been deleted succesfully');
+        console.log('Meetings have been deleted succesfully');
+      }).catch((error) => {
+        console.log('error you got error ');
+        console.log(error);
+        this.showToast('Operation failed. Something is wrong');
+      });
 
-  private async showAlertMessage(alertMessage: string, updateCalendar: Calendar): Promise<any> {
+  }
+
+  private async showAlertMessage(alertMessage: string, updateCalendar: Calendar, deleteWithoutCalculate: boolean): Promise<any> {
 
     const alert = await this.alertController.create({
       cssClass: 'alertForm',
@@ -250,25 +424,29 @@ export class CreateCalendarPage implements OnInit {
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
-            console.log('cancel');
           }
         },
         {
           text: 'OK',
           cssClass: 'secondary',
           handler: () => {
-            console.log('okey update');
-
-            this.updateCalendar(updateCalendar);
+            this.updateCalendar(updateCalendar, deleteWithoutCalculate);
           }
         },
-        // {
-        //   text: 'OK',
-        //   handler: () => {}
-        // }
       ]
     });
     await alert.present();
+  }
+
+  private async showToast(msg: string): Promise<void> {
+    const toast = await this.toastCtrl.create({
+      message: msg,
+      duration: 3000,
+      position: 'middle'
+    });
+
+    toast.onDidDismiss();
+    await toast.present();
   }
 
 
@@ -301,6 +479,7 @@ export class CreateCalendarPage implements OnInit {
   //   });
   //   await alert.present();
   // }
+
   getOneCalendar(docCalendarId: string): void {
 
     this.calendarService.getOneCalendar(docCalendarId)
@@ -462,16 +641,6 @@ export class CreateCalendarPage implements OnInit {
 
   private transformOpeningHoursDataForForm(calendar: Calendar, useCalendarTimeZone?: boolean): void {
 
-
-
-    //calendar.timeZone = null;
-    console.log('timeZone');
-    console.log(this.timeZone);
-    console.log(calendar.timeZone);
-
-    //this.timeZone = '00+00';
-    // +02:00
-    // const timeZone
     const todayDay = moment().format('YYYY-MM-DD');
 
     this.contactForm.setValue({ // todo create function and refactoring
@@ -513,14 +682,11 @@ export class CreateCalendarPage implements OnInit {
 
   private changeFormatTime(time: string, timeZone: string) {
     return time == '' ? '' : '2021-12-20T' + time + ':00.000' + timeZone;
-
   }
 
 
   resetHours(event: any, item: string | number): void {
 
-
-    /// namapujem vsetky hodnoty
     const weekData = this.mapOpeningClosingHours(true);
     console.log(weekData);
 
@@ -535,10 +701,6 @@ export class CreateCalendarPage implements OnInit {
     if (this.docIdCalendar !== undefined) {
       readyTimeZone = this.calendar.timeZone; // firebase timeZOne for update
     }
-
-    console.log('po upravou');
-    console.log('po upravou');
-    console.log(weekData);
 
     const changeCalendar: Calendar = {
       idBusiness: this.selectedBusinessId,

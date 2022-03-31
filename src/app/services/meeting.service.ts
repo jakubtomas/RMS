@@ -9,6 +9,7 @@ import { forkJoin, Observable, of, zip } from 'rxjs';
 import * as moment from 'moment';
 import { BusinessService } from './business.service';
 import { UserService } from './user.service';
+import { Business } from '../interfaces/business';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +27,8 @@ export class MeetingService {
   meetingCollection3: AngularFirestoreCollection<Meeting>;
   meetingCollection4: AngularFirestoreCollection<Meeting>;
   meetingCollection5: AngularFirestoreCollection<Meeting>;
+  meetingCollection6: AngularFirestoreCollection<Meeting>;
+  meetingCollection7: AngularFirestoreCollection<Meeting>;
 
   constructor(public afs: AngularFirestore,
     private businessService: BusinessService,
@@ -50,20 +53,10 @@ export class MeetingService {
   getMeetingsByIdBusinessByDate(idBusiness: string, dateForCalendar: string): Observable<Meeting[]> {
 
     const helpTime = moment(dateForCalendar).format('YYYY-MM-DDT00:00:00+00:00');
-    console.log('hladane');
-
-    console.log('                               ');
-    console.log(idBusiness);
-    console.log('                               ');
-    console.log(dateForCalendar);
-    console.log('                               ');
-
 
     this.meetingCollection5 = this.afs.collection('meetings',
-      ref => ref.where('date', '>', dateForCalendar)
-        .where('idBusiness', '==', idBusiness)
-      //.where('date', '>', helpTime)
-
+      ref => ref.where('idBusiness', '==', idBusiness)
+        .where('date', '>', helpTime)
     );
 
     return this.meetingCollection5.snapshotChanges().pipe(
@@ -74,28 +67,71 @@ export class MeetingService {
       })));
   }
 
-  // getMeetingByIdBusinessByDateWithUserDetails(idBusiness: string, dateForCalendar: string) {
-  //   return this.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar).pipe(
-  //     switchMap((arrayMeetings: Meeting[]) => {
 
-  //       arrayMeetings.map((meeting) => {
-  //         console.log(meeting);
-  //         console.log(meeting.idUser);
+  // just for one date
+  getMeetingsByIdBusinessByOneDay(idBusiness: string, dateForCalendar: string): Observable<Meeting[]> {
 
-  //         this.userService.getUserDetailsInformation(meeting.idUser).subscribe(value => {
-  //           console.log('value');
-  //           console.log(value);
+    const helpTime = moment(dateForCalendar).format('L');
 
-  //          });
+    console.log('helpTime for requst');
+    console.log(helpTime);
 
-  //       });
+    this.meetingCollection5 = this.afs.collection('meetings',
+      ref => ref.where('idBusiness', '==', idBusiness)
+        .where('dateForCalendar', '==', helpTime)
+    );
 
-  //       console.log(arrayMeetings);
-  //       return of(1);
-  //     }
+    return this.meetingCollection5.snapshotChanges().pipe(
+      map(changes => changes.map(a => {
+        const data = a.payload.doc.data() as Meeting;
+        data.id = a.payload.doc.id;
+        return data;
+      })));
+  }
 
-  //     ));
-  // }
+  getAllMeetingsByIdBusinessAndDay(idBusiness: string, nameDay: string): Observable<Meeting[]> {
+    this.meetingCollection6 = this.afs.collection('meetings',
+      ref => ref.where('idBusiness', '==', idBusiness)
+        .where('nameDay', '==', nameDay)
+    );
+
+    return this.meetingCollection6.snapshotChanges().pipe(
+      map(changes => changes.map(a => {
+        const data = a.payload.doc.data() as Meeting;
+        data.id = a.payload.doc.id;
+        return data;
+      })));
+  }
+
+
+
+  deleteMeetingsByIdBusiness(idBusiness: string, dateForCalendar: string): Observable<void[]> {
+
+    return this.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar).pipe(
+      switchMap((arrayMeetings: Meeting[]) =>
+        forkJoin(arrayMeetings.map(meeting => {
+          return this.deleteMeeting(meeting.id);
+        }))
+      )
+    );
+
+    // return this.getMeetingsByIdUserByDate(idUser, dateForCalendar).pipe(
+    //   switchMap((arrayMeetings: Meeting[]) =>
+    //     forkJoin(arrayMeetings.map(meeting => {
+    //       return this.businessService.getOneBusiness(meeting.idBusiness).pipe(
+    //         map(business => {
+    //           return { business, meeting };
+    //         }));
+    //     }),
+    //     )), tap((response) => {
+    //       console.log(' response');
+    //       console.log(response);
+
+    //     })
+    // );
+  }
+
+  //deleteMeeting
 
   getMeetingByIdBusinessByDateWithUserDetails(idBusiness: string, dateForCalendar: string) {
     return this.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar).pipe(
@@ -123,6 +159,11 @@ export class MeetingService {
 
   getMeetingsByIdUserOrderByDate(idUser: string, currentDay?: string): Observable<Meeting[]> {
 
+    console.log('what is your caurren');
+    console.log(currentDay);
+
+    // 2022-04-04T11:12:22+02:00
+
     this.meetingCollection3 = this.afs.collection('meetings',
       ref => ref.where('idUser', '==', idUser)
         .where('date', '>', currentDay)
@@ -136,7 +177,7 @@ export class MeetingService {
       })));
   }
 
-  getMeetingsAndDetailsBusinessByIdUser(idUser: string, currentDay?: string) {
+  getMeetingsAndDetailsBusinessByIdUser(idUser: string, currentDay?: string): Observable<{ business: Business; meeting: Meeting }[]> {
     return this.getMeetingsByIdUserOrderByDate(idUser, currentDay).pipe(
       switchMap((arrayMeetings: Meeting[]) =>
         forkJoin(arrayMeetings.map(meeting => {
@@ -184,8 +225,6 @@ export class MeetingService {
       }));
   }
   // uid cyYbqoYiDfgJit3YkIxIswYiu982
-
-
 
   getMeetingsByIdUserByDateByBusiness(idUser: string, dateForCalendar: string): Observable<Meeting[]> {
 

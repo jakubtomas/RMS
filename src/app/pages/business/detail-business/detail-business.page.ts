@@ -6,6 +6,7 @@ import { AlertController, ToastController } from '@ionic/angular';
 import { CalendarService } from '../../../services/calendar.service';
 import { Calendar } from '../../../interfaces/calendar';
 import * as moment from 'moment';
+import { MeetingService } from 'src/app/services/meeting.service';
 
 @Component({
   selector: 'app-detail-business',
@@ -21,10 +22,15 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
   calendars: Calendar[];
   isThisMyBusiness = false;
   subscription;
+  countOfMeetings = 0;
+  todayDate = moment().format('L');
+
+
 
   timeZone = moment().format().toString().substring(19, 25);
 
   constructor(
+    private meetingService: MeetingService,
     private route: ActivatedRoute,
     private businessService: BusinessService,
     private router: Router,
@@ -43,6 +49,8 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
         this.selectedBusinessId = params.businessId;
 
         this.controlBusinessPermission(params.businessId);
+        this.getOneBusiness(params.businessId);
+        this.getCalendars();
 
       }
 
@@ -81,9 +89,8 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
     this.businessService.getBusinessPermission(documentID).subscribe((permissions) => {
       const myId = localStorage.getItem('idUser');
       if (permissions.idUser === myId) {
-        this.getOneBusiness(documentID);
-        this.getCalendars();
         this.isThisMyBusiness = true;
+        this.getCountOfMeetingsForBusiness(this.selectedBusinessId, this.todayDate);
       }
 
     }, error => {
@@ -92,34 +99,31 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
   }
 
   selectMeetings(): void {
-    //this.router.navigate(['/register-business', {businessId: this.selectedBusinessId}]);
     this.router.navigate(['/calendar-meetings'], { queryParams: { businessId: this.selectedBusinessId } });
 
   }
   editBusiness(): void {
-    //this.router.navigate(['/register-business', {businessId: this.selectedBusinessId}]);
     this.router.navigate(['/register-business'], { queryParams: { businessId: this.selectedBusinessId } });
-
   }
 
 
   deleteBusiness(): void {
     this.businessService.deleteBusiness(this.selectedBusinessId).then(() => {
       //   this.router.navigate(['/list-business', {deletedBusiness: true}]);
-      this.router.navigate(['/list-business'], { queryParams: { deletedBusiness: true } });
-
       this.business = null;
       this.selectedBusinessId = null;
+      this.deleteMeetingsByIdBusiness();
+      this.router.navigate(['/list-business'], { queryParams: { deletedBusiness: true } });
 
     }).catch((error) => {
       console.log('error you got error ');
       console.log(error);
       this.messageFirebase = 'Something is wrong';
+      this.showToast('Something is wrong');
     });
   }
 
   async showAlertForDelete(input: string): Promise<any> {
-
     let deleteBusiness: boolean = null;
     deleteBusiness = input === 'business';
 
@@ -139,18 +143,66 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
         }, {
           text: 'Yes',
           handler: () => {
-            if (deleteBusiness) {
-              this.deleteBusiness();
-            }
-            if (!deleteBusiness) {
-              this.deleteCalendar();
+
+            //number of meeting with this calendar
+            if (this.countOfMeetings > 0) {
+              const newLocal =
+                'Warning are you sure about deleting this calendar?. This calendar has ' + this.countOfMeetings + ' meetings ';
+              this.showAlertMessage(newLocal, deleteBusiness);
+            } else {// when do not have any meeting
+              if (deleteBusiness) {
+                this.deleteBusiness();
+              }
+              if (!deleteBusiness) {
+                this.deleteCalendar();
+              }
             }
 
+
+            // potrebne vytvorit showAlertMessage with
+            // are you sure you want to delete this busi or calenddar with all meetings
+
+            // no nothing happend
+            // yes  call function delete calendar or delete busines and inside theses
+            // function after than  call function  deleteMeetingsByIdBusiness fomr meeting service
           }
         }]
     });
 
     await alert.present();
+  }
+
+  async showAlertMessage(alertMessage: string, deleteBusiness: boolean) {
+
+    const alert = await this.alertController.create({
+      cssClass: 'alertForm',
+      header: 'Warning',
+
+      message: alertMessage,
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+          }
+        },
+        {
+          text: 'OK',
+          cssClass: 'secondary',
+          handler: () => {
+            if (deleteBusiness) {
+              this.deleteBusiness();
+            }
+            if (!deleteBusiness) {
+              this.deleteCalendar();
+            };
+          }
+        },
+      ]
+    });
+    await alert.present();
+
   }
 
 
@@ -177,22 +229,15 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
     this.calendarService.getCalendars().subscribe(calendars => {
       this.calendars = calendars;
 
-      console.log(' all calendar');
-      console.log(this.calendars);
-
-
       if (this.calendars.length > 0) {
         this.calendars.forEach(calendar => {
+
           if (calendar.idBusiness === this.selectedBusinessId) {
-
-
             this.calendar = calendar;
             this.changeDateFormat();
           }
         });
       }
-      console.log('show me data ');
-      console.log(this.calendar);
     }, error => {
       console.log('you got error ');
       console.log(error);
@@ -210,6 +255,7 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
 
   deleteCalendar(): void {
     this.calendarService.deleteCalendar(this.calendar.id).then(() => {
+      this.deleteMeetingsByIdBusiness();
       this.showToast('Calendar has been deleted');
       this.calendar = null;
 
@@ -217,6 +263,7 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
       console.log('error you got error ');
       console.log(error);
       this.messageFirebase = 'Something is wrong';
+      this.showToast('Operation Failed something is wrong');
     });
   }
 
@@ -228,6 +275,31 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     //  this.subscription.unsubscribe();
   }
+
+  private getCountOfMeetingsForBusiness(idBusiness: string, dateForCalendar: string): void {
+    this.meetingService.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar)
+      .subscribe((meetings) => {
+        console.log('vsetky meeting od dnesneho dna');
+        console.log(meetings);
+        console.log(' ');
+        this.countOfMeetings = meetings.length;
+      });
+  }
+
+  private deleteMeetingsByIdBusiness(): void {
+
+    this.meetingService.deleteMeetingsByIdBusiness(this.selectedBusinessId, this.todayDate)
+      .toPromise().then(() => {
+        console.log('       ');
+        console.log('Meetings have been deleted okey');
+        console.log('         ');
+
+      }).catch((error) => {
+        console.log('error you got error ');
+        console.log(error);
+      });
+  }
+
 
 
 }

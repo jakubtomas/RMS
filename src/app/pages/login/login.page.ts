@@ -43,8 +43,7 @@ export class LoginPage implements OnInit {
   };
 
   constructor(
-    private router: Router,/*
-        private authService: AuthService,*/
+    private router: Router,
     private toastCtrl: ToastController,
     private authService: AuthService,
     private fb: FormBuilder
@@ -69,8 +68,6 @@ export class LoginPage implements OnInit {
 
     this.userForm.setValue({ email: 'macka@gmail.com', password: '465489' });
   }
-
-
 
   loginUser(userFormObject: { email: string; password: string }) {
     this.authService.login(userFormObject.email, userFormObject.password)
