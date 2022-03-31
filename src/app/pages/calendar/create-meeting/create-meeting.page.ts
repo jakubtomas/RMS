@@ -272,10 +272,6 @@ export class CreateMeetingPage implements OnInit {
           cssClass: 'secondary',
           handler: () => { }
         },
-        // {
-        //   text: 'OK',
-        //   handler: () => {}
-        // }
       ]
     });
     await alert.present();

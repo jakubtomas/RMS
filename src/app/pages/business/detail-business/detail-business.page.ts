@@ -43,8 +43,6 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
         this.selectedBusinessId = params.businessId;
 
         this.controlBusinessPermission(params.businessId);
-        this.getOneBusiness(params.businessId);
-        this.getCalendars();
 
       }
 
@@ -83,6 +81,8 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
     this.businessService.getBusinessPermission(documentID).subscribe((permissions) => {
       const myId = localStorage.getItem('idUser');
       if (permissions.idUser === myId) {
+        this.getOneBusiness(documentID);
+        this.getCalendars();
         this.isThisMyBusiness = true;
       }
 
@@ -167,30 +167,32 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
       idBusiness: this.calendar.idBusiness,
       week: newWeek,
       break: 'no break',
-      timeZone: this.timeZone
+      timeZone: this.calendar.timeZone
     };
 
   }
 
+  // return all calendar and filter which is my
   getCalendars(): void {
     this.calendarService.getCalendars().subscribe(calendars => {
       this.calendars = calendars;
 
-      //console.log(calendars.length);
+      console.log(' all calendar');
+      console.log(this.calendars);
+
 
       if (this.calendars.length > 0) {
         this.calendars.forEach(calendar => {
-          // console.log(calendar.idBusiness + '  ' + this.selectedBusinessId);
-
           if (calendar.idBusiness === this.selectedBusinessId) {
-            //    console.log('your calendar data are ');
-            //  console.log(calendar);
+
+
             this.calendar = calendar;
-            //call function fore format date
             this.changeDateFormat();
           }
         });
       }
+      console.log('show me data ');
+      console.log(this.calendar);
     }, error => {
       console.log('you got error ');
       console.log(error);

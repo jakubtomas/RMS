@@ -167,6 +167,7 @@ export class BusinessService {
         //return query.orderBy('city', 'asc');
         console.log(query);
 
+        // return query.orderBy('zipCode', 'asc');
         return query;
       });
 
@@ -323,6 +324,5 @@ export class BusinessService {
       .collection('business')
       .snapshotChanges();
   }
-
 
 }

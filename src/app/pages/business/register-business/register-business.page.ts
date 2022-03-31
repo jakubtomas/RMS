@@ -52,7 +52,6 @@ export class RegisterBusinessPage implements OnInit {
     return this.registerForm.get('street') as FormControl;
   }
 
-
   get typeOrganization(): FormControl {
     return this.registerForm.get('typeOrganization') as FormControl;
   }
@@ -73,7 +72,7 @@ export class RegisterBusinessPage implements OnInit {
 
     this.route.queryParams.subscribe((params: Params) => {
 
-      if (params.businessId != undefined) {
+      if (params.businessId !== undefined) {
 
         const businessId = params.businessId;
         this.updateBusinessPage = true;
@@ -107,15 +106,16 @@ export class RegisterBusinessPage implements OnInit {
     }
   }
 
+
   onSubmit(): void {
 
     const businessData: Business = {
       idOwner: localStorage.getItem('idUser'),
-      nameOrganization: this.nameOrganization.value,
+      nameOrganization: this.capitalizeFirstLetter(this.nameOrganization.value),
       phoneNumber: this.phoneNumber.value,
       zipCode: this.zipCode.value,
-      city: this.city.value,
-      nameStreetWithNumber: this.street.value,
+      city: this.capitalizeFirstLetter(this.city.value),
+      nameStreetWithNumber: this.capitalizeFirstLetter(this.street.value),
       typeOfOrganization: this.typeOrganization.value
     };
 
@@ -147,7 +147,7 @@ export class RegisterBusinessPage implements OnInit {
     });
   }
 
-  getTypesOrganization() {
+  getTypesOrganization(): { name: string }[] {
     return this.businessService.typesOfOrganization;
   }
 
@@ -194,7 +194,7 @@ export class RegisterBusinessPage implements OnInit {
     });
   }
 
-  async showToast(msg: string) {
+  async showToast(msg: string): Promise<void> {
     const toast = await this.toastCtrl.create({
       message: msg,
       duration: 3000,
@@ -203,5 +203,9 @@ export class RegisterBusinessPage implements OnInit {
 
     toast.onDidDismiss();
     await toast.present();
+  }
+
+  private capitalizeFirstLetter(name: string) {
+    return name.replace(/^./, name[0].toUpperCase());
   }
 }

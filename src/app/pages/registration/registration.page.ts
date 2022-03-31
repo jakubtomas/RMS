@@ -139,19 +139,20 @@ export class RegistrationPage implements OnInit {
 
 
 
-    this.authService.createUser(email, password, firstName, lastName).then((response) => {
-      if (response == null) {// null is success, false means there was an error
-        console.log('successful registration createUser.ts');
-        //todo send arlso message successfully
-        this.router.navigate(['/dashboard']);
-        this.showToast('The account has been created successfully.');
+    this.authService.createUser(email, password, firstName, lastName)
+      .then((response) => {
+        if (response == null) {// null is success, false means there was an error
+          console.log('successful registration createUser.ts');
+          //todo send arlso message successfully
+          this.router.navigate(['/dashboard']);
+          this.showToast('The account has been created successfully.');
 
 
-      } else {
-        this.showToast(response.message);
-        this.firebaseErrorMessage = response.message;
-      }
-    });
+        } else {
+          this.showToast(response.message);
+          this.firebaseErrorMessage = response.message;
+        }
+      });
   }
 
 

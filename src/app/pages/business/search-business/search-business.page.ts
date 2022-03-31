@@ -73,19 +73,20 @@ export class SearchBusinessPage implements OnInit {
   onSubmit(): void {
     this.searching = true;
     const searchValues: SearchBusiness = {
-      nameOrganization: this.nameOrganization.value,
-      city: this.city.value,
+      nameOrganization: this.capitalizeFirstLetter(this.nameOrganization.value),
+      city: this.capitalizeFirstLetter(this.city.value),
       zipCode: this.zipCode.value,
       typeOfOrganization: this.typeOrganization.value
     };
 
     console.log('click dostavam value ');
+    console.log(searchValues);
 
     this.getSearchedBusinesses(searchValues);
 
   }
 
-  getTypesOrganization() {
+  getTypesOrganization(): { name: string }[] {
     return this.businessService.typesOfOrganization;
   }
 
@@ -97,8 +98,7 @@ export class SearchBusinessPage implements OnInit {
     }
   }
 
-  orderByAddress() {
-
+  orderByAddress(): void {
     if (this.orderBy === 'city') {
       this.businesses.reverse();
     } else {
@@ -123,6 +123,11 @@ export class SearchBusinessPage implements OnInit {
       } else {
         this.noResultMessage = false;
       }
+    }, error => {
+      console.log('                        ');
+      console.log('error -------');
+      console.log(error);
+      console.error(error);
     });
   }
 
@@ -135,5 +140,12 @@ export class SearchBusinessPage implements OnInit {
     if (business.id !== null) {
       this.router.navigate(['/detail-business'], { queryParams: { businessId: business.id } });
     }
+  }
+  private capitalizeFirstLetter(name: string): string {
+    // return name;
+    if (name !== undefined && name !== null && name.length > 0) {
+      return name.replace(/^./, name[0].toUpperCase());
+    }
+    return name;
   }
 }

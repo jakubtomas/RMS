@@ -25,6 +25,7 @@ export class MeetingService {
   meetingCollection2: AngularFirestoreCollection<Meeting>;
   meetingCollection3: AngularFirestoreCollection<Meeting>;
   meetingCollection4: AngularFirestoreCollection<Meeting>;
+  meetingCollection5: AngularFirestoreCollection<Meeting>;
 
   constructor(public afs: AngularFirestore,
     private businessService: BusinessService,
@@ -49,15 +50,23 @@ export class MeetingService {
   getMeetingsByIdBusinessByDate(idBusiness: string, dateForCalendar: string): Observable<Meeting[]> {
 
     const helpTime = moment(dateForCalendar).format('YYYY-MM-DDT00:00:00+00:00');
+    console.log('hladane');
 
-    this.meetingCollection3 = this.afs.collection('meetings',
-      ref => ref.where('dateForCalendar', '==', dateForCalendar)
+    console.log('                               ');
+    console.log(idBusiness);
+    console.log('                               ');
+    console.log(dateForCalendar);
+    console.log('                               ');
+
+
+    this.meetingCollection5 = this.afs.collection('meetings',
+      ref => ref.where('date', '>', dateForCalendar)
         .where('idBusiness', '==', idBusiness)
-        .where('date', '>', helpTime)
+      //.where('date', '>', helpTime)
 
     );
 
-    return this.meetingCollection3.snapshotChanges().pipe(
+    return this.meetingCollection5.snapshotChanges().pipe(
       map(changes => changes.map(a => {
         const data = a.payload.doc.data() as Meeting;
         data.id = a.payload.doc.id;
@@ -174,6 +183,33 @@ export class MeetingService {
         });
       }));
   }
+  // uid cyYbqoYiDfgJit3YkIxIswYiu982
+
+
+
+  getMeetingsByIdUserByDateByBusiness(idUser: string, dateForCalendar: string): Observable<Meeting[]> {
+
+    // todo change default  Time Zone
+    const helpTime = moment(dateForCalendar).format('YYYY-MM-DDT00:00:00+01:00');
+
+    this.meetingCollection3 = this.afs.collection('meetings',
+      ref => ref.where('dateForCalendar', '==', dateForCalendar)
+        .where('idUser', '==', idUser)
+        .where('date', '>', helpTime)
+    );
+
+    return this.meetingCollection3.snapshotChanges().pipe(
+      map(changes => {
+        return changes.map(a => {
+          const data = a.payload.doc.data() as Meeting;
+          data.id = a.payload.doc.id;
+          return data;
+        });
+      }));
+  }
+
+
+
 
   getMeetingsByIdUserForOneDay(idUser: string, dateForCalendar: string) {
 

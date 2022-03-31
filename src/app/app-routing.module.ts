@@ -8,7 +8,7 @@ const routes: Routes = [
 
   {
     path: '',
-    redirectTo: '/tabs/tab1',
+    redirectTo: '/welcome/home',
     // redirectTo: 'signup',
     pathMatch: 'full'
   },
@@ -84,7 +84,11 @@ const routes: Routes = [
     path: 'calendar-meetings',
     loadChildren: () => import('./pages/calendar/calendar-meetings/calendar-meetings.module').then(m => m.CalendarMeetingsPageModule),
     canActivate: [AuthGuard]
+  },  {
+    path: 'forgot-password',
+    loadChildren: () => import('./pages/forgot-password/forgot-password.module').then( m => m.ForgotPasswordPageModule)
   },
+
 
 
 

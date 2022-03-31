@@ -3,7 +3,6 @@ import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from 
 import { Calendar } from "../interfaces/calendar";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
-import { Business } from "../interfaces/business";
 
 @Injectable({
   providedIn: 'root'

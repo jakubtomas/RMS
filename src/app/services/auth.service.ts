@@ -68,6 +68,21 @@ export class AuthService {
     localStorage.setItem('emailVerified', null);
   }
 
+  forgotPassword(passwordResetEmail: string) {
+    return this.afAuth
+      .sendPasswordResetEmail(passwordResetEmail)
+      .then(() => {
+        window.alert('Password reset email sent, check your inbox.');
+      })
+      .catch((error) => {
+        window.alert(error);
+      });
+  }
+
+  // googleAuth() {
+  //   return this.AuthLogin(new auth.GoogleAuthProvider());
+  // }
+
   // string , validacia
   createUser(email: string, password: string, firstName: string, lastName: string): Promise<null | any> {
     return this.afAuth.createUserWithEmailAndPassword(email, password)

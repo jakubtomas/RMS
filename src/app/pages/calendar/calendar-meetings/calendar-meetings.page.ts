@@ -166,22 +166,23 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
     console.log(helpTime);
     // this.meetingService.getMeetingsByIdUserForOneDay(idUser, dateForCalendar).subscribe();
 
-    this.meetingService.getMeetingsByIdUserForOneDay(idUser, dateForCalendar).subscribe(meetings => {
-      console.log('-----------------------');
-      console.log(' your meetings by User by Date ');
-      console.log(meetings);
-      console.log('-----------------------');
+    this.meetingService.getMeetingsByIdUserForOneDay(idUser, dateForCalendar)
+      .subscribe(meetings => {
+        console.log('-----------------------');
+        console.log(' your meetings by User by Date ');
+        console.log(meetings);
+        console.log('-----------------------');
 
-      this.meetingWithBusiness = meetings;
+        this.meetingWithBusiness = meetings;
 
-      //this.meetingsByDateBusiness = meetings;
-      // this.filterReservedHours(this.defaultOpeningHours, meetings)
+        //this.meetingsByDateBusiness = meetings;
+        // this.filterReservedHours(this.defaultOpeningHours, meetings)
 
-    }, error => {
-      // todo set ErrorMessage Something is wrong
-      console.log('you got error ');
-      console.log(error);
-    });
+      }, error => {
+        // todo set ErrorMessage Something is wrong
+        console.log('you got error '); git
+        console.log(error);
+      });
   }
 
   // For Business with name
