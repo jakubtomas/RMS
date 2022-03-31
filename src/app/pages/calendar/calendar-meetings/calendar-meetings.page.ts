@@ -180,7 +180,7 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
 
       }, error => {
         // todo set ErrorMessage Something is wrong
-        console.log('you got error '); git
+        console.log('you got error ');
         console.log(error);
       });
   }
