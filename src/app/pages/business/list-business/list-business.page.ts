@@ -26,24 +26,15 @@ export class ListBusinessPage implements OnInit, OnDestroy {
   directionOrderBy = 'asc';
   businesses: Business[];
 
-  // businesses$: Observable<Business[]> = //
-  //     this.businessService.getAllMyBusinesses("mock").pipe(
-  //         map(businesses=> businesses.filter((business) => business.nameOrganization))
-  //     );
-
-
   constructor(private route: ActivatedRoute,
     private businessService: BusinessService,
     private router: Router) {
   }
 
   ngOnInit() {
-    // this.getAllMyBusinesses();
     this.messageFirebase = null;
 
     this.route.queryParams.subscribe((params: Params) => {
-
-      console.log(' dostal som parametre ');
 
       this.getAllMyBusinesses();
       if (params.deletedBusiness) {
@@ -52,8 +43,6 @@ export class ListBusinessPage implements OnInit, OnDestroy {
 
       if (params.createdBusiness !== undefined) {
         this.messageFirebase = 'Business successfully created';
-        console.log(' Business created ');
-
       }
     }, error => {
       console.log('you got error ');
@@ -88,12 +77,9 @@ export class ListBusinessPage implements OnInit, OnDestroy {
     } else {
       this.orderBy = 'city';
       this.directionOrderBy = 'asc';
-      //   this.getAllBusinesses();
     }
-    console.log('click order by address');
 
   }
-
 
   // get all ID business which are my /
   private getAllMyBusinesses(): void {
@@ -101,24 +87,16 @@ export class ListBusinessPage implements OnInit, OnDestroy {
       .subscribe(businesses => {
 
         //businesses.map(businesses=> businesses.filter((business) => business.nameOrganization))
-        console.log('vypis businessoov ');
-        console.log(businesses);
         this.businesses = businesses.filter((business) => business.nameOrganization);
 
       }, error => {
-        console.log('error');
         console.log(error);
       });
   }
 
   chooseBusiness(business: Business): void {
-    console.log('call ssearthe function');
-    console.log(business.id);
-
-    console.log('business is  ' + business.nameOrganization);
 
     if (business.id !== null) {
-      //this.router.navigate(['/detail-business', {businessId: business.id}])
       this.router.navigate(['/detail-business'],
         { queryParams: { businessId: business.id } });
     }
@@ -126,8 +104,6 @@ export class ListBusinessPage implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.messageFirebase = '';
-
-    //   businesses$.pipe()
   }
 
 

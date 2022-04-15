@@ -172,17 +172,6 @@ export class RegisterBusinessPage implements OnInit {
         typeOrganization: this.business.typeOfOrganization
       });
     } else {
-      // todo delete after develop mode
-      console.log('nastavauje register Form ');
-
-      this.registerForm.setValue({
-        nameOrganization: 'mnau coffe kosice',
-        phoneNumber: '0950478654',
-        zipCode: '014440',
-        city: 'Presov',
-        street: 'presovska 42',
-        typeOrganization: null
-      });
 
     }
   }

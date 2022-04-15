@@ -37,8 +37,6 @@ export class MeetingsPage implements OnInit {
   private getMeetingsAndDetailsBusinessByIdUser() {
     this.meetingService.getMeetingsAndDetailsBusinessByIdUser(this.userId, this.dayForMeeting)
       .subscribe(meetings => {
-        console.log('getMeetingsAndDetrails BusinesBy id user');
-        console.log(meetings);
         this.meetingWithBusiness = meetings;
 
 
@@ -49,7 +47,6 @@ export class MeetingsPage implements OnInit {
         }
 
       }, error => {
-        console.log('you got error ');
         console.log(error);
       });
   }
@@ -65,7 +62,6 @@ export class MeetingsPage implements OnInit {
       }
 
     }, error => {
-      console.log('you got error');
       console.log(error);
     });
   }

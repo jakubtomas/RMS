@@ -66,9 +66,7 @@ export class BusinessService {
 
   constructor(public afs: AngularFirestore,
     public afAuth: AngularFireAuth) {
-    //this.items = this.afs.collection('items').valueChanges();
     this.idUser = localStorage.getItem('idUser');
-    console.log('your user id is ' + this.idUser);
 
     this.itemsCollection = this.afs.collection('items',
       ref => ref.orderBy('name', 'asc'));
@@ -79,7 +77,6 @@ export class BusinessService {
     this.businessPermissionCollection = this.afs.collection('businessPermission');
   }
 
-  //todo repeat the same code , create the function
   getItems(): Observable<Item[]> {
     return this.items = this.itemsCollection.snapshotChanges().pipe(
       map(changes => changes.map(a => {
@@ -120,21 +117,9 @@ export class BusinessService {
     this.businessCollection = this.afs.collection('business',
       ref => {
 
-        // let query: firebase.firestore.CollectionReference | firebase.firestore.Query = ref.orderBy('zipCode', 'asc');
-        //let query: Query<firebase.firestore.DocumentData>;
-        //let query: Query<firebase.firestore.DocumentData>;
-
-        //         * const query = ref.where('type', '==', 'Book').
-        //  *                  .where('price', '>' 18.00)
-        //           *                  .where('price', '<' 100.00)
-        //           *                  .where('category', '==', 'Fiction')
-        //           *                  .where('publisher', '==', 'BigPublisher')
-        //           *
-
-
         let query = ref.where('typeOfOrganization', '==', searchValues.typeOfOrganization);
 
-        if (searchValues.city) { //todo >= start with
+        if (searchValues.city) {
           query = ref.where('city', '==', searchValues.city);
         }
 
@@ -145,12 +130,6 @@ export class BusinessService {
         if (searchValues.zipCode) {
           query = query.where('zipCode', '==', searchValues.zipCode);
         }
-
-
-        //return query.orderBy('city', 'asc');
-        console.log(query);
-
-        // return query.orderBy('zipCode', 'asc');
         return query;
       });
 
@@ -158,8 +137,6 @@ export class BusinessService {
       map(changes => changes.map(a => {
         const data = a.payload.doc.data() as Business;
         data.id = a.payload.doc.id;
-        console.log(' spracovane data');
-        console.log(data);
 
         return data;
       })));
@@ -182,20 +159,18 @@ export class BusinessService {
 
   getAllMyBusinesses(): Observable<Business[]> {
 
-    console.log('call function ');
     this.businessCollection = this.afs.collection('business');
 
     return this.getIdsOfMyBusinesses().pipe(
       switchMap(idsBusinesses =>
         forkJoin(idsBusinesses.map(id => this.getOneBusiness(id)))),
-      tap((response) =>
-
-        console.log('////////////////// ', response))
+      tap(() =>
+        console.log('')
+      )
     );
   }
 
   getOneBusiness(documentId: string): Observable<Business | undefined> {
-    //  console.log('function getOneBusiness document  ' +  documentId);
     if (documentId === undefined) {
       return undefined;
     }
@@ -225,35 +200,8 @@ export class BusinessService {
   }
 
 
-  // create collection for permission businesse write condition where businesses is
-  // create function and
-
-  getOneBusinessDemo()/*: Observable<Business>*/ {
-
-    const userId = localStorage.getItem('idUser');
-
-    console.log('my id is ' + userId);
-
-    this.getBusinessPermissions().subscribe(permissions => {
-
-      //filter only my businesses
-      const myBusinesses = permissions.filter(permission => permission.idUser == userId);
-
-      console.log('after filter ');
-      console.log(myBusinesses);
-
-    });
-
-    //todo problem stale je subscribnute a pocuva na zmeni aj ked som na inej stranke
-    // todo niekedy tam mam viac hodnot pretoze ostava s prechadajucej
-
-  }
 
   addBusiness(businessData: Business): Promise<DocumentReference<BusinessPermission>> {
-    //todo add typ then value
-
-    console.log(JSON.stringify(businessData));
-
     return this.businessCollection2.add(businessData).then((value) => {
 
       const businessPermissionObject: BusinessPermission = {
@@ -271,8 +219,6 @@ export class BusinessService {
 
   deleteBusiness(businessId: string): Promise<void> {
     return this.businessCollection2.doc(businessId).delete();
-
-    //todo important delete also in another table in firestroe do not forget this
   }
 
 

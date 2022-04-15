@@ -40,10 +40,6 @@ export class MeetingService {
     this.meetingCollection2 = this.afs.collection('meetings');
     this.meetingCollection4 = this.afs.collection('meetings');
     this.meetingCollection5 = this.afs.collection('meetings');
-    // this.meetingCollection3 = this.afs.collection('meetings',
-    //     ref => ref.where('date', '==', 'hello')
-    //               .where('idBusiness', '==', 'helloo')
-    // );
   }
 
   addMeeting(meetingData: Meeting): Promise<DocumentReference<Meeting>> {
@@ -74,8 +70,6 @@ export class MeetingService {
 
     const helpTime = moment(dateForCalendar).format('L');
 
-    console.log('helpTime for requst');
-    console.log(helpTime);
 
     this.meetingCollection5 = this.afs.collection('meetings',
       ref => ref.where('idBusiness', '==', idBusiness)
@@ -123,20 +117,13 @@ export class MeetingService {
       switchMap((arrayMeetings: Meeting[]) =>
         zip(arrayMeetings.map(meeting => {
 
-          console.log('---');
-          console.log(meeting);
 
           return this.userService.getUserDetailsInformation(meeting.idUser).pipe(
             map((userDetails) => {
-              console.log(userDetails);
 
               return { userDetails, meeting };
             }
-            )).pipe(
-              tap(x =>
-                console.log('x value ' + JSON.stringify(x))
-              )
-            );
+            ));
         }))
       )
     );
@@ -144,10 +131,6 @@ export class MeetingService {
 
   getMeetingsByIdUserOrderByDate(idUser: string, currentDay?: string): Observable<Meeting[]> {
 
-    console.log('what is your caurren');
-    console.log(currentDay);
-
-    // 2022-04-04T11:12:22+02:00
 
     this.meetingCollection3 = this.afs.collection('meetings',
       ref => ref.where('idUser', '==', idUser)
@@ -174,15 +157,10 @@ export class MeetingService {
               };
             })
           ).pipe(
-            // tap(x =>
-            //     console.log('x value ' + JSON.stringify(x) )
-            // )
           );
         }))
       ),
-      tap((response) => {
-        console.log(' response');
-        console.log(response);
+      tap(() => {
 
       })
     );
@@ -191,7 +169,6 @@ export class MeetingService {
 
   getMeetingsByIdUserByDate(idUser: string, dateForCalendar: string): Observable<Meeting[]> {
 
-    // todo change default  Time Zone
     const helpTime = moment(dateForCalendar).format('YYYY-MM-DDT00:00:00+01:00');
 
     this.meetingCollection3 = this.afs.collection('meetings',
@@ -209,11 +186,9 @@ export class MeetingService {
         });
       }));
   }
-  // uid cyYbqoYiDfgJit3YkIxIswYiu982
 
   getMeetingsByIdUserByDateByBusiness(idUser: string, dateForCalendar: string): Observable<Meeting[]> {
 
-    // todo change default  Time Zone
     const helpTime = moment(dateForCalendar).format('YYYY-MM-DDT00:00:00+01:00');
 
     this.meetingCollection3 = this.afs.collection('meetings',
@@ -245,10 +220,7 @@ export class MeetingService {
               return { business, meeting };
             }));
         }),
-        )), tap((response) => {
-          console.log(' response');
-          console.log(response);
-
+        )), tap(() => {
         })
     );
   }
@@ -262,8 +234,6 @@ export class MeetingService {
   getOneMeetingWithUserInformation(documentId: string): Observable<any> {
     return this.getOneMeeting(documentId).pipe(
       switchMap(meeting => {
-        console.log('mnau');
-        console.log(meeting);
         return this.userService.getUserDetailsInformation(meeting.idUser).pipe(
           map((userDetails) => {
             return { meeting, userDetails };
@@ -299,6 +269,4 @@ export class MeetingService {
     return this.meetingCollection4.doc(docIdMeeting).delete();
   }
 
-  // ' ' + item.idBusiness + ' ' + item.idUser + ' ' + item.time.start
-  // todo meeting po uplinuti datumu by sa mali vymazat a uz neukazovat premysliet tox
 }

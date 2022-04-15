@@ -24,9 +24,6 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
   subscription;
   countOfMeetings = 0;
   todayDate = moment().format('L');
-
-
-
   timeZone = moment().format().toString().substring(19, 25);
 
   constructor(
@@ -116,8 +113,6 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
       this.router.navigate(['/list-business'], { queryParams: { deletedBusiness: true } });
 
     }).catch((error) => {
-      console.log('error you got error ');
-      console.log(error);
       this.messageFirebase = 'Something is wrong';
       this.showToast('Something is wrong');
     });
@@ -157,14 +152,6 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
                 this.deleteCalendar();
               }
             }
-
-
-            // potrebne vytvorit showAlertMessage with
-            // are you sure you want to delete this busi or calenddar with all meetings
-
-            // no nothing happend
-            // yes  call function delete calendar or delete busines and inside theses
-            // function after than  call function  deleteMeetingsByIdBusiness fomr meeting service
           }
         }]
     });
@@ -239,7 +226,6 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
         });
       }
     }, error => {
-      console.log('you got error ');
       console.log(error);
     });
   }
@@ -260,8 +246,6 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
       this.calendar = null;
 
     }).catch((error) => {
-      console.log('error you got error ');
-      console.log(error);
       this.messageFirebase = 'Something is wrong';
       this.showToast('Operation Failed something is wrong');
     });
@@ -279,9 +263,6 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
   private getCountOfMeetingsForBusiness(idBusiness: string, dateForCalendar: string): void {
     this.meetingService.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar)
       .subscribe((meetings) => {
-        console.log('vsetky meeting od dnesneho dna');
-        console.log(meetings);
-        console.log(' ');
         this.countOfMeetings = meetings.length;
       });
   }
@@ -290,12 +271,8 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
 
     this.meetingService.deleteMeetingsByIdBusiness(this.selectedBusinessId, this.todayDate)
       .toPromise().then(() => {
-        console.log('       ');
-        console.log('Meetings have been deleted okey');
-        console.log('         ');
 
       }).catch((error) => {
-        console.log('error you got error ');
         console.log(error);
       });
   }

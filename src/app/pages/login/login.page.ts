@@ -66,22 +66,16 @@ export class LoginPage implements OnInit {
       ])),
     });
 
-    this.userForm.setValue({ email: 'macka@gmail.com', password: '465489' });
+    //this.userForm.setValue({ email: 'macka@gmail.com', password: '465489' });
   }
 
   loginUser(userFormObject: { email: string; password: string }) {
     this.authService.login(userFormObject.email, userFormObject.password)
       .then((result) => {
         if (result == null) {// null is success
-          console.log('login successfully login.page');
           this.router.navigate(['/dashboard']);
 
         } else {
-          console.log('neprihalsesnz ');
-          console.log(result);
-
-
-          // todo cdr change for new message
           this.firebaseErrorMessage = result.message;
           this.showToast(result.message);
         }

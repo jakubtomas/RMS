@@ -49,14 +49,11 @@ export class CalendarService {
     return this.calendarCollection.valueChanges();
   }
 
-  //getOne Calendar according to doc id Calendar
   getOneCalendar(documentId: string): Observable<Calendar> {
     return this.calendarCollection.doc(documentId).valueChanges();
   }
 
   updateCalendar(docCalendarId: string, calendarData: Calendar): Promise<void> {
-    console.log('docCalendarId:string' + docCalendarId);
-    console.log(' calendar data ' + calendarData);
     return this.calendarCollection2.doc(docCalendarId).update(calendarData);
   }
 

@@ -18,7 +18,6 @@
       </ion-item>
 
       <ion-item>
-        <!--todo input only number-->
         <ion-label position="floating">City</ion-label>
         <ion-input type="text" formControlName="city"></ion-input>
       </ion-item>
@@ -28,12 +27,6 @@
         <ion-input type="text" formControlName="zipCode"></ion-input>
       </ion-item>
 
-      <!--
-           // todo when we have zipCode check the length
-            <div *ngIf="zipCode.errors?.required && zipCode.touched">
-                <em> zipCode  is required.</em>
-            </div>
--->
       <ion-item>
         <ion-label><sup>*</sup> Type of organization </ion-label>
         <ion-select
@@ -48,10 +41,6 @@
           >
             {{ type.name }}
           </ion-select-option>
-
-          <!--<div *ngFor="let field of countries">
-                        <ion-select-option value="{{field.name}}">{{field.name}}</ion-select-option>
-                    </div>-->
         </ion-select>
       </ion-item>
 
@@ -68,8 +57,7 @@
 
     <ion-spinner *ngIf="searching" name="lines"></ion-spinner>
 
-    <ion-card *ngIf="businesses"
-      ><!--todo check header ,, zoradit podla mena -->
+    <ion-card *ngIf="businesses">
       <ion-item>
         <h3>Choose business</h3>
       </ion-item>
@@ -80,7 +68,6 @@
             style="cursor: pointer"
             (click)="orderByName()"
           >
-            <!--todo hover color and mouse type change-->
             Name business &#x25B2; &#x25BC;</ion-label
           >
 
@@ -89,7 +76,6 @@
             style="cursor: pointer"
             (click)="orderByAddress()"
           >
-            <!--todo hover color and mouse type change-->
             Address &#x25B2; &#x25BC;
           </ion-label>
         </ion-item>

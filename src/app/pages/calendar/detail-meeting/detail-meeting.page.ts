@@ -32,22 +32,13 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.route.queryParams.subscribe((params: Params) => {
-
-
-
       if (params.redirectFromCalendar) {
-        console.log('idem s kalendara');
-
         this.redirectFromCalendar = true;
-      } else {
-        console.log('neidem s kalendara  ');
       }
 
       if (params.docIdMeeting !== undefined) {
         this.docIdMeeting = params.docIdMeeting;
 
-        console.log(params.docIdMeeting + '   ' + params.idBusiness);
-        //this.getOneMeeting(this.docIdMeeting);
         this.getOneMeetingWithUserInformation(this.docIdMeeting);
       }
 
@@ -60,11 +51,9 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
 
 
   getOneBusiness(documentID: string): void {
-    // todo osetrit ked nenajde business
     this.subscription =
       this.businessService.getOneBusiness(documentID).subscribe((business) => {
         this.business = business;
-        console.log(business);
 
       }, error => {
         console.error(error);
@@ -88,18 +77,11 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
-            console.log('no');
-            //todo back to detail meeting ts without change
-
-
           }
         }, {
           text: 'Yes',
           handler: () => {
-            // todo show message succesfully deleted meeting
             this.deleteMeeting(docIdMeeting);
-            //this.saveMeeting(time);
-
           }
         }]
     });
@@ -124,11 +106,9 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
 
       const myId = localStorage.getItem('idUser');
       if (permissions.idUser === myId) {
-        console.log('this is my business ');
 
         this.ownerPermissionBusiness = true;
       } else {
-        console.log('this is not your business ');
         this.ownerPermissionBusiness = false;
       }
 
@@ -143,7 +123,6 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
     if (docIdMeeting) {
       this.meetingService.getOneMeeting(docIdMeeting).subscribe(meeting => {
         this.meetingDetails = meeting;
-        console.log(meeting);
       });
     }
   }
@@ -160,23 +139,10 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
           this.userDetails = meetingData.userDetails[0];
         }
 
-
-        console.log(meetingData);
-        console.log(meetingData.meeting.idUser);
-        console.log('-----');
-        console.log(this.idUser);
-
         if (meetingData.meeting.idUser === this.idUser) {
           this.myMeeting = true;
-          console.log('toto je moj meeting');
-
-        } else {
-          console.log('toto nieje moj meeting');
 
         }
-
-
-
       });
     }
   }
@@ -211,7 +177,6 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
         this.showToast('Meeting has been successfully deleted ');
 
       }).catch((error) => {
-        console.log('error you got error ');
 
         this.showToast('Meeting has been unsuccessfully deleted ');
         console.log(error);

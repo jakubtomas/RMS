@@ -67,7 +67,6 @@ export class SearchBusinessPage implements OnInit {
       typeOrganization: null
     });
 
-    console.log(this.registerForm);
   }
 
   onSubmit(): void {
@@ -79,8 +78,6 @@ export class SearchBusinessPage implements OnInit {
       typeOfOrganization: this.typeOrganization.value
     };
 
-    console.log('click dostavam value ');
-    console.log(searchValues);
 
     this.getSearchedBusinesses(searchValues);
 
@@ -110,7 +107,6 @@ export class SearchBusinessPage implements OnInit {
   getSearchedBusinesses(searchValues: SearchBusiness): void {
 
     setTimeout(() => {
-      console.log('this is the third message');
       if (this.searching) {
         this.searching = false;
         this.noResultMessage = true;
@@ -118,10 +114,6 @@ export class SearchBusinessPage implements OnInit {
     }, 1800);
 
     this.businessService.getSearchedBusinesses(searchValues).subscribe(value => {
-      console.log(value);
-      console.log('               ');
-      console.log('               ');
-      console.log('               ');
 
       this.searching = false;
       this.businesses = value;
@@ -132,18 +124,11 @@ export class SearchBusinessPage implements OnInit {
         this.noResultMessage = false;
       }
     }, error => {
-      console.log('                        ');
-      console.log('error -------');
-      console.log(error);
       console.error(error);
     });
   }
 
   chooseBusiness(business: Business): void {
-    console.log('call the function');
-    console.log(business.id);
-
-    console.log('business is  ' + business.nameOrganization);
 
     if (business.id !== null) {
       this.router.navigate(['/detail-business'], { queryParams: { businessId: business.id } });

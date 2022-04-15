@@ -11,7 +11,6 @@
   <ion-item>
     <h1>Current date {{todayDate}}</h1>
     <br />
-    <!-- <p>{{currentTime}}</p>-->
   </ion-item>
 
   <ion-item>
@@ -26,7 +25,6 @@
           style="cursor: pointer"
           (click)="reverseTimeList()"
         >
-          <!--todo hover color and mouse type change-->
           Date &#x25B2; &#x25BC;
         </ion-label>
       </ion-item>
@@ -55,9 +53,6 @@
               ><b>Address</b> {{item.business.nameStreetWithNumber
               }}</ion-card-subtitle
             >
-            <!--
-                        <ion-card-subtitle>{{item.meeting.time.startMinutes}}</ion-card-subtitle>
-                        <ion-card-subtitle>{{currentTime}}</ion-card-subtitle>-->
           </ion-card-header>
 
           <ion-button fill="outline" slot="end">Details</ion-button>

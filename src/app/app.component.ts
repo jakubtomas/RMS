@@ -54,16 +54,10 @@ export class AppComponent implements OnDestroy {
     private userService: UserService,
   ) { }
 
-  ngOnInit(): void {
-    // this.getUserDetails();
-  }
+  ngOnInit(): void { }
 
   getUserDetails(): void {
     this.userService.getUserDetailsInformation().subscribe((userDetails) => {
-      console.log('userDetails');
-
-      console.log(userDetails);
-
       this.userDetails = userDetails[0];
     });
   }
@@ -71,43 +65,30 @@ export class AppComponent implements OnDestroy {
 
 
   signOut(): void {
-    console.log('logout function run');
-
     this.authService.signOut().then((result) => {
       if (result == null) {// null is success, false means there was an error
-        console.log('user successfully  singOut');
         this.userDetails = null;
 
-        //todo message successfully signOut
-        // this.router.navigate(['/login']);
-
       } else {
-        console.log('user unsuccessfully singOut');
-        console.log(result);
         this.firebaseErrorMessage = result;
       }
     });
 
   }
 
-  clickToggle(toggle) {
-    console.log(toggle);
-    console.log(toggle.detail.checked);
+  clickToggle(toggle): void {
 
     if (toggle.detail.checked) {
-      //this.subject$.next(true);
       this.businessService.updateBusinessMode(true);
       this.businessService.isActiveMode = true;
     } else {
 
       this.businessService.updateBusinessMode(false);
-      //  this.subject$.next(false);
       this.businessService.isActiveMode = false;
     }
-    //this.subject$.complete();
   }
+
   ngOnDestroy(): void {
-    //  this.subscription.unsubscribe();
     this.userDetails = null;
   }
 

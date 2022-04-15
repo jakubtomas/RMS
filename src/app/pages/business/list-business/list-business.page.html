@@ -1,56 +1,61 @@
 <script src="../../../guards/owner-business.guard.ts"></script>
 <ion-header>
-    <ion-toolbar>
-        <ion-buttons slot="start">
-            <ion-menu-button></ion-menu-button>
-        </ion-buttons>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
 
-        <ion-title>List of Businesses</ion-title>
-    </ion-toolbar>
+    <ion-title>List of Businesses</ion-title>
+  </ion-toolbar>
 </ion-header>
 
-
 <ion-content class="ion-padding">
+  <div class="searchElement" routerLink="/register-business">
+    <ion-icon class="ion-1x" name="add-circle"></ion-icon>
+    <p>Create Business</p>
+  </div>
 
-    <div class="searchElement" routerLink="/register-business">
-        <ion-icon class="ion-1x" name="add-circle" ></ion-icon>
-        <p>Create Business</p>
-    </div>
+  <ion-card *ngIf="messageFirebase">
+    <ion-item color="success">
+      <label class="ion-text-center">{{messageFirebase}}</label>
+    </ion-item>
+  </ion-card>
 
-    <ion-card *ngIf="messageFirebase">
-        <ion-item color="success">
-            <label class="ion-text-center">{{messageFirebase}}</label>
+  <ion-card *ngIf="businesses ; else noBusiness">
+    <ion-list>
+      <ion-item>
+        <ion-label
+          class="orderBy"
+          style="cursor: pointer"
+          (click)="orderByName()"
+        >
+          Name business &#x25B2; &#x25BC;</ion-label
+        >
+
+        <ion-label
+          class="orderBy"
+          style="cursor: pointer"
+          (click)="orderByAddress()"
+        >
+          Address &#x25B2; &#x25BC;
+        </ion-label>
+      </ion-item>
+      <ion-item-sliding
+        *ngFor="let item of businesses   | orderBusinesses:[orderBy,directionOrderBy]"
+      >
+        <ion-item (click)="chooseBusiness(item)" class="item">
+          <ion-label style="cursor: pointer"
+            >{{item.nameOrganization}}
+          </ion-label>
+          <ion-label style="cursor: pointer"
+            >{{item.city + " " + item.nameStreetWithNumber}}</ion-label
+          >
         </ion-item>
-    </ion-card>
+      </ion-item-sliding>
+    </ion-list>
+  </ion-card>
 
-
-    <ion-card *ngIf="businesses ; else noBusiness">
-        <ion-list>
-            <ion-item>
-                <ion-label class="orderBy" style="cursor:pointer"
-                        (click)="orderByName()"> <!--todo hover color and mouse type change-->
-                    Name business   &#x25B2; &#x25BC;</ion-label>
-
-                <ion-label class="orderBy" style="cursor:pointer"
-                        (click)="orderByAddress()"> <!--todo hover color and mouse type change-->
-                    Address &#x25B2; &#x25BC; </ion-label>
-
-            </ion-item>
-            <ion-item-sliding *ngFor="let item of businesses   | orderBusinesses:[orderBy,directionOrderBy]">
-                <ion-item (click)="chooseBusiness(item)" class="item">
-                    <ion-label style="cursor:pointer">{{item.nameOrganization}} </ion-label>
-                    <ion-label style="cursor:pointer">{{item.city + " " + item.nameStreetWithNumber}}</ion-label>
-                </ion-item>
-            </ion-item-sliding>
-
-        </ion-list>
-    </ion-card>
-
-    <ng-template #noBusiness >
-        <h1> Your list of Businesses is empty </h1>
-
-    </ng-template>
-
-
-
+  <ng-template #noBusiness>
+    <h1>Your list of Businesses is empty</h1>
+  </ng-template>
 </ion-content>

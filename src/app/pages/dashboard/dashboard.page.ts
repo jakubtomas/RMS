@@ -16,7 +16,7 @@ import { BusinessService } from '../../services/business.service';
 export class DashboardPage implements OnInit, OnDestroy {
 
   user: Observable<any>;
-  userId;
+  userId: any;
   emailVerified = false;
   email = ' ';
   isActiveMode = false;
@@ -36,32 +36,11 @@ export class DashboardPage implements OnInit, OnDestroy {
     this.user = null;
   }
 
-
-  //  ionViewWillEnter  ionViewWillLeave
   ionViewWillEnter(): void {
-    console.log('ionViewWillENter');
-    console.log('-----------1--------------------');
     this.getUserId();
-
   }
 
   ngOnInit() {
-    console.log('all details');
-    // this.getUserDetails();
-
-
-    // this.userService.getAllUsersDetails().subscribe((value) => {
-    //   console.log(value);
-    // });
-
-
-
-
-
-    // this.userService.getUserDetailsInformation().subscribe((value) => {
-    //   console.log('user information ');
-    //   console.log(value);
-    // });
 
   }
   resetUserDetails(): void {
@@ -71,65 +50,33 @@ export class DashboardPage implements OnInit, OnDestroy {
   getUserId(): void {
 
     this.authService.userId$.subscribe(userId => {
-      console.log('subject');
-      console.log(userId);
       if (userId) {
         this.getUserDetails(userId);
       }
     });
 
-    // this.authService.userId$.pipe(
-    //   mergeMap(async (value) => this.getUserDetails(value))
-    // );
   }
 
   getUserDetails(idUser: string): void {
 
-    this.subscription = this.userService.getUserDetailsInformation(idUser).subscribe((userDetails) => {
-      console.log('userDetails');
+    this.subscription =
+      this.userService.getUserDetailsInformation(idUser).subscribe((userDetails) => {
+        this.userDetails = userDetails[0];
 
-      console.log(userDetails);
-
-      this.userDetails = userDetails[0];
-      console.log(this.userDetails);
-
-    });
+      });
   }
 
 
   logout(): void {
-    console.log('function logout dashbouard.page .ts ');
-    // this.authService.signOut();
-    // const idUserStorage = localStorage.getItem('idUser');
-    // console.log('id pred odhlasen    ' + idUserStorage);
-
 
     this.authService.signOut().then((result) => {
       if (result == null) {// null is success, false means there was an error
         this.userDetails = null;
-        console.log('user successfully  singOut/odhlaseny ');
-
-        // const podOdhlaseni = localStorage.getItem('idUser');
-        // console.log('id po odhlaseny   ' + podOdhlaseni);
-
-        //todo message successfully signOut
-        // this.router.navigate(['/login']);
-
-      } else {
-        console.log('user unsuccessfully singOut');
-        console.log(result);
       }
     });
   }
 
-  doRedirect(address: string) {
-    console.log('clikc');
-    console.log(address);
-
-  }
-
   ionViewDidLeave() {
-    console.log('ionViewWIll leave -------------------------------------');
     this.userDetails = null;
   }
 

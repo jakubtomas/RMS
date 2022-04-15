@@ -73,7 +73,6 @@ export class RegistrationPage implements OnInit {
 
   ngOnInit() {
 
-    // console.log("ngonitin password 2 have error " + this.registerForm.get("password2").hasError("mismatch"));
 
     this.firebaseErrorMessage = null;
     this.registerForm = new FormGroup(
@@ -81,7 +80,6 @@ export class RegistrationPage implements OnInit {
         email: new FormControl('', [
           Validators.required,
           Validators.email,
-          //Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,}$'),
         ]),
         firstName: new FormControl('', Validators.required),
         lastName: new FormControl('', Validators.required),
@@ -90,7 +88,6 @@ export class RegistrationPage implements OnInit {
           Validators.required,
           Validators.minLength(6),
 
-          //  Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z]).{6,30}'),
         ]),
         password2: new FormControl('', Validators.required),
       },
@@ -118,18 +115,6 @@ export class RegistrationPage implements OnInit {
     }
   }
 
-  // private generateEmail() {
-  //     let result = '';
-  //     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  //     const charactersLength = characters.length;
-  //     for (let i = 0; i < 5; i++) {
-  //         result += characters.charAt(Math.floor(Math.random() *
-  //             charactersLength));
-  //     }
-  //     return result + '@gmail.com';
-  // }
-
-
   // eslint-disable-next-line @typescript-eslint/member-ordering
   createUser(): void {
     const email: string = this.registerForm.get('email').value;
@@ -142,7 +127,6 @@ export class RegistrationPage implements OnInit {
     this.authService.createUser(email, password, firstName, lastName)
       .then((response) => {
         if (response == null) {// null is success, false means there was an error
-          //todo send arlso message successfully
           this.router.navigate(['/dashboard']);
           this.showToast('The account has been created successfully.');
 

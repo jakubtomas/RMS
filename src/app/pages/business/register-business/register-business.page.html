@@ -1,6 +1,5 @@
 <ion-header>
   <ion-toolbar color="">
-
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
@@ -26,7 +25,6 @@
       <ion-input type="text" formControlName="nameOrganization"></ion-input>
     </ion-item>
 
-    <!--TODO  set error minimum -->
     <div *ngIf="nameOrganization.errors?.required && nameOrganization.touched">
       <em> Name organization is required.</em>
     </div>
@@ -40,8 +38,7 @@
       <em> Phone number is required.</em>
     </div>
 
-    <ion-item
-      ><!-- todo check minimum size of zip code -->
+    <ion-item>
       <ion-label position="floating">Zip Code</ion-label>
       <ion-input type="number" formControlName="zipCode"></ion-input>
     </ion-item>
@@ -51,7 +48,6 @@
     </div>
 
     <ion-item>
-      <!--todo input only number-->
       <ion-label position="floating">City</ion-label>
       <ion-input type="text" formControlName="city"></ion-input>
     </ion-item>

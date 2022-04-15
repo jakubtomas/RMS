@@ -112,42 +112,34 @@ export class CreateMeetingPage implements OnInit {
       let close;
       switch (this.selectedDayByCalendar) {
         case 'Mon':
-          console.log('It is a pondelok.');
           open = calendar[0].week[0]?.openingHours;
           close = calendar[0].week[0]?.closingHours;
           break;
         case 'Tue':
-          console.log('It is a utorok.');
           open = calendar[0].week[1]?.openingHours;
           close = calendar[0].week[1]?.closingHours;
           break;
         case 'Wed':
-          console.log('It is a Streda.');
           open = calendar[0].week[2]?.openingHours;
           close = calendar[0].week[2]?.closingHours;
           break;
         case 'Thu':
-          console.log('It is a Stvrotok.');
           open = calendar[0].week[3]?.openingHours;
           close = calendar[0].week[3]?.closingHours;
           break;
         case 'Fri':
-          console.log('It is a Piatok.');
           open = calendar[0].week[4]?.openingHours;
           close = calendar[0].week[4]?.closingHours;
           break;
         case 'Sat':
-          console.log('It is a Sobota.');
           open = calendar[0].week[5]?.openingHours;
           close = calendar[0].week[5]?.closingHours;
           break;
         case 'Sun':
-          console.log('It is a Nedela.');
           open = calendar[0].week[6]?.openingHours;
           close = calendar[0].week[6]?.closingHours;
           break;
         default:
-          console.log('No such day exists!');
           break;
       }
 
@@ -167,7 +159,6 @@ export class CreateMeetingPage implements OnInit {
 
       this.defaultOpeningHours = [];
       while (isCalculate) {
-        // todo change dates acccording to data from firestore
         ends.add(timeMeeting, 'minutes');
 
         if (ends <= realEnd) {
@@ -185,15 +176,9 @@ export class CreateMeetingPage implements OnInit {
       if (this.defaultOpeningHours.length > 0) {
         const dateForFirestore = moment(this.selectedDateByCalendar).format('L');
 
-        console.log('datum pred hladanim ');
-        console.log(this.selectedDateByCalendar);
-        console.log('+++++');
-        console.log(dateForFirestore);
-
         this.getMeetingsByIdBusinessByDate(idBusiness, dateForFirestore);
       }
     }, error => {
-      console.log('you got error ');
       console.log(error);
     });
   }
@@ -256,48 +241,30 @@ export class CreateMeetingPage implements OnInit {
   private saveMeeting(time, modifyDate): void {
     const userId = localStorage.getItem('idUser');
 
-    console.log(time.start);
     const minutesFromHour = moment(time.start, 'HH:mm').hours() * 60;
     const minutesFromMinutes = moment(time.start, 'HH:mm').minutes();
     const startInMinutes = minutesFromHour + minutesFromMinutes;
-    // try new Date ('2017-01-01')
-    // modifyDate = moment(modifyDate).add(startInMinutes, 'minutes').format();
 
-    console.log(modifyDate);
     const meetingDate = moment(modifyDate).add(startInMinutes, 'minutes').format();
 
     let meetingDateWithCalendarTimeZone = meetingDate.substring(0, 19);
 
     meetingDateWithCalendarTimeZone = meetingDateWithCalendarTimeZone + this.calendarTimeZone;
 
-
-    console.log('before save');
-    console.log(meetingDate);
-    console.log(meetingDate.substring(0, 19));
-    console.log(meetingDateWithCalendarTimeZone);
-    console.log('----------');
-    console.log(this.selectedDayByCalendar);
-    console.log(moment(this.selectedDateByCalendar).format('L'));
-
-
     const meetingData: Meeting = {
 
       dateForCalendar: moment(this.selectedDateByCalendar).format('L'),
-      //date: meetingDate.substring(0, 16),
-      //date: meetingDate,
       date: meetingDateWithCalendarTimeZone,
       nameDay: moment(this.selectedDateByCalendar).format('dddd'),
       time: {
         end: time.end,
         start: time.start
-        //startMinutes: startInMinutes
       },
       minutes: startInMinutes,
       idBusiness: this.selectedBusinessId,
       idUser: userId
     };
 
-    //control again its free this termin for meeting
     this.meetingService
       .getExistMeeting(meetingData.idBusiness, meetingData.minutes, meetingData.dateForCalendar)
       .subscribe((existMeeting) => {
@@ -333,8 +300,6 @@ export class CreateMeetingPage implements OnInit {
         this.filterReservedHours(this.defaultOpeningHours, meetings);
 
       }, error => {
-        // todo set ErrorMessage Something is wrong
-        console.log('you got error ');
         console.error(error);
       });
   }

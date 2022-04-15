@@ -15,7 +15,6 @@
 
 <ion-content>
   <ion-row>
-    <!-- Move back one screen of the slides -->
     <ion-col size="2">
       <ion-button fill="clear" (click)="back()">
         <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
@@ -26,7 +25,6 @@
       <h2>{{ viewTitle }}</h2>
     </ion-col>
 
-    <!-- Move forward one screen of the slides -->
     <ion-col size="2">
       <ion-button fill="clear" (click)="next()">
         <ion-icon name="arrow-forward" slot="icon-only"></ion-icon>
@@ -51,7 +49,6 @@
           style="cursor: pointer"
           (click)="reverseTimeList()"
         >
-          <!--todo hover color and mouse type change-->
           Time &#x25B2; &#x25BC;
         </ion-label>
       </ion-item>
@@ -70,7 +67,6 @@
         <ng-template #isNotAvailable>
           <ion-item>
             <a>
-              <!--<div class="ng-binding">{{item.start}} {{item.end}}</div>-->
               <ion-label>{{item.start}} {{item.end}} </ion-label>
             </a>
           </ion-item>
