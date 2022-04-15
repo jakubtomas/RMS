@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
+import { ToastController } from '@ionic/angular';
+
 
 @Component({
   selector: 'app-forgot-password',
@@ -8,6 +10,7 @@ import { AuthService } from 'src/app/services/auth.service';
   styleUrls: ['./forgot-password.page.scss'],
 })
 export class ForgotPasswordPage implements OnInit {
+  [x: string]: any;
 
 
   userForm: FormGroup;
@@ -36,7 +39,8 @@ export class ForgotPasswordPage implements OnInit {
   };
 
   constructor(private authService: AuthService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private toastCtrl: ToastController,
   ) { }
 
   ngOnInit(): void {
@@ -45,40 +49,40 @@ export class ForgotPasswordPage implements OnInit {
         Validators.required,
         Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
       ])),
-      password: new FormControl('', Validators.compose([
-        Validators.minLength(6),
-        Validators.required
-      ])),
+      // password: new FormControl('', Validators.compose([
+      //   Validators.minLength(6),
+      //   Validators.required
+      // ])),
     });
 
   }
 
-  resetEmail(email: string) {
-    console.log('clikc');
-    this.authService.forgotPassword(email)
+  resetEmail(input): void {
+
+    this.authService.forgotPassword(input.email)
       .then((result) => {
-        console.log('result');
-        console.log(result);
 
-        if (result == null) {// null is success
-          console.log('reset password okey');
+        if (result === null) {// null is success
+          this.showToast('Email with reset link has been sent');
+        }
 
-          //todo show toast Email with link has been sended
-
-          //
-          // this.router.navigate(['/dashboard']);
-
-        } else {
-          console.log('problem ');
-          console.log(result);
-
-
-          // todo cdr change for new message
-          //   this.firebaseErrorMessage = result.message;
-          // this.showToast(result.message);
+        if (typeof result === 'string') {
+          this.showToast(result);
         }
       });
 
   }
 
+  private async showToast(msg: string) {
+    const toast = await this.toastCtrl.create({
+      message: msg,
+      duration: 3000,
+      position: 'middle',
+      cssClass: 'alertMsg'
+    });
+
+    toast.onDidDismiss();
+    await toast.present();
+  }
 }
+

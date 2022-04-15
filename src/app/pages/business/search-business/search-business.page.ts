@@ -109,6 +109,14 @@ export class SearchBusinessPage implements OnInit {
 
   getSearchedBusinesses(searchValues: SearchBusiness): void {
 
+    setTimeout(() => {
+      console.log('this is the third message');
+      if (this.searching) {
+        this.searching = false;
+        this.noResultMessage = true;
+      }
+    }, 1800);
+
     this.businessService.getSearchedBusinesses(searchValues).subscribe(value => {
       console.log(value);
       console.log('               ');

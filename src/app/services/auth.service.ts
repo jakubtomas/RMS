@@ -69,13 +69,17 @@ export class AuthService {
   }
 
   forgotPassword(passwordResetEmail: string) {
+
     return this.afAuth
       .sendPasswordResetEmail(passwordResetEmail)
-      .then(() => {
-        window.alert('Password reset email sent, check your inbox.');
-      })
+      .then(() => null)
       .catch((error) => {
-        window.alert(error);
+
+        if (error.code) {
+          return this.createErrMessage(error.code);
+        }
+        return 'Something is wrong';
+
       });
   }
 
@@ -88,14 +92,6 @@ export class AuthService {
     return this.afAuth.createUserWithEmailAndPassword(email, password)
       .then((userCredential: UserCredential) => {
 
-        console.log('result after  registration done');
-
-        console.log(userCredential);
-        console.log(userCredential.user);
-        console.log(userCredential.user.uid);
-
-        console.log('moje idecko pre pridanie dat ' + userCredential.user.uid);
-
         this.setUser(userCredential);
         const user: UserDetails = {
           idUser: userCredential.user.uid,
@@ -103,7 +99,6 @@ export class AuthService {
           lastName,
         };
 
-        console.log(user);
         userCredential.user.sendEmailVerification();
 
         return this.userService.addUser(user).then(data => {
@@ -131,6 +126,10 @@ export class AuthService {
     const messages: { code: string; message: string }[] = [
       { code: 'auth/email-already-in-use', message: 'The email address is already in use by another account' },
       { code: 'auth/invalid-email', message: 'The email address is not valid.' },
+      {
+        code: 'auth/invalid-value-(email),-starting-an-object-on-a-scalar-field',
+        message: 'The email address is not valid. Invalid value'
+      },
       { code: 'auth/operation-not-allowed', message: 'Email/password accounts are not enabled' },
       { code: 'auth/weak-password', message: 'The password is not strong enough' },
       { code: 'auth/user-disabled', message: 'The user corresponding to the given email has been disabled.' },
@@ -142,10 +141,29 @@ export class AuthService {
          auth/too-many-requests*/
     //return the array only with one object
     return messages.filter(object => object.code === errorCode);
-
-
   }
 
+  createErrMessage(errorCode: string): string {
+    //pretriedy a da vysledok
+    const messages: { code: string; message: string }[] = [
+      { code: 'auth/email-already-in-use', message: 'The email address is already in use by another account' },
+      { code: 'auth/invalid-email', message: 'The email address is not valid.' },
+      {
+        code: 'auth/invalid-value-(email),-starting-an-object-on-a-scalar-field',
+        message: 'The email address is not valid. Invalid value'
+      },
+      { code: 'auth/operation-not-allowed', message: 'Email/password accounts are not enabled' },
+      { code: 'auth/weak-password', message: 'The password is not strong enough' },
+      { code: 'auth/user-disabled', message: 'The user corresponding to the given email has been disabled.' },
+      { code: 'auth/user-not-found', message: 'User/Email not found ' },
+      { code: 'auth/wrong-password', message: 'The password is invalid ' },
+      // eslint-disable-next-line max-len
+      { code: 'auth/too-many-requests', message: 'Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later' },
+    ]; /*todo osetrit moznu result a pozri dalsie dokumentaciu
+         auth/too-many-requests*/
+    //return the array only with one object
+    return messages.filter(object => object.code === errorCode).map(object => object.message)[0];
+  }
   //Login
   login(email: string, password: string): Promise<any> {//observable
 

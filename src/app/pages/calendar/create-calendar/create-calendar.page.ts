@@ -208,29 +208,6 @@ export class CreateCalendarPage implements OnInit {
       return;
     }
 
-    // this.calendar.week
-    // compare
-    // newCalendar
-
-    // ist array , for or foreach
-    // 2 array compare values and if
-
-    // 1 case  change old value  // should delete all metting in better case delete only this date
-    //2 case change empty value to new  // should not delete any meeting
-    //3  ak sa zmenil hodnota na  prazdny string
-    // v pripade ze sa zmeni otvaranie hodin nastavit vymazanie stretnuti
-
-    // pripad iba rozsiri otvaracie hodiny nevymazavat
-    // pripda ked zmeni iba jeden den preco vymyzat vsetky
-    // in case that delete one day or more day just for closing // empty you should not delete any
-    // or should delete only this day
-    // v pripade ze sa zmenia minutes for meeting , asi vymazat vsetko mozno prepocitat
-
-    // v pripade vymazania calendara pomocou delete calendar
-    // potrebne osetrit ked sa meni s prazdneho stringu na new aby sa nevymazal kalendar
-
-
-
     const lengthArray = this.calendar.week.length;
     let counter = 0;
     let counterNoChange = 0;
@@ -249,18 +226,20 @@ export class CreateCalendarPage implements OnInit {
         if (this.calendar.week[counter].openingHours === ''
           && this.calendar.week[counter].closingHours === '') {
           this.daysForDelete.pop();
+          this.deleteDay = false;
         }
+
       } else {
         counterNoChange++;
       }
       ++counter;
     }
 
-    let deleteWithoutCalculate = false;
+    //let deleteWithoutCalculate = false;
     // in case that user change minutes for meeting , app have delete all meetings
     if (this.calendar.timeMeeting !== updateCalendar.timeMeeting) {
-      this.deleteDay = false;// todo use old function for deleting all meetings
-      deleteWithoutCalculate = true;
+      this.deleteDay = true;// todo use old function for deleting all meetings
+      //   deleteWithoutCalculate = true;
     }
 
     // no change counter for 7 days , no different timeMeeting value
@@ -270,102 +249,106 @@ export class CreateCalendarPage implements OnInit {
     }
 
     // count of meeting for this calendar from Firestore
-    if (this.countOfMeetings > 0) {
+    if (this.countOfMeetings > 0 && this.deleteDay) {
 
       console.log(this.daysForDelete);
 
       //daysForDelete.forEach((day) => this.calculateDateByName0fDate(day));
       // this.getMeetingsByBusinessAndDay(this.calendar.idBusiness);
       const newLocal = 'Warning are you sure with updating this calendar. This calendar has ' + this.countOfMeetings + ' meetings ';
-      this.showAlertMessage(newLocal, updateCalendar, deleteWithoutCalculate); // todo change this message counf of meetings
+      this.showAlertMessage(newLocal, updateCalendar); // todo change this message counf of meetings
     } else {
+
+      // show alert with warning that you delete info
       this.updateCalendar(updateCalendar);
     }
   }
 
 
   // For day set last date which is for this day . Monday result last Monday 04/11/2022
-  private calculateDateByName0fDate(day: string) {
-    let count = 0;
-    while (count < 8) {
 
-      const nameDayFromWeek = moment().subtract(count, 'days').format('dddd');
-      const dateDayFromWeek = moment().subtract(count, 'days').format('L');
+  // private calculateDateByName0fDate(day: string) {
+  //   let count = 0;
+  //   while (count < 8) {
 
-      // parameter
-      if (day === nameDayFromWeek) {
-        this.dateForDelete.push(dateDayFromWeek);
-        count = 8;
-      } else {
-        count++;
-      }
-    }
-    this.calculateAllPossibleDateForDelete();
-  }
+  //     const nameDayFromWeek = moment().subtract(count, 'days').format('dddd');
+  //     const dateDayFromWeek = moment().subtract(count, 'days').format('L');
 
-  //
-  private calculateAllPossibleDateForDelete(): void {
-    if (this.dateForDelete.length > 0) {
-      this.dateForDelete.forEach((date) => this.calculateDatesForNext6Months(date));
-    }
-    this.filterMeetingsForDelete();
-  }
+  //     // parameter
+  //     if (day === nameDayFromWeek) {
+  //       this.dateForDelete.push(dateDayFromWeek);
+  //       count = 8;
+  //     } else {
+  //       count++;
+  //     }
+  //   }
+  //   this.calculateAllPossibleDateForDelete();
+  // }
+
+
+  // private calculateAllPossibleDateForDelete(): void {
+  //   if (this.dateForDelete.length > 0) {
+  //     this.dateForDelete.forEach((date) => this.calculateDatesForNext6Months(date));
+  //   }
+  //   this.filterMeetingsForDelete();
+  // }
 
   // Calculate  next 25 week dates since input date ,and push into array
-  private calculateDatesForNext6Months(date: string): void {
-    let counter = 0;
-    let addDays = 0;
-    let newDate: string;
-    while (counter < 25) {
-      addDays = counter * 7;
+  // private calculateDatesForNext6Months(date: string): void {
+  //   let counter = 0;
+  //   let addDays = 0;
+  //   let newDate: string;
+  //   while (counter < 25) {
+  //     addDays = counter * 7;
 
-      newDate = moment(date).add(addDays, 'days').format('L');
-      this.allDatesForDelete.push(newDate);
-      ++counter;
-    }
-  }
+  //     newDate = moment(date).add(addDays, 'days').format('L');
+  //     this.allDatesForDelete.push(newDate);
+  //     ++counter;
+  //   }
+  // }
 
   // filter meetings fore delete
-  private filterMeetingsForDelete(): void {
+  // private filterMeetingsForDelete(): void {
 
-    // eslint-disable-next-line @typescript-eslint/prefer-for-of
-    for (let i = 0; i < this.allMeetingsFromDb.length; i++) {
-      // eslint-disable-next-line @typescript-eslint/prefer-for-of
-      for (let counter = 0; counter < this.allDatesForDelete.length; counter++) {
-        if (this.allDatesForDelete[counter] === this.allMeetingsFromDb[i].dateForCalendar) {
-          //resultArray.push(this.allMeetingsFromDb[i].id);
-          this.allIdsMeetingsForDelete.push(this.allMeetingsFromDb[i].id);
-        }
-      }
-    }
+  //   // eslint-disable-next-line @typescript-eslint/prefer-for-of
+  //   for (let i = 0; i < this.allMeetingsFromDb.length; i++) {
+  //     // eslint-disable-next-line @typescript-eslint/prefer-for-of
+  //     for (let counter = 0; counter < this.allDatesForDelete.length; counter++) {
+  //       if (this.allDatesForDelete[counter] === this.allMeetingsFromDb[i].dateForCalendar) {
+  //         //resultArray.push(this.allMeetingsFromDb[i].id);
+  //         this.allIdsMeetingsForDelete.push(this.allMeetingsFromDb[i].id);
+  //       }
+  //     }
+  //   }
 
-    this.allIdsMeetingsForDelete = // remove duplicate values in array
-      this.allIdsMeetingsForDelete.filter((id, index) => this.allIdsMeetingsForDelete.indexOf(id) === index);
-    console.log('                ');
-    console.log('                ');
-    console.log('show after filter ');
-    console.log(this.allIdsMeetingsForDelete.length);
-    console.log(this.allIdsMeetingsForDelete);
+  //   this.allIdsMeetingsForDelete = // remove duplicate values in array
+  //     this.allIdsMeetingsForDelete.filter((id, index) => this.allIdsMeetingsForDelete.indexOf(id) === index);
+  //   console.log('                ');
+  //   console.log('                ');
+  //   console.log('show after filter ');
+  //   console.log(this.allIdsMeetingsForDelete.length);
+  //   console.log(this.allIdsMeetingsForDelete);
 
-    // remove meetings
-    this.allIdsMeetingsForDelete.forEach((id) => this.meetingService.deleteMeeting(id));
-  }
+  //   // remove meetings
+  //   this.allIdsMeetingsForDelete.forEach((id) => this.meetingService.deleteMeeting(id));
+  // }
   // todo opravit
   private updateCalendar(newCalendar: Calendar, deleteWithoutCalculate?: boolean): void {
 
     if (this.errorsFromHours.length === 0) {
 
-      if (deleteWithoutCalculate) {
-        this.deleteCalendar();
-        return;
-      }
+      // if (deleteWithoutCalculate) {
+      //   this.deleteCalendar();
+      //   return;
+      // }
 
       this.calendarService.updateCalendar(this.docIdCalendar, newCalendar).then(() => {
 
         if (this.deleteDay) {
 
           console.log('delete with calculate');
-          this.daysForDelete.forEach((day) => this.calculateDateByName0fDate(day));
+          // this.daysForDelete.forEach((day) => this.calculateDateByName0fDate(day));
+          this.deleteMeetingsForUpdateCalendar();
         }
 
         this.router.navigate(['/detail-business'], { queryParams: { businessId: newCalendar.idBusiness } });
@@ -379,38 +362,40 @@ export class CreateCalendarPage implements OnInit {
     }
   }
 
-  private deleteCalendar(): void {
+  // private deleteCalendar(): void {
 
 
-    console.log(' id calendar for delete');
-    console.log(this.calendar.id);
+  //   console.log(' id calendar for delete');
+  //   console.log(this.calendar.id);
 
-    /// delete calendar
-    this.calendarService.deleteCalendar(this.calendar.id).then(() => {
-      // delete meetings
-      this.deleteMeetingsForUpdateCalendar();
-      // save calendar
+  //   /// delete calendar
+  //   this.calendarService.deleteCalendar(this.calendar.id).then(() => {
+  //     // delete meetings
+  //     this.deleteMeetingsForUpdateCalendar();
+  //     // save calendar
 
-      // this.showToast('Calendar has been deleted');
-      // this.calendar = null;
+  //     // this.showToast('Calendar has been deleted');
+  //     // this.calendar = null;
 
-    }).catch((error) => {
-      console.log('error you got error ');
-      console.log(error);
-      this.messageFirebase = 'Something is wrong';
-      this.showToast('Operation Failed something is wrong');
-    });
-  }
+  //   }).catch((error) => {
+  //     console.log('error you got error ');
+  //     console.log(error);
+  //     this.messageFirebase = 'Something is wrong';
+  //     this.showToast('Operation Failed something is wrong');
+  //   });
+  // }
 
-  private deleteMeetingsForUpdateCalendar(saveNewCalendar?: boolean) {
+  private deleteMeetingsForUpdateCalendar() {
 
     this.meetingService.deleteMeetingsByIdBusiness(this.selectedBusinessId, this.todayDate)
       .toPromise().then(() => {
 
-        if (saveNewCalendar) {
-          this.saveCalendar(true);
-          //this.saveCalendar(true);
-        }
+        // if (saveNewCalendar) {
+        //   this.saveCalendar(true);
+        //   //this.saveCalendar(true);
+        // }
+
+
         console.log('Meetings have been deleted succesfully');
         console.log('Meetings have been deleted succesfully');
         console.log('Meetings have been deleted succesfully');
@@ -422,7 +407,7 @@ export class CreateCalendarPage implements OnInit {
 
   }
 
-  private async showAlertMessage(alertMessage: string, updateCalendar: Calendar, deleteWithoutCalculate: boolean): Promise<any> {
+  private async showAlertMessage(alertMessage: string, updateCalendar: Calendar, deleteWithoutCalculate?: boolean): Promise<any> {
 
     const alert = await this.alertController.create({
       cssClass: 'alertForm',
