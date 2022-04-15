@@ -167,7 +167,7 @@ export class CreateCalendarPage implements OnInit {
       idBusiness: this.selectedBusinessId,
       timeMeeting: this.contactForm.value.MinutesForMeeting,
       week: this.mapOpeningClosingHours(),
-      break: 'hello',
+      break: '',
       timeZone: this.timeZone
     };
 
