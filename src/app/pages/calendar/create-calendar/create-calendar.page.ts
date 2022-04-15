@@ -113,9 +113,6 @@ export class CreateCalendarPage implements OnInit {
     });
   }
 
-
-
-
   setValuesForPage(): void {
     if (this.isUpdateCalendar) {
       this.ionTitle = 'Update opening hours';
@@ -125,8 +122,6 @@ export class CreateCalendarPage implements OnInit {
       this.ionButton = 'Create';
     }
   }
-
-
 
   controlBusinessPermission(businessId: string, docCalendarId: string): void {
 
@@ -161,7 +156,7 @@ export class CreateCalendarPage implements OnInit {
   }
 
 
-  saveData(): void {
+  saveCalendar(forUpdate?: boolean): void {
 
     const calendar: Calendar = {
       idBusiness: this.selectedBusinessId,
@@ -173,7 +168,12 @@ export class CreateCalendarPage implements OnInit {
 
     if (this.errorsFromHours.length === 0) { // when we do not have errors
       this.calendarService.addCalendar(calendar).then(() => {
-        this.showToast('Calendar has been created successfully');
+
+        if (forUpdate) {
+          this.showToast('Calendar has been updated successfully');
+        } else {
+          this.showToast('Calendar has been created successfully');
+        }
         this.router.navigate(['/detail-business'],
           { queryParams: { businessId: this.selectedBusinessId } });
 
@@ -185,7 +185,7 @@ export class CreateCalendarPage implements OnInit {
     }
   }
 
-  prepareUpdate(): void {
+  prepareUpdateCalendar(): void {
     this.dateForDelete = [];
     this.daysForDelete = [];
 
@@ -245,13 +245,6 @@ export class CreateCalendarPage implements OnInit {
         this.deleteDay = true;
         this.daysForDelete.push(updateCalendar.week[counter].day);
 
-        // in case that new value is empty string just for closing day
-        // todo control that calendar is showing posibility create meeting according to value, opening and closingHours
-
-        // if (updateCalendar.week[counter].openingHours === '' && updateCalendar.week[counter].closingHours === '') {
-        //   this.deleteDay = false; // todo change I think we should also delete this
-        // }
-
         // in case when hours are empty string, we won't delete any meeting
         if (this.calendar.week[counter].openingHours === ''
           && this.calendar.week[counter].closingHours === '') {
@@ -266,7 +259,7 @@ export class CreateCalendarPage implements OnInit {
     let deleteWithoutCalculate = false;
     // in case that user change minutes for meeting , app have delete all meetings
     if (this.calendar.timeMeeting !== updateCalendar.timeMeeting) {
-      this.deleteDay = true;// todo use old function for deleting all meetings
+      this.deleteDay = false;// todo use old function for deleting all meetings
       deleteWithoutCalculate = true;
     }
 
@@ -316,10 +309,6 @@ export class CreateCalendarPage implements OnInit {
       this.dateForDelete.forEach((date) => this.calculateDatesForNext6Months(date));
     }
     this.filterMeetingsForDelete();
-
-    console.log('this is end');
-    console.log('----------');
-    console.log(this.allDatesForDelete);
   }
 
   // Calculate  next 25 week dates since input date ,and push into array
@@ -335,16 +324,9 @@ export class CreateCalendarPage implements OnInit {
       ++counter;
     }
   }
+
   // filter meetings fore delete
   private filterMeetingsForDelete(): void {
-
-    console.log(this.allMeetingsFromDb);
-    console.log('------');
-    console.log(this.allDatesForDelete);
-    this.allIdsMeetingsForDelete = [];
-    console.log('before filter');
-    console.log(this.allIdsMeetingsForDelete.length);
-    console.log(this.allIdsMeetingsForDelete);
 
     // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let i = 0; i < this.allMeetingsFromDb.length; i++) {
@@ -372,17 +354,18 @@ export class CreateCalendarPage implements OnInit {
   private updateCalendar(newCalendar: Calendar, deleteWithoutCalculate?: boolean): void {
 
     if (this.errorsFromHours.length === 0) {
+
+      if (deleteWithoutCalculate) {
+        this.deleteCalendar();
+        return;
+      }
+
       this.calendarService.updateCalendar(this.docIdCalendar, newCalendar).then(() => {
 
         if (this.deleteDay) {
 
-          if (deleteWithoutCalculate) {
-            this.deleteMeetingsForUpdateCalendar();
-
-          } else {
-            this.daysForDelete.forEach((day) => this.calculateDateByName0fDate(day));
-
-          }
+          console.log('delete with calculate');
+          this.daysForDelete.forEach((day) => this.calculateDateByName0fDate(day));
         }
 
         this.router.navigate(['/detail-business'], { queryParams: { businessId: newCalendar.idBusiness } });
@@ -396,10 +379,38 @@ export class CreateCalendarPage implements OnInit {
     }
   }
 
-  private deleteMeetingsForUpdateCalendar() {
+  private deleteCalendar(): void {
+
+
+    console.log(' id calendar for delete');
+    console.log(this.calendar.id);
+
+    /// delete calendar
+    this.calendarService.deleteCalendar(this.calendar.id).then(() => {
+      // delete meetings
+      this.deleteMeetingsForUpdateCalendar();
+      // save calendar
+
+      // this.showToast('Calendar has been deleted');
+      // this.calendar = null;
+
+    }).catch((error) => {
+      console.log('error you got error ');
+      console.log(error);
+      this.messageFirebase = 'Something is wrong';
+      this.showToast('Operation Failed something is wrong');
+    });
+  }
+
+  private deleteMeetingsForUpdateCalendar(saveNewCalendar?: boolean) {
 
     this.meetingService.deleteMeetingsByIdBusiness(this.selectedBusinessId, this.todayDate)
       .toPromise().then(() => {
+
+        if (saveNewCalendar) {
+          this.saveCalendar(true);
+          //this.saveCalendar(true);
+        }
         console.log('Meetings have been deleted succesfully');
         console.log('Meetings have been deleted succesfully');
         console.log('Meetings have been deleted succesfully');

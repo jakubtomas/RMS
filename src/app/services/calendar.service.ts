@@ -13,6 +13,7 @@ export class CalendarService {
   calendarCollection2: AngularFirestoreCollection<Calendar>;
   calendarCollection3: AngularFirestoreCollection<Calendar>;
   calendarCollection4: AngularFirestoreCollection<Calendar>;
+  calendarCollection5: AngularFirestoreCollection<Calendar>;
 
   constructor(public afs: AngularFirestore) {
     this.calendarCollection = this.afs.collection('calendar',
@@ -22,6 +23,7 @@ export class CalendarService {
 
     this.calendarCollection4 = this.afs.collection('calendar',
       ref => ref.orderBy('idBusiness', 'asc'));
+    this.calendarCollection5 = this.afs.collection('calendar');
   }
 
   //addCalendar(calendarData: Business): Promise<DocumentReference<BusinessPermission>> {
@@ -59,7 +61,7 @@ export class CalendarService {
   }
 
   deleteCalendar(docIdCalendar: string): Promise<void> {
-    return this.calendarCollection2.doc(docIdCalendar).delete();
+    return this.calendarCollection5.doc(docIdCalendar).delete();
   }
 }
 

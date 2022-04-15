@@ -39,6 +39,7 @@ export class MeetingService {
     this.meetingCollection = this.afs.collection('meetings');
     this.meetingCollection2 = this.afs.collection('meetings');
     this.meetingCollection4 = this.afs.collection('meetings');
+    this.meetingCollection5 = this.afs.collection('meetings');
     // this.meetingCollection3 = this.afs.collection('meetings',
     //     ref => ref.where('date', '==', 'hello')
     //               .where('idBusiness', '==', 'helloo')
@@ -46,7 +47,7 @@ export class MeetingService {
   }
 
   addMeeting(meetingData: Meeting): Promise<DocumentReference<Meeting>> {
-    return this.meetingCollection.add(meetingData);
+    return this.meetingCollection5.add(meetingData);
   }
 
   // return meeting by bussines and date
@@ -114,24 +115,8 @@ export class MeetingService {
         }))
       )
     );
-
-    // return this.getMeetingsByIdUserByDate(idUser, dateForCalendar).pipe(
-    //   switchMap((arrayMeetings: Meeting[]) =>
-    //     forkJoin(arrayMeetings.map(meeting => {
-    //       return this.businessService.getOneBusiness(meeting.idBusiness).pipe(
-    //         map(business => {
-    //           return { business, meeting };
-    //         }));
-    //     }),
-    //     )), tap((response) => {
-    //       console.log(' response');
-    //       console.log(response);
-
-    //     })
-    // );
   }
 
-  //deleteMeeting
 
   getMeetingByIdBusinessByDateWithUserDetails(idBusiness: string, dateForCalendar: string) {
     return this.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar).pipe(

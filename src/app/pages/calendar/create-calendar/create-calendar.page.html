@@ -250,7 +250,7 @@
         *ngIf="!isUpdateCalendar else updateButton "
         type="submit"
         expand="block"
-        (click)="saveData()"
+        (click)="saveCalendar()"
         [disabled]="!contactForm.valid"
         >Save calendar data
       </ion-button>
@@ -259,7 +259,7 @@
         <section>
           <ion-button
             expand="block"
-            (click)="prepareUpdate()"
+            (click)="prepareUpdateCalendar()"
             [disabled]="!contactForm.valid"
             >{{ionButton}}
           </ion-button>

@@ -82,10 +82,8 @@ export class CreateMeetingPage implements OnInit {
   // click on the date in calendar
   onCurrentDateChanged(event: Date): void {
 
-    console.log('--------');
     const yesterday = moment().subtract(1, 'day').format();
     const selectedDay = moment(event).format();
-
 
     if (selectedDay > yesterday) {
       this.pastDay = false;
@@ -95,10 +93,6 @@ export class CreateMeetingPage implements OnInit {
 
     this.selectedDateByCalendar = event;
     this.selectedDayByCalendar = event.toString().substring(0, 3);
-
-    console.log(' ------------');
-    console.log('------------');
-    console.log(this.selectedDayByCalendar);
 
     this.selectedDay = 'hello';
 
@@ -315,6 +309,7 @@ export class CreateMeetingPage implements OnInit {
 
           }).catch((error) => {
             console.error(error);
+            this.showToast('Something is wrong please refresh page');
             //this.showToast('A meeting has not been created');
             this.showAlertMessage('A meeting has not been created. Try again. Something is wrong');
           });
