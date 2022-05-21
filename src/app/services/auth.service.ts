@@ -28,7 +28,6 @@ export class AuthService {
 
     this.afAuth.authState.subscribe(user => {
       if (user) {
-
         this.userId$.next(user.uid);
 
       } else {
