@@ -19,24 +19,24 @@ export class AppComponent implements OnDestroy {
     {
       title: 'Search Business',
       url: '/search-business',
-      icon: 'search'
+      icon: 'search',
     },
     {
       title: 'Schedule',
       url: '/calendar-meetings',
-      icon: 'calendar'
+      icon: 'calendar',
     },
     {
       title: 'Dashboard',
       url: '/dashboard',
-      icon: 'clipboard'
+      icon: 'clipboard',
     },
 
     {
       title: 'My Meetings',
       url: '/meetings',
-      icon: 'people'
-    }
+      icon: 'people',
+    },
   ];
 
   subscription: Subscription;
@@ -46,15 +46,14 @@ export class AppComponent implements OnDestroy {
   firebaseErrorMessage: void;
   userDetails: UserDetails;
 
-
   constructor(
     public afAuth: AngularFireAuth,
     private authService: AuthService,
     private businessService: BusinessService,
-    private userService: UserService,
-  ) { }
+    private userService: UserService
+  ) {}
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   getUserDetails(): void {
     this.userService.getUserDetailsInformation().subscribe((userDetails) => {
@@ -62,27 +61,22 @@ export class AppComponent implements OnDestroy {
     });
   }
 
-
-
   signOut(): void {
     this.authService.signOut().then((result) => {
-      if (result == null) {// null is success, false means there was an error
+      if (result == null) {
+        // null is success, false means there was an error
         this.userDetails = null;
-
       } else {
         this.firebaseErrorMessage = result;
       }
     });
-
   }
 
   clickToggle(toggle): void {
-
     if (toggle.detail.checked) {
       this.businessService.updateBusinessMode(true);
       this.businessService.isActiveMode = true;
     } else {
-
       this.businessService.updateBusinessMode(false);
       this.businessService.isActiveMode = false;
     }
@@ -91,5 +85,4 @@ export class AppComponent implements OnDestroy {
   ngOnDestroy(): void {
     this.userDetails = null;
   }
-
 }

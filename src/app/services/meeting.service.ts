@@ -117,7 +117,6 @@ export class MeetingService {
       switchMap((arrayMeetings: Meeting[]) =>
         zip(arrayMeetings.map(meeting => {
 
-
           return this.userService.getUserDetailsInformation(meeting.idUser).pipe(
             map((userDetails) => {
 
@@ -130,7 +129,6 @@ export class MeetingService {
   }
 
   getMeetingsByIdUserOrderByDate(idUser: string, currentDay?: string): Observable<Meeting[]> {
-
 
     this.meetingCollection3 = this.afs.collection('meetings',
       ref => ref.where('idUser', '==', idUser)

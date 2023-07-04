@@ -139,7 +139,8 @@ export class BusinessService {
         data.id = a.payload.doc.id;
 
         return data;
-      })));
+      }))
+    );
 
   }
 
@@ -149,6 +150,10 @@ export class BusinessService {
 
   getIdsOfMyBusinesses(): Observable<string[]> {
     const userId = localStorage.getItem('idUser');
+
+    // of([1, 2]).pipe(
+    //   map((value) => )
+    // )
 
     return this.getBusinessPermissions().pipe(
       map((array: BusinessPermission[]) => array.filter(permission => permission.idUser == userId)),
@@ -169,6 +174,8 @@ export class BusinessService {
       )
     );
   }
+
+  //Fork Join multiple request
 
   getOneBusiness(documentId: string): Observable<Business | undefined> {
     if (documentId === undefined) {
