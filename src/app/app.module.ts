@@ -19,24 +19,22 @@ import { SharedModule } from "./shared/shared/shared.module";
 // import { OrderBusinessesPipe } from './order-businesses.pipe';
 
 @NgModule({
-  declarations: [AppComponent, OrderByOpeningHoursPipe],
-  entryComponents: [],
-  imports: [BrowserModule,
-    FormsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    IonicModule.forRoot(),
-    AppRoutingModule,
-    //AngularFireDatabaseModule
-    AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule,
-    AngularFireDatabaseModule,
-    AngularFireAuthModule,
-    SharedModule
-
-  ],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
-  bootstrap: [AppComponent],
+    declarations: [AppComponent, OrderByOpeningHoursPipe],
+    imports: [BrowserModule,
+        FormsModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        IonicModule.forRoot(),
+        AppRoutingModule,
+        //AngularFireDatabaseModule
+        AngularFireModule.initializeApp(environment.firebase),
+        AngularFirestoreModule,
+        AngularFireDatabaseModule,
+        AngularFireAuthModule,
+        SharedModule
+    ],
+    providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+    bootstrap: [AppComponent]
 })
 export class AppModule {
 }
