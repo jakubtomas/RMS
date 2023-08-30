@@ -6,6 +6,7 @@ import { AlertController, ToastController } from '@ionic/angular';
 import { MeetingService } from 'src/app/services/meeting.service';
 import { Meeting } from '../../../interfaces/meeting';
 import { UserDetails } from 'src/app/interfaces/userDetails';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-detail-meeting',
@@ -14,21 +15,22 @@ import { UserDetails } from 'src/app/interfaces/userDetails';
 })
 export class DetailMeetingPage implements OnInit, OnDestroy {
   business: Business;
-  subscription;
-  docIdMeeting;
+  subscription: Subscription;
+  docIdMeeting: string;
   meetingDetails: Meeting;
   userDetails: UserDetails;
   public ownerPermissionBusiness = false;
   redirectFromCalendar = false;
   myMeeting = false;
   private idUser = localStorage.getItem('idUser');
-  constructor(private route: ActivatedRoute,
+  constructor(
+    private route: ActivatedRoute,
     private router: Router,
     private toastCtrl: ToastController,
     public alertController: AlertController,
     private businessService: BusinessService,
-    private meetingService: MeetingService) {
-  }
+    private meetingService: MeetingService
+  ) {}
 
   ngOnInit() {
     this.route.queryParams.subscribe((params: Params) => {
@@ -49,22 +51,20 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
     });
   }
 
-
   getOneBusiness(documentID: string): void {
-    this.subscription =
-      this.businessService.getOneBusiness(documentID).subscribe((business) => {
-        this.business = business;
-
-      }, error => {
-        console.error(error);
-
-      }
+    this.subscription = this.businessService
+      .getOneBusiness(documentID)
+      .subscribe(
+        (business) => {
+          this.business = business;
+        },
+        (error) => {
+          console.error(error);
+        }
       );
   }
 
   private async showAlertForDeleteMeeting(docIdMeeting: string): Promise<any> {
-
-
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Confirm Meeting',
@@ -76,14 +76,15 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
           text: 'Cancel',
           role: 'cancel',
           cssClass: 'secondary',
-          handler: () => {
-          }
-        }, {
+          handler: () => {},
+        },
+        {
           text: 'Yes',
           handler: () => {
             this.deleteMeeting(docIdMeeting);
-          }
-        }]
+          },
+        },
+      ],
     });
 
     await alert.present();
@@ -93,7 +94,7 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
     const toast = await this.toastCtrl.create({
       message: msg,
       duration: 3000,
-      position: 'middle'
+      position: 'middle',
     });
 
     toast.onDidDismiss();
@@ -101,27 +102,24 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
   }
 
   private controlBusinessPermission(documentID: string): void {
-
-    this.businessService.getBusinessPermission(documentID).subscribe((permissions) => {
-
-      const myId = localStorage.getItem('idUser');
-      if (permissions.idUser === myId) {
-
-        this.ownerPermissionBusiness = true;
-      } else {
-        this.ownerPermissionBusiness = false;
+    this.businessService.getBusinessPermission(documentID).subscribe(
+      (permissions) => {
+        const myId = localStorage.getItem('idUser');
+        if (permissions.idUser === myId) {
+          this.ownerPermissionBusiness = true;
+        } else {
+          this.ownerPermissionBusiness = false;
+        }
+      },
+      (error) => {
+        console.log(error);
       }
-
-    }, error => {
-      console.log(error);
-    }
     );
   }
 
-
   private getOneMeeting(docIdMeeting: string) {
     if (docIdMeeting) {
-      this.meetingService.getOneMeeting(docIdMeeting).subscribe(meeting => {
+      this.meetingService.getOneMeeting(docIdMeeting).subscribe((meeting) => {
         this.meetingDetails = meeting;
       });
     }
@@ -129,68 +127,60 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
 
   private getOneMeetingWithUserInformation(docIdMeeting: string) {
     if (docIdMeeting) {
-      this.meetingService.getOneMeetingWithUserInformation(docIdMeeting).subscribe(meetingData => {
+      this.meetingService
+        .getOneMeetingWithUserInformation(docIdMeeting)
+        .subscribe((meetingData) => {
+          if (meetingData.meeting !== null) {
+            this.meetingDetails = meetingData.meeting;
+          }
 
-        if (meetingData.meeting !== null) {
-          this.meetingDetails = meetingData.meeting;
-        }
+          if (meetingData.userDetails !== null) {
+            this.userDetails = meetingData.userDetails[0];
+          }
 
-        if (meetingData.userDetails !== null) {
-          this.userDetails = meetingData.userDetails[0];
-        }
-
-        if (meetingData.meeting.idUser === this.idUser) {
-          this.myMeeting = true;
-
-        }
-      });
+          if (meetingData.meeting.idUser === this.idUser) {
+            this.myMeeting = true;
+          }
+        });
     }
   }
 
-
   private deleteMeeting(docIdMeeting: string): void {
-
     if (!this.ownerPermissionBusiness && !this.myMeeting) {
       this.showToast('You can not delete this meeting ');
       return;
     }
 
     if (docIdMeeting) {
-      this.meetingService.deleteMeeting(docIdMeeting).then(value => {
-
-
-        if (this.ownerPermissionBusiness) {
-
-          this.router.navigate(['/calendar-meetings'], {
-            queryParams: {
-              businessId: this.business.id,
-            }
-          });
-        } else {
-
-          if (this.redirectFromCalendar) {
-            this.router.navigate(['/calendar-meetings']);
+      this.meetingService
+        .deleteMeeting(docIdMeeting)
+        .then((value) => {
+          if (this.ownerPermissionBusiness) {
+            this.router.navigate(['/calendar-meetings'], {
+              queryParams: {
+                businessId: this.business.id,
+              },
+            });
           } else {
-            this.router.navigate(['/meetings']);
+            if (this.redirectFromCalendar) {
+              this.router.navigate(['/calendar-meetings']);
+            } else {
+              this.router.navigate(['/meetings']);
+            }
           }
-        }
-        this.showToast('Meeting has been successfully deleted ');
-
-      }).catch((error) => {
-
-        this.showToast('Meeting has been unsuccessfully deleted ');
-        console.log(error);
-        //todo Error Message something is wronh
-      });
+          this.showToast('Meeting has been successfully deleted ');
+        })
+        .catch((error) => {
+          this.showToast('Meeting has been unsuccessfully deleted ');
+          console.log(error);
+          //todo Error Message something is wronh
+        });
     } else {
       this.showToast('No possible to delete something is wrong');
-
     }
   }
-
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
-
 }

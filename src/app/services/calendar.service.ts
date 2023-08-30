@@ -1,11 +1,15 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from '@angular/fire/compat/firestore';
+import {
+  AngularFirestore,
+  AngularFirestoreCollection,
+  DocumentReference,
+} from '@angular/fire/compat/firestore';
 import { Calendar } from '../interfaces/calendar';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CalendarService {
   //https://ionicframework.com/docs/
@@ -16,36 +20,39 @@ export class CalendarService {
   calendarCollection5: AngularFirestoreCollection<Calendar>;
 
   constructor(public afs: AngularFirestore) {
-    this.calendarCollection = this.afs.collection('calendar',
-      ref => ref.orderBy('idBusiness', 'asc'));
+    this.calendarCollection = this.afs.collection('calendar', (ref) =>
+      ref.orderBy('idBusiness', 'asc')
+    );
     this.calendarCollection2 = this.afs.collection('calendar');
     this.calendarCollection3 = this.afs.collection('calendar');
 
-    this.calendarCollection4 = this.afs.collection('calendar',
-      ref => ref.orderBy('idBusiness', 'asc'));
+    this.calendarCollection4 = this.afs.collection('calendar', (ref) =>
+      ref.orderBy('idBusiness', 'asc')
+    );
     this.calendarCollection5 = this.afs.collection('calendar');
   }
 
-  //addCalendar(calendarData: Business): Promise<DocumentReference<BusinessPermission>> {
   addCalendar(calendarData: Calendar): Promise<DocumentReference<Calendar>> {
     return this.calendarCollection3.add(calendarData);
   }
 
   getCalendars(): Observable<Calendar[]> {
     return this.calendarCollection4.snapshotChanges().pipe(
-      map(changes => {
-        return changes.map(a => {
+      map((changes) => {
+        return changes.map((a) => {
           const data = a.payload.doc.data() as Calendar;
           data.id = a.payload.doc.id;
           return data;
         });
-      }));
+      })
+    );
   }
 
   //getOneCalendar According to id Business
   getOpeningHoursByIdBusiness(idBusiness: string) {
-    this.calendarCollection = this.afs.collection('calendar',
-      ref => ref.where('idBusiness', '==', idBusiness));
+    this.calendarCollection = this.afs.collection('calendar', (ref) =>
+      ref.where('idBusiness', '==', idBusiness)
+    );
     return this.calendarCollection.valueChanges();
   }
 
@@ -61,5 +68,3 @@ export class CalendarService {
     return this.calendarCollection5.doc(docIdCalendar).delete();
   }
 }
-
-

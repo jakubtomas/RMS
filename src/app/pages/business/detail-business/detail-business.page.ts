@@ -7,13 +7,13 @@ import { CalendarService } from '../../../services/calendar.service';
 import { Calendar } from '../../../interfaces/calendar';
 import * as moment from 'moment';
 import { MeetingService } from 'src/app/services/meeting.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-detail-business',
   templateUrl: './detail-business.page.html',
   styleUrls: ['./detail-business.page.scss'],
 })
-
 export class DetailBusinessPage implements OnInit, OnDestroy {
   messageFirebase: string;
   business: Business;
@@ -21,7 +21,7 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
   calendar: Calendar;
   calendars: Calendar[];
   isThisMyBusiness = false;
-  subscription;
+  subscription: Subscription;
   countOfMeetings = 0;
   todayDate = moment().format('L');
   timeZone = moment().format().toString().substring(19, 25);
@@ -33,27 +33,20 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
     private router: Router,
     private toastCtrl: ToastController,
     public alertController: AlertController,
-    private calendarService: CalendarService,
-  ) {
-  }
-
+    private calendarService: CalendarService
+  ) {}
 
   ngOnInit(): void {
-
     this.route.queryParams.subscribe((params: Params) => {
-
       if (params.businessId !== undefined) {
         this.selectedBusinessId = params.businessId;
 
         this.controlBusinessPermission(params.businessId);
         this.getOneBusiness(params.businessId);
         this.getCalendars();
-
       }
-
     });
   }
-
 
   ionViewWillEnter(): void {
     //  this.messageFirebase = null;
@@ -63,59 +56,71 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
     const toast = await this.toastCtrl.create({
       message: msg,
       duration: 3000,
-      position: 'middle'
+      position: 'middle',
     });
 
     toast.onDidDismiss();
     await toast.present();
   }
 
-
   getOneBusiness(documentID: string): void {
-
-    this.subscription = this.businessService.getOneBusiness(documentID).subscribe((business) => {
-      this.business = business;
-    }, error => {
-      console.log(error);
-    }
-    );
+    this.subscription = this.businessService
+      .getOneBusiness(documentID)
+      .subscribe(
+        (business) => {
+          this.business = business;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   controlBusinessPermission(documentID: string): void {
-
-    this.businessService.getBusinessPermission(documentID).subscribe((permissions) => {
-      const myId = localStorage.getItem('idUser');
-      if (permissions.idUser === myId) {
-        this.isThisMyBusiness = true;
-        this.getCountOfMeetingsForBusiness(this.selectedBusinessId, this.todayDate);
+    this.businessService.getBusinessPermission(documentID).subscribe(
+      (permissions) => {
+        const myId = localStorage.getItem('idUser');
+        if (permissions.idUser === myId) {
+          this.isThisMyBusiness = true;
+          this.getCountOfMeetingsForBusiness(
+            this.selectedBusinessId,
+            this.todayDate
+          );
+        }
+      },
+      (error) => {
+        console.error(error);
       }
-
-    }, error => {
-      console.error(error);
-    });
+    );
   }
 
   selectMeetings(): void {
-    this.router.navigate(['/calendar-meetings'], { queryParams: { businessId: this.selectedBusinessId } });
-
+    this.router.navigate(['/calendar-meetings'], {
+      queryParams: { businessId: this.selectedBusinessId },
+    });
   }
   editBusiness(): void {
-    this.router.navigate(['/register-business'], { queryParams: { businessId: this.selectedBusinessId } });
+    this.router.navigate(['/register-business'], {
+      queryParams: { businessId: this.selectedBusinessId },
+    });
   }
 
-
   deleteBusiness(): void {
-    this.businessService.deleteBusiness(this.selectedBusinessId).then(() => {
-      //   this.router.navigate(['/list-business', {deletedBusiness: true}]);
-      this.business = null;
-      this.selectedBusinessId = null;
-      this.deleteMeetingsByIdBusiness();
-      this.router.navigate(['/list-business'], { queryParams: { deletedBusiness: true } });
-
-    }).catch((error) => {
-      this.messageFirebase = 'Something is wrong';
-      this.showToast('Something is wrong');
-    });
+    this.businessService
+      .deleteBusiness(this.selectedBusinessId)
+      .then(() => {
+        //   this.router.navigate(['/list-business', {deletedBusiness: true}]);
+        this.business = null;
+        this.selectedBusinessId = null;
+        this.deleteMeetingsByIdBusiness();
+        this.router.navigate(['/list-business'], {
+          queryParams: { deletedBusiness: true },
+        });
+      })
+      .catch((error) => {
+        this.messageFirebase = 'Something is wrong';
+        this.showToast('Something is wrong');
+      });
   }
 
   async showAlertForDelete(input: string): Promise<any> {
@@ -133,18 +138,20 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
           text: 'Cancel',
           role: 'cancel',
           cssClass: 'secondary',
-          handler: () => {
-          }
-        }, {
+          handler: () => {},
+        },
+        {
           text: 'Yes',
           handler: () => {
-
             //number of meeting with this calendar
             if (this.countOfMeetings > 0) {
               const newLocal =
-                'Warning are you sure about deleting this calendar?. This calendar has ' + this.countOfMeetings + ' meetings ';
+                'Warning are you sure about deleting this calendar?. This calendar has ' +
+                this.countOfMeetings +
+                ' meetings ';
               this.showAlertMessage(newLocal, deleteBusiness);
-            } else {// when do not have any meeting
+            } else {
+              // when do not have any meeting
               if (deleteBusiness) {
                 this.deleteBusiness();
               }
@@ -152,15 +159,15 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
                 this.deleteCalendar();
               }
             }
-          }
-        }]
+          },
+        },
+      ],
     });
 
     await alert.present();
   }
 
   async showAlertMessage(alertMessage: string, deleteBusiness: boolean) {
-
     const alert = await this.alertController.create({
       cssClass: 'alertForm',
       header: 'Warning',
@@ -171,8 +178,7 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
           text: 'Cancel',
           role: 'cancel',
           cssClass: 'secondary',
-          handler: () => {
-          }
+          handler: () => {},
         },
         {
           text: 'OK',
@@ -183,22 +189,19 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
             }
             if (!deleteBusiness) {
               this.deleteCalendar();
-            };
-          }
+            }
+          },
         },
-      ]
+      ],
     });
     await alert.present();
-
   }
 
-
   changeDateFormat(): void {
-
     const newWeek = this.calendar.week.map((item) => ({
       day: item.day,
       openingHours: item.openingHours,
-      closingHours: item.closingHours
+      closingHours: item.closingHours,
     }));
 
     this.calendar = {
@@ -206,77 +209,88 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
       idBusiness: this.calendar.idBusiness,
       week: newWeek,
       break: 'no break',
-      timeZone: this.calendar.timeZone
+      timeZone: this.calendar.timeZone,
     };
-
   }
 
   // return all calendar and filter which is my
   getCalendars(): void {
-    this.calendarService.getCalendars().subscribe(calendars => {
-      this.calendars = calendars;
+    this.calendarService.getCalendars().subscribe(
+      (calendars) => {
+        this.calendars = calendars;
 
-      if (this.calendars.length > 0) {
-        this.calendars.forEach(calendar => {
-
-          if (calendar.idBusiness === this.selectedBusinessId) {
-            this.calendar = calendar;
-            this.changeDateFormat();
-          }
-        });
+        if (this.calendars.length > 0) {
+          this.calendars.forEach((calendar) => {
+            if (calendar.idBusiness === this.selectedBusinessId) {
+              this.calendar = calendar;
+              this.changeDateFormat();
+            }
+          });
+        }
+      },
+      (error) => {
+        console.log(error);
       }
-    }, error => {
-      console.log(error);
-    });
+    );
   }
 
   createCalendar(): void {
-    this.router.navigate(['/create-calendar'],
-      { queryParams: { businessId: this.selectedBusinessId } });
-  }
-
-  editCalendar(): void {
-    this.router.navigate(['/create-calendar'], { queryParams: { docCalendarId: this.calendar.id, businessId: this.selectedBusinessId } });
-  }
-
-  deleteCalendar(): void {
-    this.calendarService.deleteCalendar(this.calendar.id).then(() => {
-      this.deleteMeetingsByIdBusiness();
-      this.showToast('Calendar has been deleted');
-      this.calendar = null;
-
-    }).catch((error) => {
-      this.messageFirebase = 'Something is wrong';
-      this.showToast('Operation Failed something is wrong');
+    this.router.navigate(['/create-calendar'], {
+      queryParams: { businessId: this.selectedBusinessId },
     });
   }
 
+  editCalendar(): void {
+    this.router.navigate(['/create-calendar'], {
+      queryParams: {
+        docCalendarId: this.calendar.id,
+        businessId: this.selectedBusinessId,
+      },
+    });
+  }
+
+  deleteCalendar(): void {
+    this.calendarService
+      .deleteCalendar(this.calendar.id)
+      .then(() => {
+        this.deleteMeetingsByIdBusiness();
+        this.showToast('Calendar has been deleted');
+        this.calendar = null;
+      })
+      .catch((error) => {
+        this.messageFirebase = 'Something is wrong';
+        this.showToast('Operation Failed something is wrong');
+      });
+  }
+
   createMeeting(): void {
-    this.router.navigate(['/create-meeting'],
-      { queryParams: { businessId: this.selectedBusinessId } });
+    this.router.navigate(['/create-meeting'], {
+      queryParams: { businessId: this.selectedBusinessId },
+    });
   }
 
   ngOnDestroy(): void {
     //  this.subscription.unsubscribe();
   }
 
-  private getCountOfMeetingsForBusiness(idBusiness: string, dateForCalendar: string): void {
-    this.meetingService.getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar)
+  private getCountOfMeetingsForBusiness(
+    idBusiness: string,
+    dateForCalendar: string
+  ): void {
+    this.meetingService
+      .getMeetingsByIdBusinessByDate(idBusiness, dateForCalendar)
       .subscribe((meetings) => {
         this.countOfMeetings = meetings.length;
       });
   }
 
   private deleteMeetingsByIdBusiness(): void {
-
-    this.meetingService.deleteMeetingsByIdBusiness(this.selectedBusinessId, this.todayDate)
-      .toPromise().then(() => {
-
-      }).catch((error) => {
+    this.meetingService
+      .deleteMeetingsByIdBusiness(this.selectedBusinessId, this.todayDate)
+      .toPromise()
+      .then(() => {})
+      .catch((error) => {
         console.log(error);
       });
   }
-
-
-
 }

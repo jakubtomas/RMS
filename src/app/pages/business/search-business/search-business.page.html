@@ -30,7 +30,6 @@
       <ion-item>
         <ion-label><sup>*</sup> Type of organization </ion-label>
         <ion-select
-          interface="popover"
           formControlName="typeOrganization"
           placeholder="Select One"
           mode="md"
@@ -81,7 +80,7 @@
         </ion-item>
 
         <ion-item-sliding *ngFor="let item of businesses ">
-          <ion-item (click)="chooseBusiness(item)" class="item">
+          <ion-item (click)="selectDetailsBusiness(item)" class="item">
             <ion-label style="cursor: pointer"
               >{{item.nameOrganization}}
             </ion-label>

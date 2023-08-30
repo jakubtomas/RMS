@@ -9,8 +9,6 @@ import {
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
-//import {error} from "selenium-webdriver";
-//import {register} from "ts-node";
 
 @Component({
   selector: 'app-registration',
@@ -120,7 +118,7 @@ export class RegistrationPage implements OnInit {
       .createUser({ email, password, firstName, lastName })
       .then((response) => {
         if (response == null) {
-          // null is success, false means there was an error
+          // null is success, false means there was an error from function which create user in collection
           this.router.navigate(['/dashboard']);
           this.showToast('The account has been created successfully.');
         } else {

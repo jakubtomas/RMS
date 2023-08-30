@@ -18,7 +18,6 @@ import { UserService } from 'src/app/services/user.service';
   styleUrls: ['./calendar-meetings.page.scss'],
 })
 export class CalendarMeetingsPage implements OnInit, OnDestroy {
-
   timeMeeting: Meeting[] = [];
   meetingsByDateBusiness: Meeting[] = [];
   selectedDayByCalendar: string;
@@ -27,7 +26,6 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
   meetingWithBusiness = [];
   ownerPermissionBusiness = false;
   selectedDateEvent = null;
-
 
   private idUser = localStorage.getItem('idUser');
   business: Business;
@@ -38,7 +36,7 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
   calendar = {
     mode: 'month' as CalendarMode,
     step: 30 as Step,
-    currentDate: new Date()
+    currentDate: new Date(),
   };
 
   @ViewChild(CalendarComponent) myCal: CalendarComponent;
@@ -48,25 +46,25 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
     private meetingService: MeetingService,
     private route: ActivatedRoute,
     private businessService: BusinessService,
-    private userService: UserService,
-  ) { }
+    private userService: UserService
+  ) {}
 
   ngOnInit() {
-
     this.route.queryParams.subscribe((params: Params) => {
+      console.log(params);
 
       this.business = null;
 
       this.meetingWithBusiness = [];
 
       if (params.businessId !== undefined) {
+        console.log('no undefined');
+
         this.selectedBusinessId = params.businessId;
         this.controlBusinessPermission(params.businessId);
 
         // information about business address
         this.getOneBusiness(this.selectedBusinessId);
-
-
       } else {
         this.selectedBusinessId = null;
       }
@@ -78,19 +76,18 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
   }
 
   controlBusinessPermission(documentID: string): void {
-
-    this.businessService.getBusinessPermission(documentID).subscribe((permissions) => {
-      const myId = localStorage.getItem('idUser');
-      if (permissions.idUser === myId) {
-
-        this.ownerPermissionBusiness = true;
-      } else {
-        this.ownerPermissionBusiness = false;
+    this.businessService.getBusinessPermission(documentID).subscribe(
+      (permissions) => {
+        const myId = localStorage.getItem('idUser');
+        if (permissions.idUser === myId) {
+          this.ownerPermissionBusiness = true;
+        } else {
+          this.ownerPermissionBusiness = false;
+        }
+      },
+      (error) => {
+        console.log(error);
       }
-
-    }, error => {
-      console.log(error);
-    }
     );
   }
 
@@ -107,6 +104,9 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
   }
 
   onCurrentDateChanged(event: Date): void {
+    console.log('onCurrentDateChanged');
+    console.log(event);
+
     this.selectedDateEvent = event;
 
     this.selectedDateByCalendar = event;
@@ -116,66 +116,79 @@ export class CalendarMeetingsPage implements OnInit, OnDestroy {
 
     this.meetingWithBusiness = [];
 
-
     if (this.selectedBusinessId && dateForFirestore) {
-      this.getMeetingsByIdBusinessByDate(this.selectedBusinessId, dateForFirestore);
+      this.getMeetingsByIdBusinessByDate(
+        this.selectedBusinessId,
+        dateForFirestore
+      );
     } else {
       this.getMeetingsByIdUserByDate(this.idUser, dateForFirestore);
     }
-
   }
 
   onViewTittleChanged(title: string): void {
+    console.log(title);
+
     this.viewTitle = title;
   }
 
-
-  private getMeetingsByIdUserByDate(idUser: string, dateForCalendar: string): void {
-
-    this.meetingService.getMeetingsByIdUserForOneDay(idUser, dateForCalendar)
-      .subscribe(meetings => {
-        this.meetingWithBusiness = meetings;
-      }, error => {
-        console.log(error);
-      });
+  private getMeetingsByIdUserByDate(
+    idUser: string,
+    dateForCalendar: string
+  ): void {
+    this.meetingService
+      .getMeetingsByIdUserForOneDay(idUser, dateForCalendar)
+      .subscribe(
+        (meetings) => {
+          this.meetingWithBusiness = meetings;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
-  private getMeetingsByIdBusinessByDate(idBusiness: string, dateForCalendar: string): void {
+  private getMeetingsByIdBusinessByDate(
+    idBusiness: string,
+    dateForCalendar: string
+  ): void {
+    this.meetingService
+      .getMeetingsByIdBusinessByOneDay(idBusiness, dateForCalendar)
+      .subscribe(
+        (meetings) => {
+          this.timeMeeting = meetings;
+          const helpArray = [];
 
-    this.meetingService.getMeetingsByIdBusinessByOneDay(idBusiness, dateForCalendar).subscribe(meetings => {
+          meetings.map((meeting) => {
+            helpArray.push({ meeting });
+          });
 
-      this.timeMeeting = meetings;
-      const helpArray = [];
-
-      meetings.map(meeting => {
-        helpArray.push({ meeting });
-      });
-
-      this.meetingWithBusiness = helpArray;
-
-    }, error => {
-      console.log(error);
-    });
+          this.meetingWithBusiness = helpArray;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   selectMeeting(meeting: Meeting): void {
-
     this.router.navigate(['/detail-meeting'], {
       queryParams: {
         docIdMeeting: meeting.id,
         idBusiness: meeting.idBusiness,
         redirectFromCalendar: true,
-      }
+      },
     });
   }
 
   getOneBusiness(documentID: string): void {
-
-    this.businessService.getOneBusiness(documentID).subscribe((business) => {
-      this.business = business;
-    }, error => {
-      console.log(error);
-    }
+    this.businessService.getOneBusiness(documentID).subscribe(
+      (business) => {
+        this.business = business;
+      },
+      (error) => {
+        console.log(error);
+      }
     );
   }
 

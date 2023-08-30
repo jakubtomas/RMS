@@ -1,22 +1,23 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from '@angular/fire/compat/firestore';
+import {
+  AngularFirestore,
+  AngularFirestoreCollection,
+  DocumentReference,
+} from '@angular/fire/compat/firestore';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { UserDetails } from '../interfaces/userDetails';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserService {
-
   userCollection: AngularFirestoreCollection<UserDetails>;
   userCollection2: AngularFirestoreCollection<UserDetails>;
-  myIdUser;
+  myIdUser: string;
   idUserSubject = new BehaviorSubject(null);
 
-
-  constructor(public afs: AngularFirestore,
-  ) {
+  constructor(public afs: AngularFirestore) {
     this.userCollection = this.afs.collection('users');
   }
 
@@ -29,33 +30,35 @@ export class UserService {
 
   getAllUsersDetails(): Observable<UserDetails[]> {
     return this.userCollection.snapshotChanges().pipe(
-      map(changes => changes.map(a => {
-        const data = a.payload.doc.data() as UserDetails;
-        data.idDocument = a.payload.doc.id;
-        return data;
-      })));
+      map((changes) =>
+        changes.map((a) => {
+          const data = a.payload.doc.data() as UserDetails;
+          data.idDocument = a.payload.doc.id;
+          return data;
+        })
+      )
+    );
   }
 
   getUserDetailsInformation(idUser?: string): Observable<any> {
-
-
     if (idUser == null) {
       idUser = this.myIdUser;
     }
 
-    this.userCollection2 = this.afs.collection('users',
-      ref => ref.where('idUser', '==', idUser)
+    this.userCollection2 = this.afs.collection('users', (ref) =>
+      ref.where('idUser', '==', idUser)
     );
 
     idUser = null;
 
     return this.userCollection2.snapshotChanges().pipe(
-      map(changes => changes.map(a => {
-        const data = a.payload.doc.data() as UserDetails;
-        data.idUser = a.payload.doc.id;
-        return data;
-      })));
-
+      map((changes) =>
+        changes.map((a) => {
+          const data = a.payload.doc.data() as UserDetails;
+          data.idUser = a.payload.doc.id;
+          return data;
+        })
+      )
+    );
   }
-
 }

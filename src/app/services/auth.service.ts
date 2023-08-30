@@ -31,6 +31,7 @@ export class AuthService {
       }
     });
   }
+
   setUser(userCredential: UserCredential): void {
     if (userCredential.user.uid) {
       localStorage.setItem('idUser', userCredential.user.uid);
@@ -76,7 +77,10 @@ export class AuthService {
     return this.afAuth
       .createUserWithEmailAndPassword(email, password)
       .then((userCredential: UserCredential) => {
+        console.log(userCredential);
+
         this.setUser(userCredential);
+
         const user: UserDetails = {
           idUser: userCredential.user.uid,
           firstName,
@@ -84,12 +88,15 @@ export class AuthService {
         };
 
         userCredential.user.sendEmailVerification();
-
-        return this.userService.addUser(user).then((data) => {});
-
-        return null;
+        return this.userService.addUser(user).then((data) => {
+          console.log('data after registration');
+          console.log(data);
+        });
       })
       .catch((error) => {
+        console.log('registration error below');
+        console.log(error);
+
         if (error.code) {
           //return one object from array [0]
           return this.createErrorMessage(error.code)[0];
@@ -177,12 +184,8 @@ export class AuthService {
       .filter((object) => object.code === errorCode)
       .map((object) => object.message)[0];
   }
-  //Login
+
   login(email: string, password: string): Promise<any> {
-    //observable
-
-    const myIdUser = localStorage.getItem('idUser');
-
     return this.afAuth
       .signInWithEmailAndPassword(email, password)
       .then((userCredential: UserCredential) => {

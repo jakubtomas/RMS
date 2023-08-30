@@ -6,6 +6,5 @@ export interface Business {
   zipCode: string;
   city: string;
   nameStreetWithNumber: string;
-
   typeOfOrganization: string;
 }

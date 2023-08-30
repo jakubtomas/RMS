@@ -2,11 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BusinessService } from '../../../services/business.service';
 import { Business } from '../../../interfaces/business';
-import { error } from 'selenium-webdriver';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { BusinessPermission } from '../../../interfaces/businessPermission';
 import { ToastController } from '@ionic/angular';
-
 
 @Component({
   selector: 'app-register-business',
@@ -14,15 +11,13 @@ import { ToastController } from '@ionic/angular';
   styleUrls: ['./register-business.page.scss'],
 })
 export class RegisterBusinessPage implements OnInit {
-
   registerForm: FormGroup;
-
   business: Business;
   businessId: string;
   firebaseErrorMessage: string;
   createdNewBusiness = false;
   updateBusinessPage = false;
-  typesOrganization: object = null;
+  typesOrganization: Array<any>;
 
   //component data
   ionTitle: string;
@@ -56,12 +51,12 @@ export class RegisterBusinessPage implements OnInit {
     return this.registerForm.get('typeOrganization') as FormControl;
   }
 
-  constructor(private businessService: BusinessService,
+  constructor(
+    private businessService: BusinessService,
     private router: Router,
     private route: ActivatedRoute,
-    private toastCtrl: ToastController,
-  ) {
-  }
+    private toastCtrl: ToastController
+  ) {}
 
   ngOnInit() {
     this.setValuesForPage();
@@ -69,11 +64,8 @@ export class RegisterBusinessPage implements OnInit {
     this.firebaseErrorMessage = null;
     this.typesOrganization = this.getTypesOrganization();
 
-
     this.route.queryParams.subscribe((params: Params) => {
-
       if (params.businessId !== undefined) {
-
         const businessId = params.businessId;
         this.updateBusinessPage = true;
         this.setValuesForPage();
@@ -81,18 +73,14 @@ export class RegisterBusinessPage implements OnInit {
       }
     });
 
-
-    this.registerForm = new FormGroup(
-      {
-        nameOrganization: new FormControl('', Validators.required),
-        phoneNumber: new FormControl('', Validators.required),
-        zipCode: new FormControl('', Validators.required),
-        city: new FormControl('', Validators.required),
-        street: new FormControl('', Validators.required),
-        typeOrganization: new FormControl('', Validators.required),
-      }
-
-    );
+    this.registerForm = new FormGroup({
+      nameOrganization: new FormControl('', Validators.required),
+      phoneNumber: new FormControl('', Validators.required),
+      zipCode: new FormControl('', Validators.required),
+      city: new FormControl('', Validators.required),
+      street: new FormControl('', Validators.required),
+      typeOrganization: new FormControl('', Validators.required),
+    });
     this.setRegisterFormValues();
   }
 
@@ -106,9 +94,7 @@ export class RegisterBusinessPage implements OnInit {
     }
   }
 
-
   onSubmit(): void {
-
     const businessData: Business = {
       idOwner: localStorage.getItem('idUser'),
       nameOrganization: this.capitalizeFirstLetter(this.nameOrganization.value),
@@ -116,7 +102,7 @@ export class RegisterBusinessPage implements OnInit {
       zipCode: this.zipCode.value,
       city: this.capitalizeFirstLetter(this.city.value),
       nameStreetWithNumber: this.capitalizeFirstLetter(this.street.value),
-      typeOfOrganization: this.typeOrganization.value
+      typeOfOrganization: this.typeOrganization.value,
     };
 
     if (this.updateBusinessPage) {
@@ -124,27 +110,36 @@ export class RegisterBusinessPage implements OnInit {
     } else {
       this.createBusiness(businessData);
     }
-
   }
 
   createBusiness(businessData: Business): void {
-    this.businessService.addBusiness(businessData).then(() => {
-      this.createdNewBusiness = true;
-      this.router.navigate(['/list-business'], { queryParams: { createdBusiness: true } });
-    }).catch((error) => {
-      console.log(error);
-      this.firebaseErrorMessage = 'Something is wrong.';
-    });
+    this.businessService
+      .addBusiness(businessData)
+      .then(() => {
+        this.createdNewBusiness = true;
+        this.router.navigate(['/list-business'], {
+          queryParams: { createdBusiness: true },
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+        this.firebaseErrorMessage = 'Something is wrong.';
+      });
   }
 
   updateBusiness(businessData: Business): void {
-    this.businessService.updateBusiness(businessData, this.businessId).then(() => {
-      this.router.navigate(['/detail-business'], { queryParams: { businessId: this.businessId } });
-      this.showToast('Business successfully updated');
-    }).catch((error) => {
-      console.log(error);
-      this.firebaseErrorMessage = 'Something is wrong';
-    });
+    this.businessService
+      .updateBusiness(businessData, this.businessId)
+      .then(() => {
+        this.router.navigate(['/detail-business'], {
+          queryParams: { businessId: this.businessId },
+        });
+        this.showToast('Business successfully updated');
+      })
+      .catch((error) => {
+        console.log(error);
+        this.firebaseErrorMessage = 'Something is wrong';
+      });
   }
 
   getTypesOrganization(): { name: string }[] {
@@ -152,7 +147,6 @@ export class RegisterBusinessPage implements OnInit {
   }
 
   getOneBusinessForUpdate(businessId: string): void {
-
     this.businessId = businessId;
     this.businessService.getOneBusiness(businessId).subscribe((business) => {
       this.business = business;
@@ -162,24 +156,21 @@ export class RegisterBusinessPage implements OnInit {
 
   setRegisterFormValues(): void {
     if (this.business !== undefined) {
-
       this.registerForm.setValue({
         nameOrganization: this.business.nameOrganization,
         phoneNumber: this.business.phoneNumber,
         zipCode: this.business.zipCode,
         city: this.business.city,
         street: this.business.nameStreetWithNumber,
-        typeOrganization: this.business.typeOfOrganization
+        typeOrganization: this.business.typeOfOrganization,
       });
     } else {
-
     }
   }
 
   getItems() {
-    this.businessService.getItems().subscribe(value => {
+    this.businessService.getItems().subscribe((value) => {
       console.log(value);
-
     });
   }
 
@@ -187,7 +178,7 @@ export class RegisterBusinessPage implements OnInit {
     const toast = await this.toastCtrl.create({
       message: msg,
       duration: 3000,
-      position: 'middle'
+      position: 'middle',
     });
 
     toast.onDidDismiss();

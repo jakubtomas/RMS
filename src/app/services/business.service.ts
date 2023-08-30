@@ -2,7 +2,14 @@
 import { Injectable } from '@angular/core';
 import { Business } from '../interfaces/business';
 //import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
-import { BehaviorSubject, forkJoin, Observable, of, Subject, Subscriber } from 'rxjs';
+import {
+  BehaviorSubject,
+  forkJoin,
+  Observable,
+  of,
+  Subject,
+  Subscriber,
+} from 'rxjs';
 import { filter, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
 import {
   AngularFirestore,
@@ -17,7 +24,6 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { BusinessPermission } from '../interfaces/businessPermission';
 import { SearchBusiness } from '../interfaces/searchBusiness';
 
-
 interface Item {
   id?: string;
   name?: string;
@@ -25,10 +31,9 @@ interface Item {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class BusinessService {
-
   itemsCollection: AngularFirestoreCollection<Item>;
   businessCollection: AngularFirestoreCollection<Business>;
   businessCollection2: AngularFirestoreCollection<Business>;
@@ -63,88 +68,102 @@ export class BusinessService {
     { name: 'Sportss & Fitness' },
   ];
 
-
-  constructor(public afs: AngularFirestore,
-    public afAuth: AngularFireAuth) {
+  constructor(public afs: AngularFirestore, public afAuth: AngularFireAuth) {
     this.idUser = localStorage.getItem('idUser');
 
-    this.itemsCollection = this.afs.collection('items',
-      ref => ref.orderBy('name', 'asc'));
+    this.itemsCollection = this.afs.collection('items', (ref) =>
+      ref.orderBy('name', 'asc')
+    );
 
     this.businessCollection = this.afs.collection('business');
 
     this.businessCollection2 = this.afs.collection('business');
-    this.businessPermissionCollection = this.afs.collection('businessPermission');
+    this.businessPermissionCollection =
+      this.afs.collection('businessPermission');
   }
 
   getItems(): Observable<Item[]> {
-    return this.items = this.itemsCollection.snapshotChanges().pipe(
-      map(changes => changes.map(a => {
-        const data = a.payload.doc.data() as Item;
-        data.id = a.payload.doc.id;
-        return data;
-      })));
+    return (this.items = this.itemsCollection.snapshotChanges().pipe(
+      map((changes) =>
+        changes.map((a) => {
+          const data = a.payload.doc.data() as Item;
+          data.id = a.payload.doc.id;
+          return data;
+        })
+      )
+    ));
   }
 
   setOrderBy(orderBy: string) {
-
     if (orderBy === 'nameOrganization') {
-      this.businessCollection = this.afs.collection('business',
-        ref => ref.orderBy('nameOrganization', 'asc'));
-
+      this.businessCollection = this.afs.collection('business', (ref) =>
+        ref.orderBy('nameOrganization', 'asc')
+      );
     } else {
-      this.businessCollection = this.afs.collection('business',
-        ref => ref.orderBy('city', 'asc'));
-
+      this.businessCollection = this.afs.collection('business', (ref) =>
+        ref.orderBy('city', 'asc')
+      );
     }
   }
 
   getBusinessPermission(idBusiness: string): Observable<BusinessPermission> {
-    const businessPermissionCollection: AngularFirestoreCollection<BusinessPermission> = this.afs.collection('businessPermission',
-      ref => {
-        let query: firebase.firestore.CollectionReference | firebase.firestore.Query = ref;
+    const businessPermissionCollection: AngularFirestoreCollection<BusinessPermission> =
+      this.afs.collection('businessPermission', (ref) => {
+        let query:
+          | firebase.firestore.CollectionReference
+          | firebase.firestore.Query = ref;
+
         if (idBusiness) {
           query = query.where('idOrganization', '==', idBusiness);
         }
         return query;
       });
 
-    return businessPermissionCollection.valueChanges().pipe(map((array) => array?.length === 1 ? array[0] : null));
+    return businessPermissionCollection
+      .valueChanges()
+      .pipe(map((array) => (array?.length === 1 ? array[0] : null)));
   }
 
   getSearchedBusinesses(searchValues: SearchBusiness): Observable<Business[]> {
+    this.businessCollection = this.afs.collection('business', (ref) => {
+      let query = ref.where(
+        'typeOfOrganization',
+        '==',
+        searchValues.typeOfOrganization
+      );
 
-    this.businessCollection = this.afs.collection('business',
-      ref => {
+      if (searchValues.city) {
+        query = ref.where('city', '==', searchValues.city);
+      }
 
-        let query = ref.where('typeOfOrganization', '==', searchValues.typeOfOrganization);
+      if (searchValues.nameOrganization) {
+        query = query.where(
+          'nameOrganization',
+          '==',
+          searchValues.nameOrganization
+        );
+      }
 
-        if (searchValues.city) {
-          query = ref.where('city', '==', searchValues.city);
-        }
-
-        if (searchValues.nameOrganization) {
-          query = query.where('nameOrganization', '==', searchValues.nameOrganization);
-        }
-
-        if (searchValues.zipCode) {
-          query = query.where('zipCode', '==', searchValues.zipCode);
-        }
-        return query;
-      });
+      if (searchValues.zipCode) {
+        query = query.where('zipCode', '==', searchValues.zipCode);
+      }
+      return query;
+    });
 
     return this.businessCollection.snapshotChanges().pipe(
-      map(changes => changes.map(a => {
-        const data = a.payload.doc.data() as Business;
-        data.id = a.payload.doc.id;
+      map((changes) =>
+        changes.map((a) => {
+          const data = a.payload.doc.data() as Business;
+          data.id = a.payload.doc.id;
 
-        return data;
-      }))
+          return data;
+        })
+      )
     );
-
   }
 
-  getBusinessPermissions(): Observable<BusinessPermission[]> { //Id user id organization
+  getBusinessPermissions(): Observable<BusinessPermission[]> {
+    //Id user id organization
     return this.businessPermissionCollection.valueChanges();
   }
 
@@ -156,22 +175,23 @@ export class BusinessService {
     // )
 
     return this.getBusinessPermissions().pipe(
-      map((array: BusinessPermission[]) => array.filter(permission => permission.idUser == userId)),
-      map((value: BusinessPermission[]) => value.map((item: BusinessPermission) => item.idOrganization))
+      map((array: BusinessPermission[]) =>
+        array.filter((permission) => permission.idUser == userId)
+      ),
+      map((value: BusinessPermission[]) =>
+        value.map((item: BusinessPermission) => item.idOrganization)
+      )
     );
-
   }
 
   getAllMyBusinesses(): Observable<Business[]> {
-
     this.businessCollection = this.afs.collection('business');
 
     return this.getIdsOfMyBusinesses().pipe(
-      switchMap(idsBusinesses =>
-        forkJoin(idsBusinesses.map(id => this.getOneBusiness(id)))),
-      tap(() =>
-        console.log('')
-      )
+      switchMap((idsBusinesses) =>
+        forkJoin(idsBusinesses.map((id) => this.getOneBusiness(id)))
+      ),
+      tap(() => console.log(''))
     );
   }
 
@@ -182,35 +202,36 @@ export class BusinessService {
       return undefined;
     }
 
-    return this.businessCollection2.doc(documentId).get().pipe(
-      map(changes => {
-
-        const data = changes.data();
-        if (data === undefined) {
-          const mockObject = {
-            id: '',
-            idOwner: '',
-            nameOrganization: '',
-            phoneNumber: '',
-            zipCode: '',
-            city: '',
-            nameStreetWithNumber: '',
-            typeOfOrganization: '',
-          };
-          return mockObject;
-        } else {
-          data.id = documentId;
-          return data;
-        }
-      }));
-
+    return this.businessCollection2
+      .doc(documentId)
+      .get()
+      .pipe(
+        map((changes) => {
+          const data = changes.data();
+          if (data === undefined) {
+            const mockObject = {
+              id: '',
+              idOwner: '',
+              nameOrganization: '',
+              phoneNumber: '',
+              zipCode: '',
+              city: '',
+              nameStreetWithNumber: '',
+              typeOfOrganization: '',
+            };
+            return mockObject;
+          } else {
+            data.id = documentId;
+            return data;
+          }
+        })
+      );
   }
 
-
-
-  addBusiness(businessData: Business): Promise<DocumentReference<BusinessPermission>> {
+  addBusiness(
+    businessData: Business
+  ): Promise<DocumentReference<BusinessPermission>> {
     return this.businessCollection2.add(businessData).then((value) => {
-
       const businessPermissionObject: BusinessPermission = {
         idUser: localStorage.getItem('idUser'),
         idOrganization: value.id,
@@ -228,15 +249,13 @@ export class BusinessService {
     return this.businessCollection2.doc(businessId).delete();
   }
 
-
-  addBusinessPermission(businessPermissionObject: BusinessPermission): Promise<DocumentReference<BusinessPermission>> {
+  addBusinessPermission(
+    businessPermissionObject: BusinessPermission
+  ): Promise<DocumentReference<BusinessPermission>> {
     return this.businessPermissionCollection.add(businessPermissionObject);
   }
 
   getBusinessList(): Observable<DocumentChangeAction<unknown>[]> {
-    return this.afs
-      .collection('business')
-      .snapshotChanges();
+    return this.afs.collection('business').snapshotChanges();
   }
-
 }

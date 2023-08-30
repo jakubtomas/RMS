@@ -36,7 +36,7 @@
         </div>
       </ion-col>
 
-      <ion-col col-3 *ngIf="(businessMode | async)">
+      <ion-col col-3 *ngIf="(businessMode$ | async)">
         <div class="searchElement" routerLink="/register-business">
           <ion-icon class="ion-1x" name="add-circle"></ion-icon>
           <p>Create Business</p>
@@ -50,6 +50,13 @@
         </div>
       </ion-col>
     </ion-row>
+    <div *ngIf="userDetails$ | async as userDetails; else loading">
+      <div>{{userDetails | json}}</div>
+    </div>
+
+    <ng-template #loading>
+      <p>Loading user details...</p>
+    </ng-template>
   </ion-grid>
 
   <ion-card>
