@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { EMPTY, Observable, Subscription } from 'rxjs';
-import { map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
+import { delay, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
 import { UserDetails } from 'src/app/interfaces/userDetails';
 import { UserService } from 'src/app/services/user.service';
 import { AuthService } from '../../services/auth.service';
@@ -13,18 +13,15 @@ import { BusinessService } from '../../services/business.service';
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
 })
-export class DashboardPage implements OnInit, OnDestroy {
-  user: Observable<any>;
-  userId: any;
+export class DashboardPage implements OnInit {
+  user$: Observable<any>;
   emailVerified = false;
-  email = ' ';
   isActiveMode = false;
-  businessMode$ = this.businessService.businessMode$;
   userDetails: UserDetails;
 
-  subscription: Subscription;
-
-  userDetails$: Observable<any>;
+  businessMode$ = this.businessService.businessMode$;
+  userDetails$: Observable<UserDetails>;
+  userDetailsMessage: string = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -34,54 +31,33 @@ export class DashboardPage implements OnInit, OnDestroy {
     private businessService: BusinessService,
     private userService: UserService
   ) {
-    this.user = null;
+    this.user$ = null;
   }
 
   ionViewWillEnter(): void {
-    this.getUserId();
-    this.getUserDetails2();
+    this.getUserDetails();
   }
 
   ngOnInit() {}
-  resetUserDetails(): void {
-    this.userDetails = null;
-  }
 
-  getUserId(): void {
-    this.authService.userId$
-      .pipe(
-        take(1),
-        tap((userId) => {
-          if (userId) {
-            this.getUserDetails(userId);
-          }
-        })
-      )
-      .subscribe();
-  }
-
-  getUserDetails(idUser: string): void {
-    this.subscription = this.userService
-      .getUserDetailsInformation(idUser)
-      .subscribe((userDetails) => {
-        this.userDetails = userDetails[0];
-      });
-  }
-
-  getUserDetails2() {
+  getUserDetails() {
     this.userDetails$ = this.authService.userId$.pipe(
-      tap((data) => {
-        console.log(data);
-      }),
       take(1),
       switchMap((userId) => {
-        if (userId) {
-          return this.userService.getUserDetailsInformation(userId);
-        } else {
-          // If userId is not available, return an empty observable or handle as needed
-          return EMPTY; // Import EMPTY from 'rxjs'
-          // return of(null)
-        }
+        return this.userService.getUserDetailsInformation(userId).pipe(
+          tap({
+            next: (userDetails) => {
+              if (userDetails === null) {
+                this.userDetailsMessage =
+                  'No user details found for this user.';
+              }
+            },
+            error: () => {
+              this.userDetailsMessage =
+                'Something is wrong from server. Please try again';
+            },
+          })
+        );
       })
     );
   }
@@ -95,11 +71,12 @@ export class DashboardPage implements OnInit, OnDestroy {
     });
   }
 
-  ionViewDidLeave() {
+  resetUserDetails(): void {
     this.userDetails = null;
+    this.userDetailsMessage = null;
   }
 
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
+  ionViewDidLeave() {
+    this.userDetails = null;
   }
 }

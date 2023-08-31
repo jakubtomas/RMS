@@ -5,7 +5,15 @@ import {
   DocumentReference,
 } from '@angular/fire/compat/firestore';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import {
+  catchError,
+  defaultIfEmpty,
+  delay,
+  map,
+  switchMap,
+  tap,
+  timeout,
+} from 'rxjs/operators';
 import { UserDetails } from '../interfaces/userDetails';
 
 @Injectable({
@@ -40,7 +48,7 @@ export class UserService {
     );
   }
 
-  getUserDetailsInformation(idUser?: string): Observable<any> {
+  getUserDetailsInformation(idUser?: string): Observable<UserDetails> {
     if (idUser == null) {
       idUser = this.myIdUser;
     }
@@ -55,10 +63,17 @@ export class UserService {
       map((changes) =>
         changes.map((a) => {
           const data = a.payload.doc.data() as UserDetails;
-          data.idUser = a.payload.doc.id;
+          data.idDocument = a.payload.doc.id;
           return data;
         })
-      )
+      ),
+      // return only first element from array
+      map((userDetailsArray) =>
+        userDetailsArray.length > 0 ? userDetailsArray[0] : null
+      ),
+      catchError((error) => {
+        return of(null); // Return null in case of error
+      })
     );
   }
 }

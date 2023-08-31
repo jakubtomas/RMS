@@ -17,13 +17,24 @@
     </ion-item>
   </ion-card> -->
 
-  <ion-card *ngIf="userDetails">
+  <ion-card>
     <ion-item>
-      <label class="ion-text-start"
+      <label *ngIf="userDetails$ | async as userDetails; else login"
         >Welcome {{userDetails.firstName}} {{userDetails.lastName}}
       </label>
+      <!-- <label *ngIf="userDetailsMessage">{{userDetailsMessage}}</label> -->
     </ion-item>
   </ion-card>
+  <ng-template #login>
+    <ion-item *ngIf="!userDetailsMessage ;else displayMessage">
+      <ion-spinner name="lines"></ion-spinner>
+      <p>Loading data</p>
+    </ion-item>
+  </ng-template>
+
+  <ng-template #displayMessage>
+    <p>{{userDetailsMessage}}</p>
+  </ng-template>
 
   <div class="grid-item"></div>
 
@@ -50,13 +61,6 @@
         </div>
       </ion-col>
     </ion-row>
-    <div *ngIf="userDetails$ | async as userDetails; else loading">
-      <div>{{userDetails | json}}</div>
-    </div>
-
-    <ng-template #loading>
-      <p>Loading user details...</p>
-    </ng-template>
   </ion-grid>
 
   <ion-card>
