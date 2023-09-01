@@ -2,14 +2,7 @@
 import { Injectable } from '@angular/core';
 import { Business } from '../interfaces/business';
 //import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
-import {
-  BehaviorSubject,
-  forkJoin,
-  Observable,
-  of,
-  Subject,
-  Subscriber,
-} from 'rxjs';
+import { BehaviorSubject, forkJoin, Observable, Subject } from 'rxjs';
 import { filter, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
 import {
   AngularFirestore,
@@ -228,17 +221,17 @@ export class BusinessService {
       );
   }
 
-  addBusiness(
+  async addBusiness(
     businessData: Business
   ): Promise<DocumentReference<BusinessPermission>> {
-    return this.businessCollection2.add(businessData).then((value) => {
-      const businessPermissionObject: BusinessPermission = {
-        idUser: localStorage.getItem('idUser'),
-        idOrganization: value.id,
-      };
+    const value = await this.businessCollection2.add(businessData);
 
-      return this.addBusinessPermission(businessPermissionObject);
-    });
+    const businessPermissionObject: BusinessPermission = {
+      idUser: localStorage.getItem('idUser'),
+      idOrganization: value.id,
+    };
+
+    return await this.addBusinessPermission(businessPermissionObject);
   }
 
   updateBusiness(businessData: Business, businessId: string): Promise<void> {
@@ -250,9 +243,9 @@ export class BusinessService {
   }
 
   addBusinessPermission(
-    businessPermissionObject: BusinessPermission
+    businessPermission: BusinessPermission
   ): Promise<DocumentReference<BusinessPermission>> {
-    return this.businessPermissionCollection.add(businessPermissionObject);
+    return this.businessPermissionCollection.add(businessPermission);
   }
 
   getBusinessList(): Observable<DocumentChangeAction<unknown>[]> {

@@ -4,6 +4,7 @@ import { BusinessService } from '../../../services/business.service';
 import { Business } from '../../../interfaces/business';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   selector: 'app-register-business',
@@ -55,7 +56,8 @@ export class RegisterBusinessPage implements OnInit {
     private businessService: BusinessService,
     private router: Router,
     private route: ActivatedRoute,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -134,7 +136,7 @@ export class RegisterBusinessPage implements OnInit {
         this.router.navigate(['/detail-business'], {
           queryParams: { businessId: this.businessId },
         });
-        this.showToast('Business successfully updated');
+        this.toastService.showToast('Business successfully updated');
       })
       .catch((error) => {
         console.log(error);
@@ -172,17 +174,6 @@ export class RegisterBusinessPage implements OnInit {
     this.businessService.getItems().subscribe((value) => {
       console.log(value);
     });
-  }
-
-  async showToast(msg: string): Promise<void> {
-    const toast = await this.toastCtrl.create({
-      message: msg,
-      duration: 3000,
-      position: 'middle',
-    });
-
-    toast.onDidDismiss();
-    await toast.present();
   }
 
   private capitalizeFirstLetter(name: string) {

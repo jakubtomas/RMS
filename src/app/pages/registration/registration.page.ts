@@ -9,6 +9,7 @@ import {
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   selector: 'app-registration',
@@ -70,7 +71,8 @@ export class RegistrationPage implements OnInit {
   constructor(
     private authService: AuthService,
     private toastCtrl: ToastController,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -120,28 +122,18 @@ export class RegistrationPage implements OnInit {
         if (response === null) {
           // null is success, false means there was an error from function which create user in collection
           this.router.navigate(['/dashboard']);
-          this.showToast('The account has been created successfully.');
+          this.toastService.showToast(
+            'The account has been created successfully.'
+          );
         } else {
           if (response.message) {
-            this.showToast(response.message);
+            this.toastService.showToast(response.message);
             this.firebaseErrorMessage = response.message;
           } else {
-            this.showToast('Something is wrong.');
+            this.toastService.showToast('Something is wrong.');
             this.firebaseErrorMessage = 'Something is wrong.';
           }
         }
       });
-  }
-
-  private async showToast(msg: string) {
-    const toast = await this.toastCtrl.create({
-      message: msg,
-      duration: 3000,
-      position: 'middle',
-      cssClass: 'alertMsg',
-    });
-
-    toast.onDidDismiss();
-    await toast.present();
   }
 }

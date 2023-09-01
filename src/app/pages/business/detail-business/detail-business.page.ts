@@ -8,6 +8,7 @@ import { Calendar } from '../../../interfaces/calendar';
 import * as moment from 'moment';
 import { MeetingService } from 'src/app/services/meeting.service';
 import { Subscription } from 'rxjs';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   selector: 'app-detail-business',
@@ -31,9 +32,9 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private businessService: BusinessService,
     private router: Router,
-    private toastCtrl: ToastController,
     public alertController: AlertController,
-    private calendarService: CalendarService
+    private calendarService: CalendarService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -50,17 +51,6 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
 
   ionViewWillEnter(): void {
     //  this.messageFirebase = null;
-  }
-
-  async showToast(msg: string) {
-    const toast = await this.toastCtrl.create({
-      message: msg,
-      duration: 3000,
-      position: 'middle',
-    });
-
-    toast.onDidDismiss();
-    await toast.present();
   }
 
   getOneBusiness(documentID: string): void {
@@ -119,7 +109,7 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
       })
       .catch((error) => {
         this.messageFirebase = 'Something is wrong';
-        this.showToast('Something is wrong');
+        this.toastService.showToast('Something is wrong');
       });
   }
 
@@ -254,12 +244,12 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
       .deleteCalendar(this.calendar.id)
       .then(() => {
         this.deleteMeetingsByIdBusiness();
-        this.showToast('Calendar has been deleted');
+        this.toastService.showToast('Calendar has been deleted');
         this.calendar = null;
       })
       .catch((error) => {
         this.messageFirebase = 'Something is wrong';
-        this.showToast('Operation Failed something is wrong');
+        this.toastService.showToast('Operation Failed something is wrong');
       });
   }
 

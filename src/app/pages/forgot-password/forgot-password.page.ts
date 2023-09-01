@@ -6,7 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
-import { ToastController } from '@ionic/angular';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -29,22 +29,12 @@ export class ForgotPasswordPage implements OnInit {
         message: 'Email is not valid.',
       },
     ],
-    password: [
-      {
-        type: 'required',
-        message: 'Password is required.',
-      },
-      {
-        type: 'minlength',
-        message: 'Password length should be 6 characters long.',
-      },
-    ],
   };
 
   constructor(
     private authService: AuthService,
     private fb: FormBuilder,
-    private toastCtrl: ToastController
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -63,26 +53,14 @@ export class ForgotPasswordPage implements OnInit {
     this.authService.forgotPassword(input.email).then((result) => {
       if (result === null) {
         // null is success
-        this.showToast('Email with reset link has been sent');
+        this.toastService.showToast('Email with reset link has been sent');
       } else {
         if (result.message) {
-          this.showToast(result.message);
+          this.toastService.showToast(result.message);
         } else {
-          this.showToast('Something is wrong');
+          this.toastService.showToast('Something is wrong');
         }
       }
     });
-  }
-
-  private async showToast(msg: string) {
-    const toast = await this.toastCtrl.create({
-      message: msg,
-      duration: 3000,
-      position: 'middle',
-      cssClass: 'alertMsg',
-    });
-
-    toast.onDidDismiss();
-    await toast.present();
   }
 }

@@ -207,16 +207,4 @@ export class AuthService {
   userDetails() {
     return this.afAuth.user;
   }
-
-  private async showToast(msg: string) {
-    const toast = await this.toastCtrl.create({
-      message: msg,
-      duration: 3000,
-      position: 'middle',
-      cssClass: 'alertMsg',
-    });
-
-    toast.onDidDismiss();
-    await toast.present();
-  }
 }

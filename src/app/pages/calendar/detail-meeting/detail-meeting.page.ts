@@ -7,6 +7,7 @@ import { MeetingService } from 'src/app/services/meeting.service';
 import { Meeting } from '../../../interfaces/meeting';
 import { UserDetails } from 'src/app/interfaces/userDetails';
 import { Subscription } from 'rxjs';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   selector: 'app-detail-meeting',
@@ -29,7 +30,8 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
     private toastCtrl: ToastController,
     public alertController: AlertController,
     private businessService: BusinessService,
-    private meetingService: MeetingService
+    private meetingService: MeetingService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -90,17 +92,6 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
     await alert.present();
   }
 
-  private async showToast(msg: string) {
-    const toast = await this.toastCtrl.create({
-      message: msg,
-      duration: 3000,
-      position: 'middle',
-    });
-
-    toast.onDidDismiss();
-    await toast.present();
-  }
-
   private controlBusinessPermission(documentID: string): void {
     this.businessService.getBusinessPermission(documentID).subscribe(
       (permissions) => {
@@ -147,7 +138,7 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
 
   private deleteMeeting(docIdMeeting: string): void {
     if (!this.ownerPermissionBusiness && !this.myMeeting) {
-      this.showToast('You can not delete this meeting ');
+      this.toastService.showToast('You can not delete this meeting ');
       return;
     }
 
@@ -168,15 +159,17 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
               this.router.navigate(['/meetings']);
             }
           }
-          this.showToast('Meeting has been successfully deleted ');
+          this.toastService.showToast('Meeting has been successfully deleted ');
         })
         .catch((error) => {
-          this.showToast('Meeting has been unsuccessfully deleted ');
+          this.toastService.showToast(
+            'Meeting has been unsuccessfully deleted '
+          );
           console.log(error);
           //todo Error Message something is wronh
         });
     } else {
-      this.showToast('No possible to delete something is wrong');
+      this.toastService.showToast('No possible to delete something is wrong');
     }
   }
 
