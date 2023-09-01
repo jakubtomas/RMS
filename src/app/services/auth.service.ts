@@ -10,6 +10,7 @@ import { BusinessService } from './business.service';
 import { UserService } from './user.service';
 import { UserDetails } from '../interfaces/userDetails';
 import { ToastController } from '@ionic/angular';
+import { NewUser } from '../interfaces/auth-user';
 @Injectable({
   providedIn: 'root',
 })
@@ -33,6 +34,8 @@ export class AuthService {
   }
 
   setUser(userCredential: UserCredential): void {
+    console.log('set User function rn ');
+
     if (userCredential.user.uid) {
       localStorage.setItem('idUser', userCredential.user.uid);
 
@@ -51,62 +54,53 @@ export class AuthService {
     localStorage.setItem('emailVerified', null);
   }
 
-  forgotPassword(passwordResetEmail: string) {
-    return this.afAuth
-      .sendPasswordResetEmail(passwordResetEmail)
-      .then(() => null)
-      .catch((error) => {
-        if (error.code) {
-          return this.createErrMessage(error.code);
-        }
-        return 'Something is wrong';
-      });
+  async forgotPassword(passwordResetEmail: string): Promise<any> {
+    try {
+      await this.afAuth.sendPasswordResetEmail(passwordResetEmail);
+      return null;
+    } catch (error) {
+      if (error.code) {
+        return this.createErrorMessage(error.code);
+      }
+      return 'Something is wrong';
+    }
   }
 
-  createUser({
-    email,
-    password,
-    firstName,
-    lastName,
-  }: {
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
-  }): Promise<null | any> {
-    return this.afAuth
-      .createUserWithEmailAndPassword(email, password)
-      .then((userCredential: UserCredential) => {
-        console.log(userCredential);
+  async createUser(
+    newUser: NewUser
+  ): Promise<null | { code: string; message: string }> {
+    try {
+      const userCredential = await this.afAuth.createUserWithEmailAndPassword(
+        newUser.email,
+        newUser.password
+      );
 
-        this.setUser(userCredential);
+      this.setUser(userCredential);
 
-        const user: UserDetails = {
-          idUser: userCredential.user.uid,
-          firstName,
-          lastName,
-        };
+      const user: UserDetails = {
+        idUser: userCredential.user.uid,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+      };
 
-        userCredential.user.sendEmailVerification();
-        return this.userService.addUser(user).then((data) => {
-          console.log('data after registration');
-          console.log(data);
-        });
-      })
-      .catch((error) => {
-        console.log('registration error below');
-        console.log(error);
+      await this.userService.addUser(user);
+      await userCredential.user.sendEmailVerification();
 
-        if (error.code) {
-          //return one object from array [0]
-          return this.createErrorMessage(error.code)[0];
-        }
+      return null; // Success
+    } catch (error) {
+      if (error.code) {
+        return this.createErrorMessage(error.code);
+      }
 
-        return { code: 'problem', message: 'Something is wrong from server' };
-      });
+      return {
+        code: 'problem',
+        message:
+          'Something is wrong from the server ,User has not been created successfully',
+      };
+    }
   }
 
-  createErrorMessage(errorCode: string): object[] {
+  createErrorMessage(errorCode: string): { code: string; message: string } {
     const messages: { code: string; message: string }[] = [
       {
         code: 'auth/email-already-in-use',
@@ -140,49 +134,35 @@ export class AuthService {
         message:
           'Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later',
       },
-    ];
-    return messages.filter((object) => object.code === errorCode);
-  }
-
-  createErrMessage(errorCode: string): string {
-    //pretriedy a da vysledok
-    const messages: { code: string; message: string }[] = [
       {
-        code: 'auth/email-already-in-use',
-        message: 'The email address is already in use by another account',
-      },
-      {
-        code: 'auth/invalid-email',
-        message: 'The email address is not valid.',
-      },
-      {
-        code: 'auth/invalid-value-(email),-starting-an-object-on-a-scalar-field',
-        message: 'The email address is not valid. Invalid value',
-      },
-      {
-        code: 'auth/operation-not-allowed',
-        message: 'Email/password accounts are not enabled',
-      },
-      {
-        code: 'auth/weak-password',
-        message: 'The password is not strong enough',
-      },
-      {
-        code: 'auth/user-disabled',
-        message: 'The user corresponding to the given email has been disabled.',
-      },
-      { code: 'auth/user-not-found', message: 'User/Email not found ' },
-      { code: 'auth/wrong-password', message: 'The password is invalid ' },
-      // eslint-disable-next-line max-len
-      {
-        code: 'auth/too-many-requests',
+        code: 'auth/missing-android-pkg-name',
         message:
-          'Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later',
+          'An Android package name must be provided if the Android app is required to be installed',
+      },
+      {
+        code: 'auth/missing-continue-uri',
+        message: 'A continue URL must be provided in the request',
+      },
+      {
+        code: 'auth/missing-ios-bundle-id',
+        message:
+          'An iOS Bundle ID must be provided if an App Store ID is provided',
+      },
+      {
+        code: 'auth/invalid-continue-uri',
+        message: 'The continue URL provided in the request is invalid',
+      },
+      {
+        code: 'auth/unauthorized-continue-uri',
+        message:
+          'The domain of the continue URL is not whitelisted. Whitelist the domain in the Firebase console',
+      },
+      {
+        code: 'auth/user-not-found',
+        message: 'User not found',
       },
     ];
-    return messages
-      .filter((object) => object.code === errorCode)
-      .map((object) => object.message)[0];
+    return messages.filter((object) => object.code === errorCode)[0];
   }
 
   login(email: string, password: string): Promise<any> {

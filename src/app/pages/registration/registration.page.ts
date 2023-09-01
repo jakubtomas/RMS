@@ -117,13 +117,18 @@ export class RegistrationPage implements OnInit {
     this.authService
       .createUser({ email, password, firstName, lastName })
       .then((response) => {
-        if (response == null) {
+        if (response === null) {
           // null is success, false means there was an error from function which create user in collection
           this.router.navigate(['/dashboard']);
           this.showToast('The account has been created successfully.');
         } else {
-          this.showToast(response.message);
-          this.firebaseErrorMessage = response.message;
+          if (response.message) {
+            this.showToast(response.message);
+            this.firebaseErrorMessage = response.message;
+          } else {
+            this.showToast('Something is wrong.');
+            this.firebaseErrorMessage = 'Something is wrong.';
+          }
         }
       });
   }
