@@ -5,9 +5,10 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AuthService } from './services/auth.service';
 import { Router } from '@angular/router';
 import { BusinessService } from './services/business.service';
-import { Subject, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { UserService } from './services/user.service';
 import { UserDetails } from './interfaces/userDetails';
+import { switchMap, take, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -46,6 +47,8 @@ export class AppComponent implements OnDestroy {
   firebaseErrorMessage: void;
   userDetails: UserDetails;
 
+  userDetails$: Observable<UserDetails>;
+
   constructor(
     public afAuth: AngularFireAuth,
     private authService: AuthService,
@@ -53,12 +56,21 @@ export class AppComponent implements OnDestroy {
     private userService: UserService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // this.afAuth.user.subscribe((value) => {
+    //   console.log(value.providerData);
+    // });
 
-  getUserDetails(): void {
-    this.userService.getUserDetailsInformation().subscribe((userDetails) => {
-      this.userDetails = userDetails[0];
-    });
+    this.getUserDetails();
+  }
+
+  getUserDetails() {
+    this.userDetails$ = this.authService.userId$.pipe(
+      take(1),
+      switchMap((userId) => {
+        return this.userService.getUserDetailsInformation(userId);
+      })
+    );
   }
 
   signOut(): void {

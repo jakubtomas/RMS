@@ -83,6 +83,25 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
       }
     );
   }
+  getCalendars(): void {
+    this.calendarService.getCalendars().subscribe(
+      (calendars) => {
+        this.calendars = calendars;
+
+        if (this.calendars.length > 0) {
+          this.calendars.forEach((calendar) => {
+            if (calendar.idBusiness === this.selectedBusinessId) {
+              this.calendar = calendar;
+              this.changeDateFormat();
+            }
+          });
+        }
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
 
   selectMeetings(): void {
     this.router.navigate(['/calendar-meetings'], {
@@ -204,25 +223,6 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
   }
 
   // return all calendar and filter which is my
-  getCalendars(): void {
-    this.calendarService.getCalendars().subscribe(
-      (calendars) => {
-        this.calendars = calendars;
-
-        if (this.calendars.length > 0) {
-          this.calendars.forEach((calendar) => {
-            if (calendar.idBusiness === this.selectedBusinessId) {
-              this.calendar = calendar;
-              this.changeDateFormat();
-            }
-          });
-        }
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  }
 
   createCalendar(): void {
     this.router.navigate(['/create-calendar'], {

@@ -71,7 +71,7 @@ export class LoginPage implements OnInit {
       ),
     });
 
-    //this.userForm.setValue({ email: 'macka@gmail.com', password: '465489' });
+    this.userForm.setValue({ email: '123123@gmail.com', password: '123123' });
   }
 
   loginUser(userFormObject: { email: string; password: string }) {

@@ -4,7 +4,18 @@ import { Business } from '../../../interfaces/business';
 import { BusinessService } from '../../../services/business.service';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { SearchBusiness } from '../../../interfaces/searchBusiness';
+import { Observable } from 'rxjs';
+import { map, take, tap } from 'rxjs/operators';
 
+export type AllowedProperties =
+  | 'city'
+  | 'id'
+  | 'idOwner'
+  | 'nameOrganization'
+  | 'nameStreetWithNumber'
+  | 'phoneNumber'
+  | 'typeOfOrganization'
+  | 'zipCode';
 @Component({
   selector: 'app-search-business',
   templateUrl: './search-business.page.html',
@@ -12,15 +23,19 @@ import { SearchBusiness } from '../../../interfaces/searchBusiness';
 })
 export class SearchBusinessPage implements OnInit {
   registerForm: FormGroup;
-  businesses: Business[];
-  business: Business;
-  businessId: string;
-  firebaseErrorMessage: string;
   typesOrganization: Array<any>;
-  orderBy = 'nameOrganization';
+  orderBy: AllowedProperties = 'nameOrganization';
   searching = false;
 
   noResultMessage = false;
+  searchBusinessError: string;
+  businesses$: Observable<Business[]>;
+
+  constructor(
+    private businessService: BusinessService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
 
   get nameOrganization(): FormControl {
     return this.registerForm.get('nameOrganization') as FormControl;
@@ -38,14 +53,7 @@ export class SearchBusinessPage implements OnInit {
     return this.registerForm.get('typeOrganization') as FormControl;
   }
 
-  constructor(
-    private businessService: BusinessService,
-    private router: Router,
-    private route: ActivatedRoute
-  ) {}
-
   ngOnInit() {
-    this.firebaseErrorMessage = null;
     this.typesOrganization = this.getTypesOrganization();
     this.registerForm = new FormGroup({
       nameOrganization: new FormControl(''),
@@ -78,45 +86,40 @@ export class SearchBusinessPage implements OnInit {
     return this.businessService.typesOfOrganization;
   }
 
-  orderByName(): void {
-    if (this.orderBy === 'nameOrganization') {
-      this.businesses.reverse();
+  toggleSortOrder(property: AllowedProperties): void {
+    if (this.orderBy === property) {
+      // Reverse the order if it's already sorted by the same property
+      this.businesses$ = this.businesses$.pipe(
+        map((businesses) => businesses.reverse())
+      );
     } else {
-      this.orderBy = 'nameOrganization';
-    }
-  }
-
-  orderByAddress(): void {
-    if (this.orderBy === 'city') {
-      this.businesses.reverse();
-    } else {
-      this.orderBy = 'city';
+      this.orderBy = property;
+      // Sort by the specified property
+      this.businesses$ = this.businesses$.pipe(
+        map((businesses) =>
+          businesses.sort((a, b) => a[property].localeCompare(b[property]))
+        )
+      );
     }
   }
 
   getSearchedBusinesses(searchValues: SearchBusiness): void {
-    setTimeout(() => {
-      if (this.searching) {
-        this.searching = false;
-        this.noResultMessage = true;
-      }
-    }, 1800);
+    this.searching = true;
 
-    this.businessService.getSearchedBusinesses(searchValues).subscribe(
-      (value) => {
-        this.searching = false;
-        this.businesses = value;
-
-        if (this.businesses.length === 0) {
-          this.noResultMessage = true;
-        } else {
-          this.noResultMessage = false;
-        }
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
+    this.businesses$ = this.businessService
+      .getSearchedBusinesses(searchValues)
+      .pipe(
+        tap({
+          next: (business: Business[]) => {
+            console.log(business);
+            this.searching = false;
+          },
+          error: () => {
+            this.searchBusinessError =
+              'Problem with server. Please try again or refresh page.';
+          },
+        })
+      );
   }
 
   selectDetailsBusiness(business: Business): void {

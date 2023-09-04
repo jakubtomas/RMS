@@ -174,9 +174,9 @@ export class MeetingService {
     currentDay?: string
   ): Observable<{ business: Business; meeting: Meeting }[]> {
     return this.getMeetingsByIdUserOrderByDate(idUser, currentDay).pipe(
-      switchMap((arrayMeetings: Meeting[]) =>
+      switchMap((meetings: Meeting[]) =>
         forkJoin(
-          arrayMeetings.map((meeting) => {
+          meetings.map((meeting) => {
             return this.businessService
               .getOneBusiness(meeting.idBusiness)
               .pipe(
@@ -252,9 +252,9 @@ export class MeetingService {
     dateForCalendar: string
   ): Observable<{ business: Business; meeting: Meeting }[]> {
     return this.getMeetingsByIdUserByDate(idUser, dateForCalendar).pipe(
-      switchMap((arrayMeetings: Meeting[]) =>
+      switchMap((meetings: Meeting[]) =>
         forkJoin(
-          arrayMeetings.map((meeting) => {
+          meetings.map((meeting) => {
             return this.businessService.getOneBusiness(meeting.idBusiness).pipe(
               map((business) => {
                 return { business, meeting };

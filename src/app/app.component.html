@@ -2,8 +2,9 @@
   <ion-split-pane contentId="main-content">
     <ion-menu contentId="main-content">
       <ion-content>
-        <ion-list *ngIf="afAuth.user | async" lines="none">
-          <ion-list-header *ngIf="userDetails">
+        <ion-list *ngIf="afAuth.user | async as user" lines="none">
+          <ion-list-header *ngIf="userDetails$ | async as userDetails">
+            {{ user.providerData[0].email }} <br />
             {{ userDetails.firstName }} {{ userDetails.lastName }}
           </ion-list-header>
 

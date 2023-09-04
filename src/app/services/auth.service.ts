@@ -60,7 +60,7 @@ export class AuthService {
       return null;
     } catch (error) {
       if (error.code) {
-        return this.createErrorMessage(error.code);
+        return this.createErrorMessage(error.code, error.message);
       }
       return 'Something is wrong';
     }
@@ -88,8 +88,12 @@ export class AuthService {
 
       return null; // Success
     } catch (error) {
+      // console.log(error);
+      // console.log(error.code);
+      // console.log(error.message);
+
       if (error.code) {
-        return this.createErrorMessage(error.code);
+        return this.createErrorMessage(error.code, error.message);
       }
 
       return {
@@ -100,7 +104,12 @@ export class AuthService {
     }
   }
 
-  createErrorMessage(errorCode: string): { code: string; message: string } {
+  createErrorMessage(
+    errorCode: string,
+    errorMessage: string
+  ): { code: string; message: string } {
+    return { code: errorCode, message: errorMessage };
+
     const messages: { code: string; message: string }[] = [
       {
         code: 'auth/email-already-in-use',
@@ -165,43 +174,41 @@ export class AuthService {
     return messages.filter((object) => object.code === errorCode)[0];
   }
 
-  login(email: string, password: string): Promise<any> {
-    return this.afAuth
-      .signInWithEmailAndPassword(email, password)
-      .then((userCredential: UserCredential) => {
-        this.setUser(userCredential);
-        this.userService.setUserId(userCredential.user.uid);
+  async login(email: string, password: string): Promise<any> {
+    try {
+      const userCredential = await this.afAuth.signInWithEmailAndPassword(
+        email,
+        password
+      );
 
-        localStorage.setItem('idUser', userCredential.user.uid);
-        localStorage.setItem('email', userCredential.user.email);
-        localStorage.setItem(
-          'emailVerified',
-          userCredential.user.emailVerified + ''
-        );
+      this.setUser(userCredential);
+      this.userService.setUserId(userCredential.user.uid);
 
-        return null;
-      })
-      .catch((error) => {
-        if (error.code) {
-          return this.createErrorMessage(error.code)[0];
-        }
-
-        return { code: 'problem', message: 'Something is wrong from server' };
-      });
+      localStorage.setItem('idUser', userCredential.user.uid);
+      localStorage.setItem('email', userCredential.user.email);
+      localStorage.setItem(
+        'emailVerified',
+        userCredential.user.emailVerified + ''
+      );
+      return null;
+    } catch (error) {
+      if (error.code) {
+        return this.createErrorMessage(error.code, error.message);
+      }
+      return { code: 'problem', message: 'Something is wrong from server' };
+    }
   }
 
-  signOut(): Promise<void> {
-    return this.afAuth
-      .signOut()
-      .then(() => {
-        this.setNullLocalStorage();
-        this.businessService.updateBusinessMode(false);
-      })
-      .catch((error) => {
-        if (error) {
-          return error;
-        }
-      });
+  async signOut(): Promise<void> {
+    try {
+      await this.afAuth.signOut();
+      this.setNullLocalStorage();
+      this.businessService.updateBusinessMode(false);
+    } catch (error) {
+      if (error) {
+        return error;
+      }
+    }
   }
 
   userDetails() {

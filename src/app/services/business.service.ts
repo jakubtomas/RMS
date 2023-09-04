@@ -87,7 +87,7 @@ export class BusinessService {
     ));
   }
 
-  setOrderBy(orderBy: string) {
+  setOrderBy(orderBy: string): void {
     if (orderBy === 'nameOrganization') {
       this.businessCollection = this.afs.collection('business', (ref) =>
         ref.orderBy('nameOrganization', 'asc')
@@ -140,6 +140,8 @@ export class BusinessService {
       if (searchValues.zipCode) {
         query = query.where('zipCode', '==', searchValues.zipCode);
       }
+      // query = query.orderBy('nameOrganization', 'asc');
+
       return query;
     });
 
@@ -148,9 +150,13 @@ export class BusinessService {
         changes.map((a) => {
           const data = a.payload.doc.data() as Business;
           data.id = a.payload.doc.id;
-
           return data;
         })
+      ),
+      map((businesses) =>
+        businesses.sort((a, b) =>
+          a.nameOrganization.localeCompare(b.nameOrganization)
+        )
       )
     );
   }
@@ -162,10 +168,6 @@ export class BusinessService {
 
   getIdsOfMyBusinesses(): Observable<string[]> {
     const userId = localStorage.getItem('idUser');
-
-    // of([1, 2]).pipe(
-    //   map((value) => )
-    // )
 
     return this.getBusinessPermissions().pipe(
       map((array: BusinessPermission[]) =>
