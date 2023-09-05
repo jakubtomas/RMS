@@ -7,8 +7,9 @@ import { CalendarService } from '../../../services/calendar.service';
 import { Calendar } from '../../../interfaces/calendar';
 import * as moment from 'moment';
 import { MeetingService } from 'src/app/services/meeting.service';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { ToastService } from 'src/app/services/toast.service';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-detail-business',
@@ -26,6 +27,8 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
   countOfMeetings = 0;
   todayDate = moment().format('L');
   timeZone = moment().format().toString().substring(19, 25);
+
+  oneBusiness$: Observable<Business>;
 
   constructor(
     private meetingService: MeetingService,
@@ -49,21 +52,19 @@ export class DetailBusinessPage implements OnInit, OnDestroy {
     });
   }
 
-  ionViewWillEnter(): void {
-    //  this.messageFirebase = null;
-  }
+  ionViewWillEnter(): void {}
 
   getOneBusiness(documentID: string): void {
-    this.subscription = this.businessService
-      .getOneBusiness(documentID)
-      .subscribe(
-        (business) => {
-          this.business = business;
+    this.oneBusiness$ = this.businessService.getOneBusiness(documentID).pipe(
+      tap({
+        next: (business: Business) => {
+          if (business.id === '' || business.idOwner === '') {
+            this.messageFirebase = 'User details not found';
+          }
         },
-        (error) => {
-          console.log(error);
-        }
-      );
+        error: (error) => {},
+      })
+    );
   }
 
   controlBusinessPermission(documentID: string): void {

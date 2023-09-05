@@ -16,6 +16,7 @@ export type AllowedProperties =
   | 'phoneNumber'
   | 'typeOfOrganization'
   | 'zipCode';
+
 @Component({
   selector: 'app-search-business',
   templateUrl: './search-business.page.html',

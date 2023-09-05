@@ -34,8 +34,6 @@ export class AuthService {
   }
 
   setUser(userCredential: UserCredential): void {
-    console.log('set User function rn ');
-
     if (userCredential.user.uid) {
       localStorage.setItem('idUser', userCredential.user.uid);
 

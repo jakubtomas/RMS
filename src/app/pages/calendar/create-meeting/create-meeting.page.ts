@@ -191,56 +191,27 @@ export class CreateMeetingPage implements OnInit {
 
     const modifyDate = upravenyCas;
 
-    const alert = await this.alertController.create({
-      cssClass: 'alertForm',
-      header: 'Confirm Meeting',
+    const message =
+      'Are you sure you want to create appointment?' +
+      '\n' +
+      '' +
+      confirmDay +
+      '\n' +
+      ' Start  ' +
+      time.start +
+      '\n\n\n\n\n' +
+      '\n' +
+      'End  ' +
+      time.end;
 
-      message:
-        'Are you sure you want to create appointment?' +
-        '\n' +
-        '' +
-        confirmDay +
-        '\n' +
-        ' Start  ' +
-        time.start +
-        '\n\n\n\n\n' +
-        '\n' +
-        'End  ' +
-        time.end,
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => {},
-        },
-        {
-          text: 'Yes',
-          handler: () => {
-            this.saveMeeting(time, modifyDate);
-          },
-        },
-      ],
-    });
-    await alert.present();
-  }
+    const result = await this.toastService.showAlertMessage(
+      message,
+      'Confirm Meeting'
+    );
 
-  private async showAlertMessage(alertMessage: string): Promise<any> {
-    const alert = await this.alertController.create({
-      cssClass: 'alertForm',
-      header: 'Warning',
-
-      message: alertMessage,
-      buttons: [
-        {
-          text: 'OK',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => {},
-        },
-      ],
-    });
-    await alert.present();
+    if (result) {
+      this.saveMeeting(time, modifyDate);
+    }
   }
 
   private saveMeeting(time, modifyDate): void {
@@ -288,6 +259,10 @@ export class CreateMeetingPage implements OnInit {
                 this.toastService.showToast(
                   'A meeting has been created successfully.'
                 );
+
+                this.toastService.showAlertMessage(
+                  'A meeting has been created successfully'
+                );
               })
               .catch((error) => {
                 console.error(error);
@@ -295,19 +270,19 @@ export class CreateMeetingPage implements OnInit {
                   'Something is wrong please refresh page'
                 );
                 //this.toastService.showToast('A meeting has not been created');
-                this.showAlertMessage(
+                this.toastService.showAlertMessage(
                   'A meeting has not been created. Try again. Something is wrong'
                 );
               });
           } else {
             // its not available termin
-            this.showAlertMessage(
+            this.toastService.showAlertMessage(
               'Please select another time, because this time has been used by another customer.'
             );
           }
         },
         (error) => {
-          this.showAlertMessage(
+          this.toastService.showAlertMessage(
             'A meeting has not been created. Try again. Something is wrong'
           );
           console.error(error);

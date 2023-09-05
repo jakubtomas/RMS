@@ -2,7 +2,14 @@
 import { Injectable } from '@angular/core';
 import { Business } from '../interfaces/business';
 //import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
-import { BehaviorSubject, forkJoin, Observable, Subject } from 'rxjs';
+import {
+  BehaviorSubject,
+  forkJoin,
+  Observable,
+  of,
+  Subject,
+  throwError,
+} from 'rxjs';
 import { filter, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
 import {
   AngularFirestore,
@@ -38,8 +45,6 @@ export class BusinessService {
   idUser = '';
   items: Observable<Item[]>;
   isActiveMode = false;
-
-  private orderBy = 'nameOrganization';
 
   public oneUserBusinesses = [];
 
@@ -99,22 +104,24 @@ export class BusinessService {
     }
   }
 
-  getBusinessPermission(idBusiness: string): Observable<BusinessPermission> {
-    const businessPermissionCollection: AngularFirestoreCollection<BusinessPermission> =
-      this.afs.collection('businessPermission', (ref) => {
-        let query:
-          | firebase.firestore.CollectionReference
-          | firebase.firestore.Query = ref;
+  getBusinessPermission(
+    idBusiness: string
+  ): Observable<BusinessPermission | null> {
+    if (!idBusiness) {
+      return of(null);
+    }
 
-        if (idBusiness) {
-          query = query.where('idOrganization', '==', idBusiness);
-        }
-        return query;
-      });
-
-    return businessPermissionCollection
+    return this.afs
+      .collection<BusinessPermission>('businessPermission', (ref) =>
+        ref.where('idOrganization', '==', idBusiness)
+      )
       .valueChanges()
-      .pipe(map((array) => (array?.length === 1 ? array[0] : null)));
+      .pipe(
+        switchMap((array) => {
+          const businessPermission = array?.length === 1 ? array[0] : null;
+          return of(businessPermission);
+        })
+      );
   }
 
   getSearchedBusinesses(searchValues: SearchBusiness): Observable<Business[]> {
@@ -201,26 +208,29 @@ export class BusinessService {
       .doc(documentId)
       .get()
       .pipe(
-        map((changes) => {
+        switchMap((changes) => {
           const data = changes.data();
           if (data === undefined) {
-            const mockObject = {
-              id: '',
-              idOwner: '',
-              nameOrganization: '',
-              phoneNumber: '',
-              zipCode: '',
-              city: '',
-              nameStreetWithNumber: '',
-              typeOfOrganization: '',
-            };
-            return mockObject;
+            return of(this.createMockBusinessObject(documentId));
           } else {
             data.id = documentId;
-            return data;
+            return of(data);
           }
         })
       );
+  }
+
+  private createMockBusinessObject(documentId: string): Business {
+    return {
+      id: documentId,
+      idOwner: '',
+      nameOrganization: '',
+      phoneNumber: '',
+      zipCode: '',
+      city: '',
+      nameStreetWithNumber: '',
+      typeOfOrganization: '',
+    };
   }
 
   async addBusiness(

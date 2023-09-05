@@ -19,7 +19,7 @@
     </ion-item>
   </ion-card>
 
-  <ion-card *ngIf="business" class="schedule">
+  <ion-card *ngIf="oneBusiness$ | async as business; " class="schedule">
     <ion-card-header>
       <div class="item">
         <ion-icon name="information-circle-outline"></ion-icon>

@@ -66,32 +66,6 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
       );
   }
 
-  private async showAlertForDeleteMeeting(docIdMeeting: string): Promise<any> {
-    const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
-      header: 'Confirm Meeting',
-      animated: true,
-      backdropDismiss: true,
-      message: 'Are you sure you want to delete appointment?',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => {},
-        },
-        {
-          text: 'Yes',
-          handler: () => {
-            this.deleteMeeting(docIdMeeting);
-          },
-        },
-      ],
-    });
-
-    await alert.present();
-  }
-
   private controlBusinessPermission(documentID: string): void {
     this.businessService.getBusinessPermission(documentID).subscribe(
       (permissions) => {

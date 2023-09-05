@@ -189,7 +189,7 @@ export class CreateCalendarPage implements OnInit {
     }
   }
 
-  prepareUpdateCalendar(): void {
+  async prepareUpdateCalendar(): Promise<void> {
     this.dateForDelete = [];
     this.daysForDelete = [];
 
@@ -261,18 +261,21 @@ export class CreateCalendarPage implements OnInit {
 
     // count of meeting for this calendar from Firestore
     if (this.countOfMeetings > 0 && this.deleteDay) {
-      const newLocal =
+      const message =
         'Warning are you sure with updating this calendar. This command can delete some meetings ';
-      this.showAlertMessage(newLocal, updateCalendar);
+      // this.showAlertMessage(message, updateCalendar);
+
+      const result = await this.toastService.showAlertMessage(message);
+
+      if (result) {
+        this.updateCalendar(updateCalendar);
+      }
     } else {
       this.updateCalendar(updateCalendar);
     }
   }
 
-  private updateCalendar(
-    newCalendar: Calendar,
-    deleteWithoutCalculate?: boolean
-  ): void {
+  private updateCalendar(newCalendar: Calendar): void {
     if (this.errorsFromHours.length === 0) {
       this.calendarService
         .updateCalendar(this.docIdCalendar, newCalendar)
@@ -301,35 +304,6 @@ export class CreateCalendarPage implements OnInit {
         console.log(error);
         this.toastService.showToast('Operation failed. Something is wrong');
       });
-  }
-
-  private async showAlertMessage(
-    alertMessage: string,
-    updateCalendar: Calendar,
-    deleteWithoutCalculate?: boolean
-  ): Promise<any> {
-    const alert = await this.alertController.create({
-      cssClass: 'alertForm',
-      header: 'Warning',
-
-      message: alertMessage,
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => {},
-        },
-        {
-          text: 'OK',
-          cssClass: 'secondary',
-          handler: () => {
-            this.updateCalendar(updateCalendar, deleteWithoutCalculate);
-          },
-        },
-      ],
-    });
-    await alert.present();
   }
 
   getOneCalendar(docCalendarId: string): void {
