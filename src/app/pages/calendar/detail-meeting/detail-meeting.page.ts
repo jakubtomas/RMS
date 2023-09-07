@@ -24,6 +24,7 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
   redirectFromCalendar = false;
   myMeeting = false;
   private idUser = localStorage.getItem('idUser');
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -31,7 +32,7 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
     public alertController: AlertController,
     private businessService: BusinessService,
     private meetingService: MeetingService,
-    private toastService: ToastService
+    public toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -51,6 +52,18 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
         this.getOneBusiness(params.idBusiness);
       }
     });
+  }
+
+  public async showAlertForDeleteMeeting(docIdMeeting: string): Promise<void> {
+    const message = 'Are you sure you want to delete appointment?';
+    const result = await this.toastService.showAlertMessage(
+      message,
+      'Delete Meetingg'
+    );
+
+    if (result) {
+      this.deleteMeeting(docIdMeeting);
+    }
   }
 
   getOneBusiness(documentID: string): void {

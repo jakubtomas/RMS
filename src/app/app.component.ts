@@ -39,7 +39,6 @@ export class AppComponent implements OnDestroy {
       icon: 'people',
     },
   ];
-
   subscription: Subscription;
   businessMode = this.businessService.businessMode$;
   loggedIn = false;

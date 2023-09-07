@@ -259,17 +259,8 @@ export class CreateMeetingPage implements OnInit {
                 this.toastService.showToast(
                   'A meeting has been created successfully.'
                 );
-
-                this.toastService.showAlertMessage(
-                  'A meeting has been created successfully'
-                );
               })
               .catch((error) => {
-                console.error(error);
-                this.toastService.showToast(
-                  'Something is wrong please refresh page'
-                );
-                //this.toastService.showToast('A meeting has not been created');
                 this.toastService.showAlertMessage(
                   'A meeting has not been created. Try again. Something is wrong'
                 );

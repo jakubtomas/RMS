@@ -73,7 +73,8 @@
     </ion-card-header> -->
 
     <section class="buttons">
-      <ion-button *ngIf="ownerPermissionBusiness || myMeeting"
+      <ion-button
+        *ngIf="ownerPermissionBusiness || myMeeting"
         color="danger"
         (click)="showAlertForDeleteMeeting(docIdMeeting)"
         >Delete Meeting</ion-button

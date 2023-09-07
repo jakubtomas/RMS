@@ -19,42 +19,41 @@ interface Item {
   styleUrls: ['./list-business.page.scss'],
 })
 export class ListBusinessPage implements OnInit, OnDestroy {
-
   items: Item[];
   messageFirebase: string;
-  private orderBy = 'nameOrganization';
+  public orderBy = 'nameOrganization';
   directionOrderBy = 'asc';
   businesses: Business[];
 
-  constructor(private route: ActivatedRoute,
+  constructor(
+    private route: ActivatedRoute,
     private businessService: BusinessService,
-    private router: Router) {
-  }
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.messageFirebase = null;
 
-    this.route.queryParams.subscribe((params: Params) => {
+    this.route.queryParams.subscribe(
+      (params: Params) => {
+        this.getAllMyBusinesses();
+        if (params.deletedBusiness) {
+          this.messageFirebase = 'Business successfully deleted';
+        }
 
-      this.getAllMyBusinesses();
-      if (params.deletedBusiness) {
-        this.messageFirebase = 'Business successfully deleted';
+        if (params.createdBusiness !== undefined) {
+          this.messageFirebase = 'Business successfully created';
+        }
+      },
+      (error) => {
+        console.log('you got error ');
+        console.log(error);
       }
-
-      if (params.createdBusiness !== undefined) {
-        this.messageFirebase = 'Business successfully created';
-      }
-    }, error => {
-      console.log('you got error ');
-      console.log(error);
-    });
-
+    );
   }
-
 
   orderByName(): void {
     if (this.orderBy === 'nameOrganization') {
-
       if (this.directionOrderBy === 'desc') {
         this.directionOrderBy = 'asc';
       } else {
@@ -68,7 +67,6 @@ export class ListBusinessPage implements OnInit, OnDestroy {
 
   orderByAddress(): void {
     if (this.orderBy === 'city') {
-
       if (this.directionOrderBy === 'desc') {
         this.directionOrderBy = 'asc';
       } else {
@@ -78,33 +76,32 @@ export class ListBusinessPage implements OnInit, OnDestroy {
       this.orderBy = 'city';
       this.directionOrderBy = 'asc';
     }
-
   }
 
   // get all ID business which are my /
   private getAllMyBusinesses(): void {
-    this.businessService.getAllMyBusinesses()
-      .subscribe(businesses => {
-
+    this.businessService.getAllMyBusinesses().subscribe(
+      (businesses) => {
         //businesses.map(businesses=> businesses.filter((business) => business.nameOrganization))
-        this.businesses = businesses.filter((business) => business.nameOrganization);
-
-      }, error => {
+        this.businesses = businesses.filter(
+          (business) => business.nameOrganization
+        );
+      },
+      (error) => {
         console.log(error);
-      });
+      }
+    );
   }
 
   chooseBusiness(business: Business): void {
-
     if (business.id !== null) {
-      this.router.navigate(['/detail-business'],
-        { queryParams: { businessId: business.id } });
+      this.router.navigate(['/detail-business'], {
+        queryParams: { businessId: business.id },
+      });
     }
   }
 
   ngOnDestroy(): void {
     this.messageFirebase = '';
   }
-
-
 }
