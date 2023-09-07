@@ -51,17 +51,4 @@ export class ToastService {
       await alert.present();
     });
   }
-
-  // async showAlertAndCallUpdateCalendar() {
-  //   const result = await this.alertService.showAlertMessage(
-  //     'This is a global alert message.'
-  //   );
-
-  //   if (result) {
-  //     this.updateCalendar(); // Call the updateCalendar function on OK
-  //   } else {
-  //     // Handle the Cancel action (optional)
-  //     console.log('Cancel button clicked in Component A');
-  //   }
-  // }
 }
