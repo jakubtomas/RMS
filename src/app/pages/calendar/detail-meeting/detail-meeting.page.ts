@@ -8,6 +8,7 @@ import { Meeting } from '../../../interfaces/meeting';
 import { UserDetails } from 'src/app/interfaces/userDetails';
 import { Subscription } from 'rxjs';
 import { ToastService } from 'src/app/services/toast.service';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-detail-meeting',
@@ -105,8 +106,10 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
 
   private getOneMeetingWithUserInformation(docIdMeeting: string) {
     if (docIdMeeting) {
+      // todo improve use async pipe
       this.meetingService
         .getOneMeetingWithUserInformation(docIdMeeting)
+        .pipe(take(1))
         .subscribe((meetingData) => {
           if (meetingData.meeting !== null) {
             this.meetingDetails = meetingData.meeting;
