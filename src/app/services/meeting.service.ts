@@ -174,24 +174,23 @@ export class MeetingService {
     currentDay?: string
   ): Observable<{ business: Business; meeting: Meeting }[]> {
     return this.getMeetingsByIdUserOrderByDate(idUser, currentDay).pipe(
-      switchMap((meetings: Meeting[]) =>
-        forkJoin(
+      switchMap((meetings: Meeting[]) => {
+        if (meetings.length === 0) {
+          return of([]);
+        }
+        return forkJoin(
           meetings.map((meeting) => {
-            return this.businessService
-              .getOneBusiness(meeting.idBusiness)
-              .pipe(
-                map((business) => {
-                  return {
-                    business,
-                    meeting,
-                  };
-                })
-              )
-              .pipe();
+            return this.businessService.getOneBusiness(meeting.idBusiness).pipe(
+              map((business) => {
+                return {
+                  business,
+                  meeting,
+                };
+              })
+            );
           })
-        )
-      ),
-      tap(() => {})
+        );
+      })
     );
   }
 

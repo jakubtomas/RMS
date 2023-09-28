@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { EMPTY, Observable, Subscription } from 'rxjs';
-import { delay, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
+import { switchMap, take, tap } from 'rxjs/operators';
 import { UserDetails } from 'src/app/interfaces/userDetails';
 import { UserService } from 'src/app/services/user.service';
 import { AuthService } from '../../services/auth.service';

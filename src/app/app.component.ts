@@ -47,6 +47,7 @@ export class AppComponent implements OnDestroy {
   userDetails: UserDetails;
 
   userDetails$: Observable<UserDetails>;
+  myMovieRating$: Observable<any>; // change any to your type
 
   constructor(
     public afAuth: AngularFireAuth,
@@ -63,7 +64,7 @@ export class AppComponent implements OnDestroy {
     this.getUserDetails();
   }
 
-  getUserDetails() {
+  getUserDetails(): void {
     this.userDetails$ = this.authService.userId$.pipe(
       take(1),
       switchMap((userId) => {

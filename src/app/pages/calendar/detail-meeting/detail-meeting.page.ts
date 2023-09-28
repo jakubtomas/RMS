@@ -68,6 +68,10 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
   }
 
   getOneBusiness(documentID: string): void {
+    //todo use async pipe with catcherror
+    // return empty object is not good idea without error message
+
+    // second solution create global class for unsubscribe by takeUntil like in video
     this.subscription = this.businessService
       .getOneBusiness(documentID)
       .subscribe(
@@ -106,7 +110,6 @@ export class DetailMeetingPage implements OnInit, OnDestroy {
 
   private getOneMeetingWithUserInformation(docIdMeeting: string) {
     if (docIdMeeting) {
-      // todo improve use async pipe
       this.meetingService
         .getOneMeetingWithUserInformation(docIdMeeting)
         .pipe(take(1))
